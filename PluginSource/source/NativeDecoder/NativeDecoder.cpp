@@ -158,7 +158,7 @@ int nativeCreateDecoderAsync(const char* filePath, int& id) {
 	while (getVideoContextIter(newID, &iter)) { newID++; }
 
 	VideoContext context;
-	context.avhandler = new AVHandler();
+	context.avhandler = new AVHandler(filePath);
 	context.id = newID;
 	id = context.id;
 	context.path = (char*)malloc(sizeof(char) * (strlen(filePath) + 1));
@@ -183,7 +183,7 @@ int nativeCreateDecoder(const char* filePath, int& id) {
 	while (getVideoContextIter(newID, &iter)) { newID++; }
 
 	VideoContext context;
-	context.avhandler = new AVHandler();
+	context.avhandler = new AVHandler(filePath);
 	context.id = newID;
 	id = context.id;
 	context.path = NULL;
@@ -428,7 +428,7 @@ void nativeLoadThumbnail(int id, float time, void* texY, void* texU, void* texV)
 }
 
 int nativeGetMetaData(const char* filePath, char*** key, char*** value) {
-	AVHandler* avhandler = new AVHandler();
+	AVHandler* avhandler = new AVHandler(filePath);
 	avhandler->init(filePath);
 
 	char** metaKey = NULL;

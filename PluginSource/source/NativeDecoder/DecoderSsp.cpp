@@ -221,9 +221,8 @@ bool DecoderSsp::init(const char* filePath)
 		LOG("Decoder has been init. \n");
 		return true;
 	}
-
-	if (filePath == NULL) {
-		LOG("File path is NULL. \n");
+	if (filePath == NULL ||strncmp(filePath,"ssp://",strlen("ssp://"))!=0) {
+		LOG("Path is not a ssp url or null \n");
 		return false;
 	}
 
@@ -266,7 +265,7 @@ bool DecoderSsp::init(const char* filePath)
 			av_get_colorspace_name(mVideoCodecContext->colorspace),
 			av_color_range_name(mVideoCodecContext->color_range));
 	}
-	mThreadLooper = new imf::ThreadLoop(std::bind(&DecoderSsp::setup, this, _1, filePath));
+	mThreadLooper = new imf::ThreadLoop(std::bind(&DecoderSsp::setup, this, _1,filePath+strlen("ssp://")));
 	mThreadLooper->start();
 	mVideoInfo.isEnabled = true;
 	mAudioInfo.isEnabled = false;

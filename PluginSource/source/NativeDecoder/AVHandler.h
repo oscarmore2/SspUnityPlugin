@@ -7,7 +7,7 @@
  
 class AVHandler {
 public:
-	AVHandler();
+	AVHandler(const char* path);
 	~AVHandler();
 	
 	enum DecoderState {
@@ -41,4 +41,11 @@ private:
 	double mSeekTime;
 	std::string filePath;
 	std::thread mDecodeThread;
+
+private:
+
+	 static const std::string PROTOCOL_SSP;
+	 static const std::string PROTOCOL_HTTP;
+	 static const std::string PROTOCOL_FILE;
 };
+

@@ -33,3 +33,13 @@
 SspUnityProject/Library/
 PluginSource/projects/VideoPlugin/Debug/
 SspUnityProject/Temp/
+/SspUnityProject/.vs/SspUnityProject/v14/*.suo
+/SspUnityProject/SspUnityProject.userprefs
+/SspUnityProject/UnityPackageManager/manifest.json
+/SspUnityProject/obj/Debug/Assembly-CSharp.csproj.CoreCompileInputs.cache
+/SspUnityProject/obj/Debug/Assembly-CSharp.csprojResolveAssemblyReference.cache
+/SspUnityProject/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+/SspUnityProject/Assembly-CSharp.csproj
+/SspUnityProject/FBCaptureSDK.txt
+/SspUnityProject/SspUnityProject.sln
+/SspUnityProject/.vscode

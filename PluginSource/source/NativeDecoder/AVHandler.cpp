@@ -1,14 +1,23 @@
-//========= Copyright 2015-2018, HTC Corporation. All rights reserved. ===========
-
 #include "AVHandler.h"
 #include "DecoderFFmpeg.h"
 #include "Logger.h"
 #include "DecoderSsp.h"
 
-AVHandler::AVHandler() {
+const std::string AVHandler::PROTOCOL_SSP = "ssp://";
+const std::string AVHandler::PROTOCOL_HTTP = "http://";
+const std::string AVHandler::PROTOCOL_FILE = "file://";
+
+AVHandler::AVHandler(const char* path) {
 	mDecoderState = UNINITIALIZED;
 	mSeekTime = 0.0;
-	mIDecoder = new DecoderSsp();
+	if (strncmp(path, PROTOCOL_SSP.c_str(),PROTOCOL_SSP.size() == 0))
+	{
+		mIDecoder = new DecoderSsp();
+	}
+	else
+	{
+		mIDecoder = new DecoderFFmpeg();
+	}
 }
 
 void AVHandler::init(const char* filePath) {
