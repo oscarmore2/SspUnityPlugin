@@ -7,9 +7,9 @@ public enum ResourceType
 
 }
 
-interface IResource  {
+public abstract class IResource  {
 
-    ResourceType GetType();
-    string GetPath();
+    public abstract ResourceType GetType();
+    public abstract string GetPath();
 
 }

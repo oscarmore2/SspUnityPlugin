@@ -4,13 +4,6 @@ using UnityEngine;
 
 public class IResourceRef : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	public int Priority;
+    public IResource Resources;
 }
