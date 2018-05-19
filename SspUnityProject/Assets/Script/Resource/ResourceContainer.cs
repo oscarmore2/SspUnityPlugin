@@ -4,13 +4,5 @@ using UnityEngine;
 
 public class ResourceContainer : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public List<IResource> ResourceList = new List<IResource>();
 }
