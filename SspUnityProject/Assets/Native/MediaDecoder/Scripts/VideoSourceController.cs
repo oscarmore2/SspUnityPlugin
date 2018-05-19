@@ -7,7 +7,6 @@ using System.Collections;
 
 namespace UnityPlugin.Decoder
 {
-	[RequireComponent(typeof(SspDecoder))]
 	public class VideoSourceController : MonoBehaviour {
 		protected string LOG_TAG = "[VideoSourceController]";
 

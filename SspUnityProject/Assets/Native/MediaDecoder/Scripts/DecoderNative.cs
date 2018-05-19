@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 namespace UnityPlugin.Decoder
 {
-    public class NativeDecoder
+    public class DecoderNative
     {
         public enum DecoderState
         {
@@ -103,7 +103,7 @@ namespace UnityPlugin.Decoder
             Debug.LogFormat("[Native] {0}", str);
         }
 
-        [DllImport(NativeDecoder.NATIVE_LIBRARY_NAME)]
+        [DllImport(DecoderNative.NATIVE_LIBRARY_NAME)]
         public static extern IntPtr GetRenderEventFunc();
     }
 

@@ -23,10 +23,10 @@ namespace UnityPlugin.Decoder
         private const double OVERLAP_TIME = 0.02; //  Our audio clip is defined as: [overlay][audio data][overlap].
         public bool playOnAwake = false;
         public string mediaPath; //	Assigned outside.
-        public UnityEvent onInitComplete = null; //  Initialization is asynchronized. Invoked after initialization.
-        public UnityEvent onVideoEnd = null; //  Invoked on video end.
-        private NativeDecoder.DecoderState lastState = NativeDecoder.DecoderState.NOT_INITIALIZED;
-        public NativeDecoder.DecoderState decoderState = NativeDecoder.DecoderState.NOT_INITIALIZED;
+        public UnityEvent onInitComplete = new UnityEvent();//  Initialization is asynchronized. Invoked after initialization.
+        public UnityEvent onVideoEnd = new UnityEvent(); //  Invoked on video end.
+        private DecoderNative.DecoderState lastState = DecoderNative.DecoderState.NOT_INITIALIZED;
+        public DecoderNative.DecoderState decoderState = DecoderNative.DecoderState.NOT_INITIALIZED;
         private int decoderID = -1;
         private bool isAllAudioChEnabled;
 
@@ -73,20 +73,20 @@ namespace UnityPlugin.Decoder
             }
             var dataPtr = new IntPtr();
             var lengthPerChannel = 0;
-            double audioNativeTime = NativeDecoder.nativeGetAudioData(decoderID, ref dataPtr, ref lengthPerChannel);
+            double audioNativeTime = DecoderNative.nativeGetAudioData(decoderID, ref dataPtr, ref lengthPerChannel);
             float[] buff = null;
             if (lengthPerChannel > 0)
             {
                 buff = new float[lengthPerChannel * audioChannels];
                 Marshal.Copy(dataPtr, buff, 0, buff.Length);
-                NativeDecoder.nativeFreeAudioData(decoderID);
+                DecoderNative.nativeFreeAudioData(decoderID);
             }
             data = buff;
             time = audioNativeTime;
             samplesPerChannel = lengthPerChannel;
         }
 
-        public NativeDecoder.DecoderState getDecoderState()
+        public DecoderNative.DecoderState getDecoderState()
         {
             return decoderState;
         }
@@ -95,7 +95,7 @@ namespace UnityPlugin.Decoder
         {
             var keyptr = IntPtr.Zero;
             var valptr = IntPtr.Zero;
-            var metaCount = NativeDecoder.nativeGetMetaData(filePath, out keyptr, out valptr);
+            var metaCount = DecoderNative.nativeGetMetaData(filePath, out keyptr, out valptr);
             var keys = new IntPtr[metaCount];
             var vals = new IntPtr[metaCount];
             Marshal.Copy(keyptr, keys, 0, metaCount);
@@ -117,7 +117,7 @@ namespace UnityPlugin.Decoder
 
         public float getVideoCurrentTime()
         {
-            if (decoderState == NativeDecoder.DecoderState.PAUSE || decoderState == NativeDecoder.DecoderState.SEEK_FRAME)
+            if (decoderState == DecoderNative.DecoderState.PAUSE || decoderState == DecoderNative.DecoderState.SEEK_FRAME)
             {
                 return (float)hangTime;
             }
@@ -143,72 +143,51 @@ namespace UnityPlugin.Decoder
 
         public bool isSeeking()
         {
-            return decoderState >= NativeDecoder.DecoderState.INITIALIZED && (decoderState == NativeDecoder.DecoderState.SEEK_FRAME || !NativeDecoder.nativeIsContentReady(decoderID));
+            return decoderState >= DecoderNative.DecoderState.INITIALIZED && (decoderState == DecoderNative.DecoderState.SEEK_FRAME || !DecoderNative.nativeIsContentReady(decoderID));
         }
 
         public bool isVideoEOF()
         {
-            return decoderState == NativeDecoder.DecoderState.EOF;
+            return decoderState == DecoderNative.DecoderState.EOF;
         }
 
-        public static void loadVideoThumb(GameObject obj, string filePath, float time)
-        {
-            if (!File.Exists(filePath))
-            {
-                print(LOG_TAG + " File not found!");
-                return;
-            }
-            var decID = -1;
-            var width = 0;
-            var height = 0;
-            var totalTime = 0.0f;
-            NativeDecoder.nativeCreateDecoder(filePath, ref decID);
-            NativeDecoder.nativeGetVideoFormat(decID, ref width, ref height, ref totalTime);
-            if (!NativeDecoder.nativeStartDecoding(decID))
-            {
-                print(LOG_TAG + " Decoding not start.");
-                return;
-            }
-            var thumbY = new Texture2D(width, height, TextureFormat.Alpha8, false);
-            var thumbU = new Texture2D(width / 2, height / 2, TextureFormat.Alpha8, false);
-            var thumbV = new Texture2D(width / 2, height / 2, TextureFormat.Alpha8, false);
-            var thumbMat = getMaterial(obj);
-            if (thumbMat == null)
-            {
-                print(LOG_TAG + " Target has no MeshRenderer.");
-                NativeDecoder.nativeDestroyDecoder(decID);
-                return;
-            }
-            thumbMat.SetTexture("_YTex", thumbY);
-            thumbMat.SetTexture("_UTex", thumbU);
-            thumbMat.SetTexture("_VTex", thumbV);
-            NativeDecoder.nativeLoadThumbnail(decID, time, thumbY.GetNativeTexturePtr(), thumbU.GetNativeTexturePtr(), thumbV.GetNativeTexturePtr());
-            NativeDecoder.nativeDestroyDecoder(decID);
-        }
+        //public static void loadVideoThumb(GameObject obj, string filePath, float time)
+        //{
+        //    if (!File.Exists(filePath))
+        //    {
+        //        print(LOG_TAG + " File not found!");
+        //        return;
+        //    }
+        //    var decID = -1;
+        //    var width = 0;
+        //    var height = 0;
+        //    var totalTime = 0.0f;
+        //    DecoderNative.nativeCreateDecoder(filePath, ref decID);
+        //    DecoderNative.nativeGetVideoFormat(decID, ref width, ref height, ref totalTime);
+        //    if (!DecoderNative.nativeStartDecoding(decID))
+        //    {
+        //        print(LOG_TAG + " Decoding not start.");
+        //        return;
+        //    }
+        //    var thumbY = new Texture2D(width, height, TextureFormat.Alpha8, false);
+        //    var thumbU = new Texture2D(width / 2, height / 2, TextureFormat.Alpha8, false);
+        //    var thumbV = new Texture2D(width / 2, height / 2, TextureFormat.Alpha8, false);
+        //    var thumbMat = getMaterial(obj);
+        //    if (thumbMat == null)
+        //    {
+        //        print(LOG_TAG + " Target has no MeshRenderer.");
+        //        DecoderNative.nativeDestroyDecoder(decID);
+        //        return;
+        //    }
+        //    thumbMat.SetTexture("_YTex", thumbY);
+        //    thumbMat.SetTexture("_UTex", thumbU);
+        //    thumbMat.SetTexture("_VTex", thumbV);
+        //    DecoderNative.nativeLoadThumbnail(decID, time, thumbY.GetNativeTexturePtr(), thumbU.GetNativeTexturePtr(), thumbV.GetNativeTexturePtr());
+        //    DecoderNative.nativeDestroyDecoder(decID);
+        //}
 
-        protected static Material getMaterial(GameObject obj)
-        {
-            var meshRenderer = obj.GetComponent<MeshRenderer>();
-            if (meshRenderer)
-                return meshRenderer.material;
-            else
-            {
-                var image = obj.GetComponent<Image>();
-                if (image)
-                    return image.material;
-                else
-                {
-                    var rawImage = obj.GetComponent<RawImage>();
-                    if (rawImage)
-                        return rawImage.material;
-                    else
-                    {
-                        Debug.LogError("Please attach YUV2RGBA shader to material");
-                        return new Material(Shader.Find("Unlit/YUV2RGBA"));
-                    }
-                }
-            }
-        }
+        public Material texMaterial = null;
+
 
         public void mute()
         {
@@ -228,7 +207,7 @@ namespace UnityPlugin.Decoder
 
         public void setAudioEnable(bool isEnable)
         {
-            NativeDecoder.nativeSetAudioEnable(decoderID, isEnable);
+            DecoderNative.nativeSetAudioEnable(decoderID, isEnable);
             if (isEnable)
             {
                 setSeekTime(getVideoCurrentTime());
@@ -237,10 +216,10 @@ namespace UnityPlugin.Decoder
 
         public void setPause()
         {
-            if (decoderState == NativeDecoder.DecoderState.START)
+            if (decoderState == DecoderNative.DecoderState.START)
             {
                 hangTime = curRealTime - globalStartTime;
-                decoderState = NativeDecoder.DecoderState.PAUSE;
+                decoderState = DecoderNative.DecoderState.PAUSE;
                 if (isAudioEnabled)
                 {
                     foreach (var src in audioSource)
@@ -253,10 +232,10 @@ namespace UnityPlugin.Decoder
 
         public void setResume()
         {
-            if (decoderState == NativeDecoder.DecoderState.PAUSE)
+            if (decoderState == DecoderNative.DecoderState.PAUSE)
             {
                 globalStartTime = curRealTime - hangTime;
-                decoderState = NativeDecoder.DecoderState.START;
+                decoderState = DecoderNative.DecoderState.START;
                 if (isAudioEnabled)
                 {
                     foreach (var src in audioSource)
@@ -269,10 +248,10 @@ namespace UnityPlugin.Decoder
 
         public bool setSeekTime(float seekTime)
         {
-            if (decoderState != NativeDecoder.DecoderState.SEEK_FRAME && decoderState >= NativeDecoder.DecoderState.START)
+            if (decoderState != DecoderNative.DecoderState.SEEK_FRAME && decoderState >= DecoderNative.DecoderState.START)
             {
                 lastState = decoderState;
-                decoderState = NativeDecoder.DecoderState.SEEK_FRAME;
+                decoderState = DecoderNative.DecoderState.SEEK_FRAME;
                 var setTime = 0.0f;
                 if ((isVideoEnabled && seekTime > videoTotalTime) || (isAudioEnabled && seekTime > audioTotalTime) || isVideoReadyToReplay || isAudioReadyToReplay || seekTime < 0.0f)
                 {
@@ -285,8 +264,8 @@ namespace UnityPlugin.Decoder
                 }
                 print(LOG_TAG + " set seek time: " + setTime);
                 hangTime = setTime;
-                NativeDecoder.nativeSetSeekTime(decoderID, setTime);
-                NativeDecoder.nativeSetVideoTime(decoderID, setTime);
+                DecoderNative.nativeSetSeekTime(decoderID, setTime);
+                DecoderNative.nativeSetVideoTime(decoderID, setTime);
                 if (isAudioEnabled)
                 {
                     lock (_lock)
@@ -324,7 +303,7 @@ namespace UnityPlugin.Decoder
 
         public void setVideoEnable(bool isEnable)
         {
-            NativeDecoder.nativeSetVideoEnable(decoderID, isEnable);
+            DecoderNative.nativeSetVideoEnable(decoderID, isEnable);
             if (isEnable)
             {
                 setSeekTime(getVideoCurrentTime());
@@ -345,14 +324,14 @@ namespace UnityPlugin.Decoder
 
         public void startDecoding()
         {
-            if (decoderState == NativeDecoder.DecoderState.INITIALIZED)
+            if (decoderState == DecoderNative.DecoderState.INITIALIZED)
             {
-                if (!NativeDecoder.nativeStartDecoding(decoderID))
+                if (!DecoderNative.nativeStartDecoding(decoderID))
                 {
                     print(LOG_TAG + " Decoding not start.");
                     return;
                 }
-                decoderState = NativeDecoder.DecoderState.BUFFERING;
+                decoderState = DecoderNative.DecoderState.BUFFERING;
                 globalStartTime = curRealTime;
                 hangTime = curRealTime - globalStartTime;
                 isVideoReadyToReplay = isAudioReadyToReplay = false;
@@ -369,10 +348,10 @@ namespace UnityPlugin.Decoder
 
         public void stopDecoding()
         {
-            if (decoderState >= NativeDecoder.DecoderState.INITIALIZING)
+            if (decoderState >= DecoderNative.DecoderState.INITIALIZING)
             {
                 print(LOG_TAG + " stop decoding.");
-                decoderState = NativeDecoder.DecoderState.STOP;
+                decoderState = DecoderNative.DecoderState.STOP;
                 releaseTextures();
                 if (isAudioEnabled)
                 {
@@ -391,9 +370,9 @@ namespace UnityPlugin.Decoder
                         }
                     }
                 }
-                NativeDecoder.nativeDestroyDecoder(decoderID);
+                DecoderNative.nativeDestroyDecoder(decoderID);
                 decoderID = -1;
-                decoderState = NativeDecoder.DecoderState.NOT_INITIALIZED;
+                decoderState = DecoderNative.DecoderState.NOT_INITIALIZED;
                 isVideoEnabled = isAudioEnabled = false;
                 isVideoReadyToReplay = isAudioReadyToReplay = false;
                 isAllAudioChEnabled = false;
@@ -417,9 +396,9 @@ namespace UnityPlugin.Decoder
             var playedAudioDataLength = AUDIO_FRAME_SIZE * audioChannels; //  Data length exclude the overlap length.
             print(LOG_TAG + " audioDataTime " + audioDataTime);
             audioProgressTime = -1.0; //  Used to schedule each audio clip to be played.
-            while (decoderState >= NativeDecoder.DecoderState.START)
+            while (decoderState >= DecoderNative.DecoderState.START)
             {
-                if (decoderState == NativeDecoder.DecoderState.START)
+                if (decoderState == DecoderNative.DecoderState.START)
                 {
                     var currentTime = curRealTime - globalStartTime;
                     if (currentTime < audioTotalTime || audioTotalTime == -1.0f)
@@ -433,7 +412,7 @@ namespace UnityPlugin.Decoder
                                 audioProgressTime = firstAudioFrameTime + OVERLAP_TIME;
                                 globalStartTime = curRealTime - audioProgressTime;
                             }
-                            while (audioSource[swapIndex].isPlaying || decoderState == NativeDecoder.DecoderState.SEEK_FRAME)
+                            while (audioSource[swapIndex].isPlaying || decoderState == DecoderNative.DecoderState.SEEK_FRAME)
                             {
                                 yield return null;
                             }
@@ -484,9 +463,9 @@ namespace UnityPlugin.Decoder
 
         private void registNativeLog()
         {
-            var logDel = new Action<string>(NativeDecoder.nativeLogHandler);
+            var logDel = new Action<string>(DecoderNative.nativeLogHandler);
             var intptr_delegate = Marshal.GetFunctionPointerForDelegate(logDel);
-            NativeDecoder.nativeRegistLogHandler(intptr_delegate);
+            DecoderNative.nativeRegistLogHandler(intptr_delegate);
         }
         private void Awake()
         {
@@ -505,7 +484,7 @@ namespace UnityPlugin.Decoder
             var channels = 0;
             var freqency = 0;
             var duration = 0.0f;
-            NativeDecoder.nativeGetAudioFormat(decoderID, ref channels, ref freqency, ref duration);
+            DecoderNative.nativeGetAudioFormat(decoderID, ref channels, ref freqency, ref duration);
             audioChannels = channels;
             audioFrequency = freqency;
             audioTotalTime = duration > 0 ? duration : -1.0f;
@@ -522,7 +501,7 @@ namespace UnityPlugin.Decoder
             var nativeTexturePtrY = new IntPtr();
             var nativeTexturePtrU = new IntPtr();
             var nativeTexturePtrV = new IntPtr();
-            NativeDecoder.nativeCreateTexture(decoderID, ref nativeTexturePtrY, ref nativeTexturePtrU, ref nativeTexturePtrV);
+            DecoderNative.nativeCreateTexture(decoderID, ref nativeTexturePtrY, ref nativeTexturePtrU, ref nativeTexturePtrV);
             videoTexYch = Texture2D.CreateExternalTexture(videoWidth, videoHeight, TextureFormat.Alpha8, false, false, nativeTexturePtrY);
             videoTexUch = Texture2D.CreateExternalTexture(videoWidth / 2, videoHeight / 2, TextureFormat.Alpha8, false, false, nativeTexturePtrU);
             videoTexVch = Texture2D.CreateExternalTexture(videoWidth / 2, videoHeight / 2, TextureFormat.Alpha8, false, false, nativeTexturePtrV);
@@ -549,26 +528,26 @@ namespace UnityPlugin.Decoder
         private IEnumerator initDecoderAsync(string path)
         {
             print(LOG_TAG + " init Decoder.");
-            decoderState = NativeDecoder.DecoderState.INITIALIZING;
+            decoderState = DecoderNative.DecoderState.INITIALIZING;
             mediaPath = path;
             decoderID = -1;
-            NativeDecoder.nativeCreateDecoderAsync(mediaPath, ref decoderID);
+            DecoderNative.nativeCreateDecoderAsync(mediaPath, ref decoderID);
             var result = 0;
             do
             {
                 yield return null;
-                result = NativeDecoder.nativeGetDecoderState(decoderID);
+                result = DecoderNative.nativeGetDecoderState(decoderID);
             } while (!(result == 1 || result == -1));
 
             //  Init success.
             if (result == 1)
             {
                 print(LOG_TAG + " Init success.");
-                isVideoEnabled = NativeDecoder.nativeIsVideoEnabled(decoderID);
+                isVideoEnabled = DecoderNative.nativeIsVideoEnabled(decoderID);
                 if (isVideoEnabled)
                 {
                     var duration = 0.0f;
-                    NativeDecoder.nativeGetVideoFormat(decoderID, ref videoWidth, ref videoHeight, ref duration);
+                    DecoderNative.nativeGetVideoFormat(decoderID, ref videoWidth, ref videoHeight, ref duration);
                     videoTotalTime = duration > 0 ? duration : -1.0f;
                     print(LOG_TAG + " Video format: (" + videoWidth + ", " + videoHeight + ")");
                     if (videoTotalTime > 0) print(LOG_TAG + " Total time: " + videoTotalTime);
@@ -577,13 +556,13 @@ namespace UnityPlugin.Decoder
                 }
 
                 //	Initialize audio.
-                isAudioEnabled = NativeDecoder.nativeIsAudioEnabled(decoderID);
+                isAudioEnabled = DecoderNative.nativeIsAudioEnabled(decoderID);
                 print(LOG_TAG + " isAudioEnabled = " + isAudioEnabled);
                 if (isAudioEnabled)
                 {
                     if (isAllAudioChEnabled)
                     {
-                        NativeDecoder.nativeSetAudioAllChDataEnable(decoderID, isAllAudioChEnabled);
+                        DecoderNative.nativeSetAudioAllChDataEnable(decoderID, isAllAudioChEnabled);
                         getAudioFormat();
                     }
                     else
@@ -592,7 +571,7 @@ namespace UnityPlugin.Decoder
                         initAudioSource();
                     }
                 }
-                decoderState = NativeDecoder.DecoderState.INITIALIZED;
+                decoderState = DecoderNative.DecoderState.INITIALIZED;
                 if (onInitComplete != null)
                 {
                     onInitComplete.Invoke();
@@ -601,7 +580,7 @@ namespace UnityPlugin.Decoder
             else
             {
                 print(LOG_TAG + " Init fail.");
-                decoderState = NativeDecoder.DecoderState.INIT_FAIL;
+                decoderState = DecoderNative.DecoderState.INIT_FAIL;
             }
         }
 
@@ -617,7 +596,7 @@ namespace UnityPlugin.Decoder
         {
             //print(LOG_TAG + " OnDestroy");
             stopDecoding();
-            NativeDecoder.nativeRegistLogHandler(IntPtr.Zero);
+            DecoderNative.nativeRegistLogHandler(IntPtr.Zero);
         }
 
         private void pullAudioData(object sender, DoWorkEventArgs e)
@@ -627,12 +606,12 @@ namespace UnityPlugin.Decoder
             var audioFrameLength = 0;
             double lastTime = -1.0f; //	Avoid to schedule the same audio data set.
             audioDataBuff = new List<float>();
-            while (decoderState >= NativeDecoder.DecoderState.START)
+            while (decoderState >= DecoderNative.DecoderState.START)
             {
-                if (decoderState != NativeDecoder.DecoderState.SEEK_FRAME)
+                if (decoderState != DecoderNative.DecoderState.SEEK_FRAME)
                 {
-                    double audioNativeTime = NativeDecoder.nativeGetAudioData(decoderID, ref dataPtr, ref audioFrameLength);
-                    if (0 < audioNativeTime && lastTime != audioNativeTime && decoderState != NativeDecoder.DecoderState.SEEK_FRAME && audioFrameLength != 0)
+                    double audioNativeTime = DecoderNative.nativeGetAudioData(decoderID, ref dataPtr, ref audioFrameLength);
+                    if (0 < audioNativeTime && lastTime != audioNativeTime && decoderState != DecoderNative.DecoderState.SEEK_FRAME && audioFrameLength != 0)
                     {
                         if (firstAudioFrameTime == -1.0)
                         {
@@ -653,7 +632,7 @@ namespace UnityPlugin.Decoder
                     }
                     if (audioNativeTime != -1.0)
                     {
-                        NativeDecoder.nativeFreeAudioData(decoderID);
+                        DecoderNative.nativeFreeAudioData(decoderID);
                     }
                     Thread.Sleep(2);
                 }
@@ -676,7 +655,20 @@ namespace UnityPlugin.Decoder
 
         private void setTextures(Texture ytex, Texture utex, Texture vtex)
         {
-            var texMaterial = getMaterial(gameObject);
+            if (texMaterial == null)
+                texMaterial = new Material(Shader.Find("Unlit/YUV2RGBA"));
+            var meshRenderer = GetComponent<MeshRenderer>();
+            if (meshRenderer)
+                meshRenderer.material = texMaterial;
+            var image = GetComponent<Image>();
+            if (image)
+                image.material = texMaterial;
+            var rawImage = GetComponent<RawImage>();
+            if (rawImage)
+                rawImage.material = texMaterial;
+            texMaterial.SetTexture("_YTex", ytex);
+            texMaterial.SetTexture("_UTex", utex);
+            texMaterial.SetTexture("_VTex", vtex);
             texMaterial.SetTexture("_YTex", ytex);
             texMaterial.SetTexture("_UTex", utex);
             texMaterial.SetTexture("_VTex", vtex);
@@ -687,11 +679,11 @@ namespace UnityPlugin.Decoder
         {
             switch (decoderState)
             {
-                case NativeDecoder.DecoderState.START:
+                case DecoderNative.DecoderState.START:
                     if (isVideoEnabled)
                     {
                         //  Prevent empty texture generate green screen.(default 0,0,0 in YUV which is green in RGB)
-                        if (useDefault && NativeDecoder.nativeIsContentReady(decoderID))
+                        if (useDefault && DecoderNative.nativeIsContentReady(decoderID))
                         {
                             getTextureFromNative();
                             setTextures(videoTexYch, videoTexUch, videoTexVch);
@@ -704,7 +696,7 @@ namespace UnityPlugin.Decoder
                         //	Normal update frame.
                         if (setTime < videoTotalTime || videoTotalTime <= 0)
                         {
-                            if (seekPreview && NativeDecoder.nativeIsContentReady(decoderID))
+                            if (seekPreview && DecoderNative.nativeIsContentReady(decoderID))
                             {
                                 setPause();
                                 seekPreview = false;
@@ -712,8 +704,8 @@ namespace UnityPlugin.Decoder
                             }
                             else
                             {
-                                NativeDecoder.nativeSetVideoTime(decoderID, (float)setTime);
-                                GL.IssuePluginEvent(NativeDecoder.GetRenderEventFunc(), decoderID);
+                                DecoderNative.nativeSetVideoTime(decoderID, (float)setTime);
+                                GL.IssuePluginEvent(DecoderNative.GetRenderEventFunc(), decoderID);
                             }
                         }
                         else
@@ -721,33 +713,33 @@ namespace UnityPlugin.Decoder
                             isVideoReadyToReplay = true;
                         }
                     }
-                    if (NativeDecoder.nativeIsVideoBufferEmpty(decoderID) && !NativeDecoder.nativeIsEOF(decoderID))
+                    if (DecoderNative.nativeIsVideoBufferEmpty(decoderID) && !DecoderNative.nativeIsEOF(decoderID))
                     {
-                        decoderState = NativeDecoder.DecoderState.BUFFERING;
+                        decoderState = DecoderNative.DecoderState.BUFFERING;
                         hangTime = curRealTime - globalStartTime;
                     }
                     break;
-                case NativeDecoder.DecoderState.SEEK_FRAME:
-                    if (NativeDecoder.nativeIsSeekOver(decoderID))
+                case DecoderNative.DecoderState.SEEK_FRAME:
+                    if (DecoderNative.nativeIsSeekOver(decoderID))
                     {
                         globalStartTime = curRealTime - hangTime;
-                        decoderState = NativeDecoder.DecoderState.START;
-                        if (lastState == NativeDecoder.DecoderState.PAUSE)
+                        decoderState = DecoderNative.DecoderState.START;
+                        if (lastState == DecoderNative.DecoderState.PAUSE)
                         {
                             seekPreview = true;
                             mute();
                         }
                     }
                     break;
-                case NativeDecoder.DecoderState.BUFFERING:
-                    if (!NativeDecoder.nativeIsVideoBufferEmpty(decoderID) || NativeDecoder.nativeIsEOF(decoderID))
+                case DecoderNative.DecoderState.BUFFERING:
+                    if (!DecoderNative.nativeIsVideoBufferEmpty(decoderID) || DecoderNative.nativeIsEOF(decoderID))
                     {
-                        decoderState = NativeDecoder.DecoderState.START;
+                        decoderState = DecoderNative.DecoderState.START;
                         globalStartTime = curRealTime - hangTime;
                     }
                     break;
-                case NativeDecoder.DecoderState.PAUSE:
-                case NativeDecoder.DecoderState.EOF:
+                case DecoderNative.DecoderState.PAUSE:
+                case DecoderNative.DecoderState.EOF:
                 default:
                     break;
             }
@@ -755,7 +747,7 @@ namespace UnityPlugin.Decoder
             {
                 if ((!isVideoEnabled || isVideoReadyToReplay) && (!isAudioEnabled || isAudioReadyToReplay))
                 {
-                    decoderState = NativeDecoder.DecoderState.EOF;
+                    decoderState = DecoderNative.DecoderState.EOF;
                     isVideoReadyToReplay = isAudioReadyToReplay = false;
                     if (onVideoEnd != null)
                     {
