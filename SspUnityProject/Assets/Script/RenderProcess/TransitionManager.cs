@@ -1,16 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TransitionManager : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
+	public TransitionStage Stage;
+
+	public TransitionRenderPrecess TransitionRenderer;
+
+	public UnityEvent OnTransitionStart;
+
+	public UnityEvent OnTransitionEnd;
+
+	public void Transition ()
+	{
 		
 	}
 }
