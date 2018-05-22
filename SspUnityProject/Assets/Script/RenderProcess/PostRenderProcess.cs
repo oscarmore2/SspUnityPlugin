@@ -5,9 +5,17 @@ using UnityEngine;
 
 public class PostRenderProcess : IRenderProcess
 {
+
+	public override IRenderProcess CreateRenderProcess ()
+	{
+		return base.CreateRenderProcess ();
+	}
+
     public override void DoRenderProcess()
     {
-        throw new NotImplementedException();
+		this.ProcessBegin ();
+
+		this.ProcessEnd ();
     }
 
 }

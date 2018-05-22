@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class PreRenderProcess : IRenderProcess
 {
+	public override IRenderProcess CreateRenderProcess ()
+	{
+		return base.CreateRenderProcess ();
+	}
+
     public override void DoRenderProcess()
     {
         throw new NotImplementedException();
