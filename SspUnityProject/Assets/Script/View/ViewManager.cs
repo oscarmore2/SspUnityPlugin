@@ -31,4 +31,14 @@ public class ViewManager : MonoBehaviour {
     {
 
     }
+
+    public void ExpendCameraView()
+    {
+
+    }
+
+    public void ShinkCameraView()
+    {
+
+    }
 }
