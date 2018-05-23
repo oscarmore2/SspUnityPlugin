@@ -61,20 +61,26 @@ public class RenderProcessManager : MonoBehaviour {
         }
 
         PostProcess.SetupProcess(TransitionProcess.ProcessResult);
+
+        StartCoroutine(OnRender());
     }
 
 	IEnumerator OnRender()
 	{
-		yield return EffectProcess.DoRenderProcess ();
+        while (true)
+        {
+            yield return EffectProcess.DoRenderProcess();
 
-        yield return EarlyProcess.DoRenderProcess ();
+            yield return EarlyProcess.DoRenderProcess();
 
-		for (int i=0; i < branchProcessPath.Count; i++ ) {
-            yield return branchProcessPath[i].DoRenderProcess ();
-		}
+            for (int i = 0; i < branchProcessPath.Count; i++)
+            {
+                yield return branchProcessPath[i].DoRenderProcess();
+            }
 
-        yield return TransitionProcess.DoRenderProcess();
+            yield return TransitionProcess.DoRenderProcess();
 
-        yield return PostProcess.DoRenderProcess();
+            yield return PostProcess.DoRenderProcess();
+        }
     }
 }
