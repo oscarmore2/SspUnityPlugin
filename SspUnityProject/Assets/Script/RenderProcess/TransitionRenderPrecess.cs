@@ -5,8 +5,17 @@ using System;
 
 public class TransitionRenderPrecess : IRenderProcess
 {
-    public override void DoRenderProcess()
+    public override void SetupProcess(Texture inputTex)
     {
-        throw new NotImplementedException();
+        processShader = Shader.Find("RenderProcess/TransitionProcess");
+        procressMaterial.shader = processShader;
+        base.SetupProcess(inputTex);
+    }
+
+    public override IEnumerator DoRenderProcess()
+    {
+        ProcessBegin();
+        yield return 1;
+        ProcessEnd();
     }
 }

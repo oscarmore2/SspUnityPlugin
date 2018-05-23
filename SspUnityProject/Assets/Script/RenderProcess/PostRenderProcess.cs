@@ -5,16 +5,17 @@ using UnityEngine;
 
 public class PostRenderProcess : IRenderProcess
 {
+    public override void SetupProcess(Texture inputTex)
+    {
+        processShader = Shader.Find("RenderProcess/PostProcess");
+        procressMaterial.shader = processShader;
+        base.SetupProcess(inputTex);
+    }
 
-	public override IRenderProcess CreateRenderProcess ()
-	{
-		return base.CreateRenderProcess ();
-	}
-
-    public override void DoRenderProcess()
+    public override IEnumerator DoRenderProcess()
     {
 		this.ProcessBegin ();
-
+        yield return new WaitForEndOfFrame();
 		this.ProcessEnd ();
     }
 

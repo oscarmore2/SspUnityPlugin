@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RenderProcessManager : MonoBehaviour {
 
-    List<IRenderProcess> ProcessPath = new List<IRenderProcess>();
+    List<IRenderProcess> branchProcessPath = new List<IRenderProcess>();
     int currentProcessIndex = -1;
 
 	public EffectRenderProcess EffectProcess;
@@ -17,42 +17,64 @@ public class RenderProcessManager : MonoBehaviour {
 
 	public void RegisterProcess(int position, IRenderProcess process)
     {
-		if (position > ProcessPath.Count + 1) {
-			ProcessPath.Add (process);
-		} else if (position < ProcessPath.Count - 1) {
-			ProcessPath.Insert (0, process);
+		if (position > branchProcessPath.Count + 1) {
+			branchProcessPath.Add (process);
+		} else if (position < branchProcessPath.Count - 1) {
+			branchProcessPath.Insert (0, process);
 		} else {
-			ProcessPath.Insert (position, process);
+			branchProcessPath.Insert (position, process);
 		}
     }
 
-    public IRenderProcess GetCurRenderProcess()
+	void CreateBseicRenderProcess()
+	{
+        EffectProcess = new EffectRenderProcess();
+        EarlyProcess = new PreRenderProcess();
+        TransitionProcess = new TransitionRenderPrecess();
+        PostProcess = new PostRenderProcess();
+    }
+
+    public void StartRender(Texture Input)
     {
-        return ProcessPath[currentProcessIndex];
+        EffectProcess.SetupProcess(Input);
+
+        EarlyProcess.SetupProcess(EffectProcess.ProcessResult);
+
+        if (branchProcessPath.Count > 0)
+        {
+            for (int i = 0; i < branchProcessPath.Count; i++)
+            {
+                if (i == 0)
+                {
+                    branchProcessPath[i].SetupProcess(EarlyProcess.ProcessResult);
+                }
+                else
+                {
+                    branchProcessPath[i].SetupProcess(branchProcessPath[i - 1].ProcessResult);
+                }
+            }
+            TransitionProcess.SetupProcess(branchProcessPath[branchProcessPath.Count - 1].ProcessResult);
+        }
+        else
+        {
+            TransitionProcess.SetupProcess(EarlyProcess.ProcessResult);
+        }
+
+        PostProcess.SetupProcess(TransitionProcess.ProcessResult);
     }
-		
-	void Awake()
+
+	IEnumerator OnRender()
 	{
-		
-	}
+		yield return EffectProcess.DoRenderProcess ();
 
-	void CreateRenderProcess()
-	{
-		
-	}
+        yield return EarlyProcess.DoRenderProcess ();
 
-	void Update()
-	{
-		EffectProcess.DoRenderProcess ();
-
-		EarlyProcess.DoRenderProcess ();
-
-		TransitionProcess.DoRenderProcess ();
-
-		PostProcess.DoRenderProcess ();
-
-		foreach (var p in ProcessPath) {
-			p.DoRenderProcess ();
+		for (int i=0; i < branchProcessPath.Count; i++ ) {
+            yield return branchProcessPath[i].DoRenderProcess ();
 		}
-	}
+
+        yield return TransitionProcess.DoRenderProcess();
+
+        yield return PostProcess.DoRenderProcess();
+    }
 }

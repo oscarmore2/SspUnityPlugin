@@ -5,13 +5,17 @@ using UnityEngine;
 
 public class PreRenderProcess : IRenderProcess
 {
-	public override IRenderProcess CreateRenderProcess ()
+	public override void SetupProcess(Texture inputTex)
 	{
-		return base.CreateRenderProcess ();
-	}
+        processShader = Shader.Find("RenderProcess/PreProcess");
+        procressMaterial.shader = processShader;
+        base.SetupProcess(inputTex);
+    }
 
-    public override void DoRenderProcess()
+    public override IEnumerator DoRenderProcess()
     {
-        throw new NotImplementedException();
+        ProcessBegin();
+        yield return 1;
+        ProcessEnd();
     }
 }
