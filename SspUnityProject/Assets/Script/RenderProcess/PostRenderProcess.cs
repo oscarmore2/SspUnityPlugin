@@ -8,15 +8,21 @@ public class PostRenderProcess : IRenderProcess
     public override void SetupProcess(Texture inputTex)
     {
         processShader = Shader.Find("RenderProcess/PostProcess");
-        procressMaterial.shader = processShader;
+        GameObject obj = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefab/Renderer"), this.gameObject.transform);
+        var mesh = obj.GetComponentInChildren<MeshRenderer>();
+        procressMaterial = new Material(processShader);
+        mesh.material = procressMaterial;
+        renderCamera = obj.GetComponent<Camera>();
         base.SetupProcess(inputTex);
     }
 
-    public override IEnumerator DoRenderProcess()
+    public override void DoRenderProcess()
     {
-		this.ProcessBegin ();
-        yield return new WaitForEndOfFrame();
-		this.ProcessEnd ();
+        if (null != ProcessBegin)
+            ProcessBegin();
+
+        if (null != ProcessEnd)
+            ProcessEnd();
     }
 
 }

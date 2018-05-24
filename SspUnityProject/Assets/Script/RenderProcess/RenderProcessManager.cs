@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RenderProcessManager : MonoBehaviour {
+public class RenderProcessManager : Singleton<RenderProcessManager> {
 
     List<IRenderProcess> branchProcessPath = new List<IRenderProcess>();
     int currentProcessIndex = -1;
@@ -26,12 +27,20 @@ public class RenderProcessManager : MonoBehaviour {
 		}
     }
 
-	void CreateBseicRenderProcess()
+	public void CreateBseicRenderProcess()
 	{
-        EffectProcess = new EffectRenderProcess();
-        EarlyProcess = new PreRenderProcess();
-        TransitionProcess = new TransitionRenderPrecess();
-        PostProcess = new PostRenderProcess();
+        EffectProcess = RenderProcessFactory.CreateProcess<EffectRenderProcess>();
+        EarlyProcess = RenderProcessFactory.CreateProcess<PreRenderProcess>();
+        TransitionProcess = RenderProcessFactory.CreateProcess<TransitionRenderPrecess>();
+        PostProcess = RenderProcessFactory.CreateProcess<PostRenderProcess>();
+    }
+
+    public void DestoryRenderProcess()
+    {
+        EffectProcess = null;
+        EarlyProcess = null;
+        TransitionProcess = null;
+        PostProcess = null;
     }
 
     public void StartRender(Texture Input)
@@ -69,18 +78,69 @@ public class RenderProcessManager : MonoBehaviour {
 	{
         while (true)
         {
-            yield return EffectProcess.DoRenderProcess();
+            EffectProcess.DoRenderProcess();
 
-            yield return EarlyProcess.DoRenderProcess();
+            EarlyProcess.DoRenderProcess();
 
             for (int i = 0; i < branchProcessPath.Count; i++)
             {
-                yield return branchProcessPath[i].DoRenderProcess();
+                branchProcessPath[i].DoRenderProcess();
             }
 
-            yield return TransitionProcess.DoRenderProcess();
+            TransitionProcess.DoRenderProcess();
 
-            yield return PostProcess.DoRenderProcess();
+            PostProcess.DoRenderProcess();
+
+            yield return new WaitForEndOfFrame();
         }
+    }
+
+    public override void OnInitialize()
+    {
+        CreateBseicRenderProcess();
+    }
+
+    public override void OnUninitialize()
+    {
+        DestoryRenderProcess();
+    }
+}
+
+public class RenderProcessFactory
+{
+    public static T CreateProcess<T>() where T : IRenderProcess
+    {
+        T process = null;
+        GameObject obj = new GameObject ("RenderProcess");
+        obj.transform.position = Vector3.left * 3000;
+        if (typeof(T) == typeof(EffectRenderProcess))
+        {
+            obj.name = "EffectRenderProcess";
+            obj.transform.position += Vector3.up * 1000;
+            IRenderProcess temp = obj.AddComponent<EffectRenderProcess>();
+            process = (T)temp;
+        }
+        else if (typeof(T) == typeof(PreRenderProcess))
+        {
+            obj.name = "PreRenderProcess";
+            obj.transform.position += Vector3.up * 2000;
+            IRenderProcess temp = obj.AddComponent<PreRenderProcess>();
+            process = (T)temp;
+        }
+        else if (typeof(T) == typeof(TransitionRenderPrecess))
+        {
+            obj.name = "TransitionRenderPrecess";
+            obj.transform.position += Vector3.up * 3000;
+            IRenderProcess temp = obj.AddComponent<TransitionRenderPrecess>();
+            process = (T)temp;
+        }
+        else if (typeof(T) == typeof(PostRenderProcess))
+        {
+            obj.name = "PostRenderProcess";
+            obj.transform.position += Vector3.up * 4000;
+            IRenderProcess temp = obj.AddComponent<PostRenderProcess>();
+            process = (T)temp;
+        }
+        return process;
     }
 }

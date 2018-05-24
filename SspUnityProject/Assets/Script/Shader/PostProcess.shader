@@ -1,4 +1,4 @@
-﻿Shader "Unlit/PostProcess"
+﻿Shader "RenderProcess/PostProcess"
 {
 	Properties
 	{

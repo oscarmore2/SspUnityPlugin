@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class IRenderProcess  {
+
+
+public abstract class IRenderProcess : MonoBehaviour  {
 
     protected List<IResourceRenderer> ResourceOverlays = new List<IResourceRenderer>();
 
-	protected Camera renderCamera;
+	public Camera renderCamera { get; protected set; }
 
     protected Texture inputTexture;
 
@@ -29,16 +31,14 @@ public abstract class IRenderProcess  {
     /// </summary>
 	public virtual void SetupProcess (Texture inputTex)
 	{
-		var width = OutputBuffer.Instance.Config.Width;
-		var height = OutputBuffer.Instance.Config.Height;
-        ProcessResult = new RenderTexture (height, width, 0);
-        GameObject obj = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefab/Renderer"), Vector3.zero, Quaternion.identity, GameObject.Find("RenderProcess").transform);
-        renderCamera = obj.GetComponent<Camera> ();
+        var width = 1920;
+        var height = 1080;
+        ProcessResult = new RenderTexture (width, height, 0);
         renderCamera.targetTexture = (RenderTexture)ProcessResult;
         renderCamera.aspect = (float)width / (float)height;
         inputTexture = inputTex;
         procressMaterial.mainTexture = inputTexture;
 	}
-
-    public abstract IEnumerator DoRenderProcess();
+    
+    public abstract void DoRenderProcess();
 }
