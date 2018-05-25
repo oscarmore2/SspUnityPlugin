@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RenderProcessManager : Singleton<RenderProcessManager> {
+public class RenderProcessManager: MonoBehaviour {
 
     List<IRenderProcess> branchProcessPath = new List<IRenderProcess>();
     int currentProcessIndex = -1;
@@ -29,13 +29,19 @@ public class RenderProcessManager : Singleton<RenderProcessManager> {
 
 	public void CreateBseicRenderProcess()
 	{
-        EffectProcess = RenderProcessFactory.CreateProcess<EffectRenderProcess>();
-        EarlyProcess = RenderProcessFactory.CreateProcess<PreRenderProcess>();
-        TransitionProcess = RenderProcessFactory.CreateProcess<TransitionRenderPrecess>();
-        PostProcess = RenderProcessFactory.CreateProcess<PostRenderProcess>();
+        EffectProcess = RenderProcessFactory.CreateProcess<EffectRenderProcess>(this.gameObject);
+        EarlyProcess = RenderProcessFactory.CreateProcess<PreRenderProcess>(this.gameObject);
+        TransitionProcess = RenderProcessFactory.CreateProcess<TransitionRenderPrecess>(this.gameObject);
+        PostProcess = RenderProcessFactory.CreateProcess<PostRenderProcess>(this.gameObject);
     }
 
-    public void DestoryRenderProcess()
+    void OnDestroy()
+    {
+        StopCoroutine("OnRender");
+        DestoryRenderProcess();
+    }
+
+    void DestoryRenderProcess()
     {
         EffectProcess = null;
         EarlyProcess = null;
@@ -94,25 +100,16 @@ public class RenderProcessManager : Singleton<RenderProcessManager> {
             yield return new WaitForEndOfFrame();
         }
     }
-
-    public override void OnInitialize()
-    {
-        CreateBseicRenderProcess();
-    }
-
-    public override void OnUninitialize()
-    {
-        DestoryRenderProcess();
-    }
 }
 
 public class RenderProcessFactory
 {
-    public static T CreateProcess<T>() where T : IRenderProcess
+    public static T CreateProcess<T>(GameObject processManager) where T : IRenderProcess
     {
         T process = null;
-        GameObject obj = new GameObject ("RenderProcess");
-        obj.transform.position = Vector3.left * 3000;
+        GameObject obj = new GameObject ();
+        obj.transform.parent = processManager.transform;
+        obj.transform.localPosition = Vector3.zero;
         if (typeof(T) == typeof(EffectRenderProcess))
         {
             obj.name = "EffectRenderProcess";
@@ -141,6 +138,14 @@ public class RenderProcessFactory
             IRenderProcess temp = obj.AddComponent<PostRenderProcess>();
             process = (T)temp;
         }
+        return process;
+    }
+
+    public static RenderProcessManager CreateProcessManager()
+    {
+        GameObject obj = new GameObject("ProcessManager");
+        obj.transform.position = Vector3.left * 3000;
+        RenderProcessManager process = obj.AddComponent<RenderProcessManager>();
         return process;
     }
 }

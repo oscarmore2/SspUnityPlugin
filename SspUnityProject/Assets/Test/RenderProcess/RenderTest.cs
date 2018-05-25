@@ -10,7 +10,11 @@ public class RenderTest : MonoBehaviour {
 
     public RawImage img;
 
+    public RawImage OutputImg;
+
     public Canvas resourceRender;
+
+    RenderProcessManager process;
 
     public string path;
 
@@ -23,7 +27,8 @@ public class RenderTest : MonoBehaviour {
 
         player.prepareCompleted += started;
 
-        RenderProcessManager.Create();
+        process = RenderProcessFactory.CreateProcessManager();
+        process.CreateBseicRenderProcess();
         player.Prepare();
         player.Play();
 
@@ -34,8 +39,9 @@ public class RenderTest : MonoBehaviour {
     void started(VideoPlayer p)
     {
         img.texture = p.texture;
-        RenderProcessManager.Instance.StartRender(player.texture);
-        resourceRender.worldCamera = RenderProcessManager.Instance.PostProcess.renderCamera;
+        process.StartRender(player.texture);
+        resourceRender.worldCamera = process.PostProcess.renderCamera;
+        OutputImg.texture = process.PostProcess.ProcessResult;
     }
 	
 	// Update is called once per frame
