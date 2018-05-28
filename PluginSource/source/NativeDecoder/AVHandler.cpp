@@ -10,7 +10,7 @@ const std::string AVHandler::PROTOCOL_FILE = "file://";
 AVHandler::AVHandler(const char* path) {
 	mDecoderState = UNINITIALIZED;
 	mSeekTime = 0.0;
-	if (strncmp(path, PROTOCOL_SSP.c_str(),PROTOCOL_SSP.size() == 0))
+	if (strncmp(path, PROTOCOL_SSP.c_str(),PROTOCOL_SSP.size())== 0)
 	{
 		mIDecoder = new DecoderSsp();
 	}
