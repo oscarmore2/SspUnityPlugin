@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IConfigable : MonoBehaviour {
+public class ResouceDispalyList : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {

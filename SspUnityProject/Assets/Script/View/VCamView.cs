@@ -1,11 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class VCamView : IView {
+    protected override void OnHided()
+    {
 
-	// Use this for initialization
-	void Start () {
+    }
+
+    protected override void OnShown()
+    {
+
+    }
+
+    // Use this for initialization
+    void Start () {
 		
 	}
 	
@@ -13,4 +23,6 @@ public class VCamView : IView {
 	void Update () {
 		
 	}
+
+    
 }

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ViewManager : MonoBehaviour {
 
+    PGMView PGM;
+    PVWView PVW;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -13,4 +16,29 @@ public class ViewManager : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    void OnChangeBiding()
+    {
+
+    }
+
+    public void OnPushToPVW(VCamView Vcam)
+    {
+
+    }
+
+    void OnTransitionToPGM()
+    {
+
+    }
+
+    public void ExpendCameraView()
+    {
+
+    }
+
+    public void ShinkCameraView()
+    {
+
+    }
 }
