@@ -10,23 +10,23 @@ using UnityEngine.VR;
 
 namespace UnityPlugin.Encoder {
    
-    [RequireComponent(typeof(Camera))]
+    //[RequireComponent(typeof(Camera))]
     public class MediaEncoder : MonoBehaviour {
 
 
-        [Header("360 Capture Camera")]
-        [Tooltip("Reference to camera that renders the cubemap")]
-        public Camera cubemapCamera;
-        [Tooltip("Reference to camera that renders the depth cubemap")]
-        public Camera depthCubemapCamera;
+        //[Header("360 Capture Camera")]
+        //[Tooltip("Reference to camera that renders the cubemap")]
+        //public Camera cubemapCamera;
+        //[Tooltip("Reference to camera that renders the depth cubemap")]
+        //public Camera depthCubemapCamera;
         private Camera non360Camera;
-
+        private RenderTexture cameraRenderTexture;
         public static MediaEncoder singleton;
 
         [Header("Capture Options")]
-        public NativeEncoder.CAPTURE_MODE captureMode = NativeEncoder.CAPTURE_MODE._360_CAPTURE;
-        public NativeEncoder.CAPTURE_TEXTURE_FORMAT captureTextureFormat = NativeEncoder.CAPTURE_TEXTURE_FORMAT.RGB_CAPTURE;
-        public NativeEncoder.PROJECTION_TYPE projectionType = NativeEncoder.PROJECTION_TYPE.EQUIRECT;
+        protected NativeEncoder.CAPTURE_MODE captureMode = NativeEncoder.CAPTURE_MODE.NON_360_CAPTURE;
+        protected NativeEncoder.CAPTURE_TEXTURE_FORMAT captureTextureFormat = NativeEncoder.CAPTURE_TEXTURE_FORMAT.RGB_CAPTURE;
+        protected NativeEncoder.PROJECTION_TYPE projectionType = NativeEncoder.PROJECTION_TYPE.EQUIRECT;
         public NativeEncoder.VIDEO_CAPTURE_TYPE videoCaptureType = NativeEncoder.VIDEO_CAPTURE_TYPE.VOD;
 
         [Header("Capture Hotkeys")]
@@ -89,31 +89,31 @@ namespace UnityPlugin.Encoder {
         public bool enabledAudioCapture = true;
         public bool enabledMicCapture = true;
 
-        private RenderTexture cubemapTexture;
-        private RenderTexture cubemapRenderTarget;
-        private RenderTexture depthCubemapTexture;
-        private RenderTexture equirectTexture;
-        private RenderTexture depthEquirectTexture;
+        //private RenderTexture cubemapTexture;
+        //private RenderTexture cubemapRenderTarget;
+        //private RenderTexture depthCubemapTexture;
+        //private RenderTexture equirectTexture;
+        //private RenderTexture depthEquirectTexture;
         private RenderTexture outputTexture;
 
-        private Material equirectMaterial;
-        private Material cubemapMaterial;
-        private Int32 cubemapSize = 1024;
+       // private Material equirectMaterial;
+        //private Material cubemapMaterial;
+        //private Int32 cubemapSize = 1024;
 
-        [Header("Shader Settings")]
-        public Shader equirectShader;
-        public Shader cubemapShader;
+        //[Header("Shader Settings")]
+       // public Shader equirectShader;
+       // public Shader cubemapShader;
 
         private NativeEncoder.VRDEVICE_TYPE attachedHMD;
-        private bool updateCubemap = true;
-        private bool includeCameraRotation = true;
+        //private bool updateCubemap = true;
+        //private bool includeCameraRotation = true;
         private bool screenshotReady = false;
         private bool screenshotStarted = false;
 
-        [Tooltip("Offset spherical coordinates (shift equirect)")]
-        private Vector2 sphereOffset = new Vector2(0, 1);
-        [Tooltip("Scale spherical coordinates (flip equirect, usually just 1 or -1)")]
-        private Vector2 sphereScale = new Vector2(1, -1);
+        //[Tooltip("Offset spherical coordinates (shift equirect)")]
+        //private Vector2 sphereOffset = new Vector2(0, 1);
+        //[Tooltip("Scale spherical coordinates (flip equirect, usually just 1 or -1)")]
+        //private Vector2 sphereScale = new Vector2(1, -1);
 
         void Awake() {
 
@@ -128,9 +128,15 @@ namespace UnityPlugin.Encoder {
             captureStartedType = NativeEncoder.CAPTURE_TYPE.NONE;
 
             non360Camera = GetComponent<Camera>();
+            if (null == non360Camera)
+                non360Camera = gameObject.AddComponent<Camera>();
+            non360Camera.hideFlags = HideFlags.HideAndDontSave;
             non360Camera.enabled = false;
-            depthCubemapCamera.enabled = false;
-            cubemapCamera.enabled = false;
+            cameraRenderTexture = new RenderTexture(4096,2048,0,RenderTextureFormat.ARGB32);
+            cameraRenderTexture.Create();
+            non360Camera.targetTexture = cameraRenderTexture;
+            //depthCubemapCamera.enabled = false;
+            //cubemapCamera.enabled = false;
 
             OnError += CaptureStatusLog;
 
@@ -219,17 +225,17 @@ namespace UnityPlugin.Encoder {
 
             if (!captureStarted && !screenshotStarted) return;
 
-            if (updateCubemap && captureMode == NativeEncoder.CAPTURE_MODE._360_CAPTURE) {  // Render rgb cubemap
-                if (cubemapCamera) {
-                    cubemapCamera.transform.position = transform.position;
-                    cubemapCamera.RenderToCubemap(cubemapTexture);
-                }
+            //if (updateCubemap && captureMode == NativeEncoder.CAPTURE_MODE._360_CAPTURE) {  // Render rgb cubemap
+            //    if (cubemapCamera) {
+            //        cubemapCamera.transform.position = transform.position;
+            //        cubemapCamera.RenderToCubemap(cubemapTexture);
+            //    }
 
-                if (captureTextureFormat == NativeEncoder.CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE && depthCubemapCamera) {  // Render depth cubemap
-                    depthCubemapCamera.transform.position = transform.position;
-                    depthCubemapCamera.RenderToCubemap(depthCubemapTexture);
-                }
-            }
+            //    if (captureTextureFormat == NativeEncoder.CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE && depthCubemapCamera) {  // Render depth cubemap
+            //        depthCubemapCamera.transform.position = transform.position;
+            //        depthCubemapCamera.RenderToCubemap(depthCubemapTexture);
+            //    }
+            //}
 
             if (screenshotStarted) {
                 screenshotReady = true;
@@ -254,8 +260,8 @@ namespace UnityPlugin.Encoder {
             NativeEncoder.FBCAPTURE_STATUS status = NativeEncoder.FBCAPTURE_STATUS.OK;
 
             non360Camera.enabled = true;
-            depthCubemapCamera.enabled = true;
-            cubemapCamera.enabled = true;
+            //depthCubemapCamera.enabled = true;
+            //cubemapCamera.enabled = true;
 
             if (captureStarted || NativeEncoder.fbc_getCaptureStatus() != NativeEncoder.FBCAPTURE_STATUS.OK) {
                 OnError(NativeEncoder.CAPTURE_ERROR.CAPTURE_ALREADY_IN_PROGRESS, null);
@@ -384,8 +390,8 @@ namespace UnityPlugin.Encoder {
             NativeEncoder.FBCAPTURE_STATUS status = NativeEncoder.FBCAPTURE_STATUS.OK;
 
             non360Camera.enabled = true;
-            depthCubemapCamera.enabled = true;
-            cubemapCamera.enabled = true;
+            //depthCubemapCamera.enabled = true;
+            //cubemapCamera.enabled = true;
 
             if (captureStarted || NativeEncoder.fbc_getCaptureStatus() != NativeEncoder.FBCAPTURE_STATUS.OK) {
                 OnError(NativeEncoder.CAPTURE_ERROR.CAPTURE_ALREADY_IN_PROGRESS, null);
@@ -521,8 +527,8 @@ namespace UnityPlugin.Encoder {
             NativeEncoder.FBCAPTURE_STATUS status;
 
             non360Camera.enabled = true;
-            depthCubemapCamera.enabled = true;
-            cubemapCamera.enabled = true;
+            //depthCubemapCamera.enabled = true;
+            //cubemapCamera.enabled = true;
 
             // Check current screenshot status.
             // It should return FBCAPTURE_STATUS.OK when it's not in progress
@@ -612,43 +618,43 @@ namespace UnityPlugin.Encoder {
             if (captureStarted != screenshotStarted) {
                 NativeEncoder.fbc_stopCapture();
 
-                // Release textures & material
-                if (equirectTexture) {
-                    Destroy(equirectTexture);
-                    equirectTexture = null;
-                }
+                //// Release textures & material
+                //if (equirectTexture) {
+                //    Destroy(equirectTexture);
+                //    equirectTexture = null;
+                //}
 
-                if (depthEquirectTexture) {
-                    Destroy(depthEquirectTexture);
-                    depthEquirectTexture = null;
-                }
+                //if (depthEquirectTexture) {
+                //    Destroy(depthEquirectTexture);
+                //    depthEquirectTexture = null;
+                //}
 
                 if (outputTexture) {
                     Destroy(outputTexture);
                     outputTexture = null;
                 }
 
-                if (cubemapTexture) {
-                    Destroy(cubemapTexture);
-                    cubemapTexture = null;
-                }
+                //if (cubemapTexture) {
+                //    Destroy(cubemapTexture);
+                //    cubemapTexture = null;
+                //}
 
-                if (depthCubemapTexture) {
-                    Destroy(depthCubemapTexture);
-                    depthCubemapTexture = null;
-                }
+                //if (depthCubemapTexture) {
+                //    Destroy(depthCubemapTexture);
+                //    depthCubemapTexture = null;
+                //}
 
-                if (equirectMaterial) {
-                    Destroy(equirectMaterial);
-                    equirectMaterial = null;
-                }
+                //if (equirectMaterial) {
+                //    Destroy(equirectMaterial);
+                //    equirectMaterial = null;
+                //}
 
                 captureStarted = false;
                 screenshotReady = false;
 
                 non360Camera.enabled = false;
-                depthCubemapCamera.enabled = false;
-                cubemapCamera.enabled = false;
+                //depthCubemapCamera.enabled = false;
+                //cubemapCamera.enabled = false;
 
                 captureStartedType = NativeEncoder.CAPTURE_TYPE.NONE;
 
@@ -662,69 +668,69 @@ namespace UnityPlugin.Encoder {
             if (captureStarted || screenshotStarted) {
                 RenderTexture active = RenderTexture.active;
 
-                if (captureMode == NativeEncoder.CAPTURE_MODE._360_CAPTURE) {
-                    if (projectionType == NativeEncoder.PROJECTION_TYPE.EQUIRECT) {
+                //if (captureMode == NativeEncoder.CAPTURE_MODE._360_CAPTURE) {
+                    //if (projectionType == NativeEncoder.PROJECTION_TYPE.EQUIRECT) {
                         // convert to equirectangular
-                        equirectMaterial.SetTexture("_CubeTex", cubemapTexture);
-                        equirectMaterial.SetVector("_SphereScale", sphereScale);
-                        equirectMaterial.SetVector("_SphereOffset", sphereOffset);
+                        //equirectMaterial.SetTexture("_CubeTex", cubemapTexture);
+                        //equirectMaterial.SetVector("_SphereScale", sphereScale);
+                        //equirectMaterial.SetVector("_SphereOffset", sphereOffset);
 
-                        if (includeCameraRotation) {
-                            // cubemaps are always rendered along axes, so we do rotation by rotating the cubemap lookup
-                            equirectMaterial.SetMatrix("_CubeTransform", Matrix4x4.TRS(Vector3.zero, transform.rotation, Vector3.one));
-                        } else {
-                            equirectMaterial.SetMatrix("_CubeTransform", Matrix4x4.identity);
-                        }
+                        //if (includeCameraRotation) {
+                        //    // cubemaps are always rendered along axes, so we do rotation by rotating the cubemap lookup
+                        //    equirectMaterial.SetMatrix("_CubeTransform", Matrix4x4.TRS(Vector3.zero, transform.rotation, Vector3.one));
+                        //} else {
+                        //    equirectMaterial.SetMatrix("_CubeTransform", Matrix4x4.identity);
+                        //}
 
-                        if (captureTextureFormat == NativeEncoder.CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE) {
-                            // equirect RGB texture copy
-                            Graphics.Blit(src, equirectTexture, equirectMaterial);
-                            Graphics.CopyTexture(equirectTexture, 0, 0, 0, 0, outputWidth, outputHeight,
-                                                 outputTexture, 0, 0, 0, outputHeight);
+                //        if (captureTextureFormat == NativeEncoder.CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE) {
+                //            // equirect RGB texture copy
+                //            Graphics.Blit(src, equirectTexture, equirectMaterial);
+                //            Graphics.CopyTexture(equirectTexture, 0, 0, 0, 0, outputWidth, outputHeight,
+                //                                 outputTexture, 0, 0, 0, outputHeight);
 
-                            // equirect depth texture copy
-                            equirectMaterial.SetTexture("_CubeTex", depthCubemapTexture);
-                            Graphics.Blit(src, depthEquirectTexture, equirectMaterial);
-                            Graphics.CopyTexture(depthEquirectTexture, 0, 0, 0, 0, outputWidth, outputHeight,
-                                                 outputTexture, 0, 0, 0, 0);
-                        } else {
-                            // equirect RGB texture copy
-                            Graphics.Blit(src, equirectTexture, equirectMaterial);
-                            Graphics.CopyTexture(equirectTexture, 0, 0, 0, 0, outputWidth, outputHeight,
-                                                 outputTexture, 0, 0, 0, 0);
-                        }
-                    } else if (projectionType == NativeEncoder.PROJECTION_TYPE.CUBEMAP) {
-                        cubemapMaterial.SetTexture("_CubeTex", cubemapTexture);
-                        cubemapMaterial.SetVector("_SphereScale", sphereScale);
-                        cubemapMaterial.SetVector("_SphereOffset", sphereOffset);
+                //            // equirect depth texture copy
+                //            equirectMaterial.SetTexture("_CubeTex", depthCubemapTexture);
+                //            Graphics.Blit(src, depthEquirectTexture, equirectMaterial);
+                //            Graphics.CopyTexture(depthEquirectTexture, 0, 0, 0, 0, outputWidth, outputHeight,
+                //                                 outputTexture, 0, 0, 0, 0);
+                //        } else {
+                //            // equirect RGB texture copy
+                //            Graphics.Blit(src, equirectTexture, equirectMaterial);
+                //            Graphics.CopyTexture(equirectTexture, 0, 0, 0, 0, outputWidth, outputHeight,
+                //                                 outputTexture, 0, 0, 0, 0);
+                //        }
+                //    } else if (projectionType == NativeEncoder.PROJECTION_TYPE.CUBEMAP) {
+                //        cubemapMaterial.SetTexture("_CubeTex", cubemapTexture);
+                //        cubemapMaterial.SetVector("_SphereScale", sphereScale);
+                //        cubemapMaterial.SetVector("_SphereOffset", sphereOffset);
 
-                        if (includeCameraRotation) {
-                            // cubemaps are always rendered along axes, so we do rotation by rotating the cubemap lookup
-                            cubemapMaterial.SetMatrix("_CubeTransform", Matrix4x4.TRS(Vector3.zero, transform.rotation, Vector3.one));
-                        } else {
-                            cubemapMaterial.SetMatrix("_CubeTransform", Matrix4x4.identity);
-                        }
+                //        if (includeCameraRotation) {
+                //            // cubemaps are always rendered along axes, so we do rotation by rotating the cubemap lookup
+                //            cubemapMaterial.SetMatrix("_CubeTransform", Matrix4x4.TRS(Vector3.zero, transform.rotation, Vector3.one));
+                //        } else {
+                //            cubemapMaterial.SetMatrix("_CubeTransform", Matrix4x4.identity);
+                //        }
 
-                        cubemapMaterial.SetPass(0);
+                //        cubemapMaterial.SetPass(0);
 
-                        Graphics.SetRenderTarget(cubemapRenderTarget);
+                //        Graphics.SetRenderTarget(cubemapRenderTarget);
 
-                        float s = 1.0f / 3.0f;
-                        RenderCubeFace(CubemapFace.PositiveX, 0.0f, 0.5f, s, 0.5f);
-                        RenderCubeFace(CubemapFace.NegativeX, s, 0.5f, s, 0.5f);
-                        RenderCubeFace(CubemapFace.PositiveY, s * 2.0f, 0.5f, s, 0.5f);
+                //        float s = 1.0f / 3.0f;
+                //        RenderCubeFace(CubemapFace.PositiveX, 0.0f, 0.5f, s, 0.5f);
+                //        RenderCubeFace(CubemapFace.NegativeX, s, 0.5f, s, 0.5f);
+                //        RenderCubeFace(CubemapFace.PositiveY, s * 2.0f, 0.5f, s, 0.5f);
 
-                        RenderCubeFace(CubemapFace.NegativeY, 0.0f, 0.0f, s, 0.5f);
-                        RenderCubeFace(CubemapFace.PositiveZ, s, 0.0f, s, 0.5f);
-                        RenderCubeFace(CubemapFace.NegativeZ, s * 2.0f, 0.0f, s, 0.5f);
+                //        RenderCubeFace(CubemapFace.NegativeY, 0.0f, 0.0f, s, 0.5f);
+                //        RenderCubeFace(CubemapFace.PositiveZ, s, 0.0f, s, 0.5f);
+                //        RenderCubeFace(CubemapFace.NegativeZ, s * 2.0f, 0.0f, s, 0.5f);
 
-                        Graphics.SetRenderTarget(null);
-                        Graphics.Blit(cubemapRenderTarget, outputTexture);
+                //        Graphics.SetRenderTarget(null);
+                //        Graphics.Blit(cubemapRenderTarget, outputTexture);
 
-                    }
-                } else {
+                //    }
+                //} else {
                     Graphics.Blit(src, outputTexture);
-                }
+                //}
                 RenderTexture.active = active;
                 if (screenshotStarted) {
                     yield return new WaitUntil(() => screenshotReady);
@@ -827,45 +833,45 @@ namespace UnityPlugin.Encoder {
             outputTexture.hideFlags = HideFlags.HideAndDontSave;
             outputTexture.Create();
 
-            if (captureMode == NativeEncoder.CAPTURE_MODE._360_CAPTURE) {
-                if (projectionType == NativeEncoder.PROJECTION_TYPE.EQUIRECT) {
-                    equirectTexture = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32);
-                    equirectTexture.hideFlags = HideFlags.HideAndDontSave;
-                    equirectTexture.Create();
-                    if (captureTextureFormat == NativeEncoder.CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE) {
-                        depthEquirectTexture = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32);
-                        depthEquirectTexture.hideFlags = HideFlags.HideAndDontSave;
-                        depthEquirectTexture.Create();
-                    }
+//            if (captureMode == NativeEncoder.CAPTURE_MODE._360_CAPTURE) {
+//                if (projectionType == NativeEncoder.PROJECTION_TYPE.EQUIRECT) {
+//                    equirectTexture = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32);
+//                    equirectTexture.hideFlags = HideFlags.HideAndDontSave;
+//                    equirectTexture.Create();
+//                    if (captureTextureFormat == NativeEncoder.CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE) {
+//                        depthEquirectTexture = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32);
+//                        depthEquirectTexture.hideFlags = HideFlags.HideAndDontSave;
+//                        depthEquirectTexture.Create();
+//                    }
 
-                    // Create equirect material
-                    equirectMaterial = CreateMaterial(equirectShader, equirectMaterial);
-                } else if (projectionType == NativeEncoder.PROJECTION_TYPE.CUBEMAP) {
-                    cubemapRenderTarget = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32);
-                    cubemapRenderTarget.hideFlags = HideFlags.HideAndDontSave;
-                    cubemapMaterial = CreateMaterial(cubemapShader, cubemapMaterial);
-                }
+//                    // Create equirect material
+//                    equirectMaterial = CreateMaterial(equirectShader, equirectMaterial);
+//                } else if (projectionType == NativeEncoder.PROJECTION_TYPE.CUBEMAP) {
+//                    cubemapRenderTarget = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32);
+//                    cubemapRenderTarget.hideFlags = HideFlags.HideAndDontSave;
+//                    cubemapMaterial = CreateMaterial(cubemapShader, cubemapMaterial);
+//                }
 
-                // Create cubemap render texture
-                cubemapTexture = new RenderTexture(cubemapSize, cubemapSize, 0);
-#if UNITY_5_4_OR_NEWER
-                cubemapTexture.dimension = UnityEngine.Rendering.TextureDimension.Cube;
-                cubemapTexture.hideFlags = HideFlags.HideAndDontSave;
-#else
-                cubemapTexture.isCubemap = true;
-                cubemapTexture.hideFlags = HideFlags.HideAndDontSave;
-#endif
-                if (captureTextureFormat == NativeEncoder.CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE) {
-                    depthCubemapTexture = new RenderTexture(cubemapSize, cubemapSize, 0);
-#if UNITY_5_4_OR_NEWER
-                    depthCubemapTexture.dimension = UnityEngine.Rendering.TextureDimension.Cube;
-                    depthCubemapTexture.hideFlags = HideFlags.HideAndDontSave;
-#else
-                    depthCubemapTexture.isCubemap = true;
-                    depthCubemapTexture.hideFlags = HideFlags.HideAndDontSave;
-#endif
-                }
-            }
+//                // Create cubemap render texture
+//                cubemapTexture = new RenderTexture(cubemapSize, cubemapSize, 0);
+//#if UNITY_5_4_OR_NEWER
+//                cubemapTexture.dimension = UnityEngine.Rendering.TextureDimension.Cube;
+//                cubemapTexture.hideFlags = HideFlags.HideAndDontSave;
+//#else
+//                cubemapTexture.isCubemap = true;
+//                cubemapTexture.hideFlags = HideFlags.HideAndDontSave;
+//#endif
+//                if (captureTextureFormat == NativeEncoder.CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE) {
+//                    depthCubemapTexture = new RenderTexture(cubemapSize, cubemapSize, 0);
+//#if UNITY_5_4_OR_NEWER
+//                    depthCubemapTexture.dimension = UnityEngine.Rendering.TextureDimension.Cube;
+//                    depthCubemapTexture.hideFlags = HideFlags.HideAndDontSave;
+//#else
+//                    depthCubemapTexture.isCubemap = true;
+//                    depthCubemapTexture.hideFlags = HideFlags.HideAndDontSave;
+//#endif
+//                }
+//            }
         }
 
         /// <summary>
@@ -894,8 +900,13 @@ namespace UnityPlugin.Encoder {
         }
 
 
-        void OnRenderImage(RenderTexture src, RenderTexture dst) {
-            StartCoroutine(ScreenBufferBlit(null, src, dst));
+        //void OnRenderImage(RenderTexture src, RenderTexture dst) {
+        //    StartCoroutine(ScreenBufferBlit(null, src, dst));
+        //}
+
+        void OnPostRender()
+        {
+            StartCoroutine(ScreenBufferBlit(null, cameraRenderTexture, null));
         }
 
         void OnDestroy() {
