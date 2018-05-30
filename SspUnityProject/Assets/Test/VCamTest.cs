@@ -5,11 +5,10 @@ using UnityEngine;
 
 public class VCamTest : MonoBehaviour
 {
-    public string path = Path.Combine(Application.streamingAssetsPath, "tech.mp4");
     // Use this for initialization
     void Start ()
 	{
-	    var cam = VCamFactory.Create(path, gameObject);
+	    var cam = VCamFactory.Create(Path.Combine(Application.streamingAssetsPath, "tech.mp4"), gameObject);
         cam.controller.Start();
 	}
 	

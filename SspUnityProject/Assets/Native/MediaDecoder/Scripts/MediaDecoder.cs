@@ -11,9 +11,21 @@ using UnityEngine.UI;
 
 namespace UnityPlugin.Decoder
 {
-    public class MediaDecoder : MonoBehaviour
+    public class BaseDecoder:MonoBehaviour
     {
-        private const string LOG_TAG = "[MediaDecoder]";
+        protected Texture2D videoTexYch;
+        protected Texture2D videoTexUch;
+        protected Texture2D videoTexVch;
+        protected int videoWidth = -1;
+        protected int videoHeight = -1;
+        protected const string LOG_TAG = "[Decoder]";
+        public string mediaPath; //	Assigned outside.
+        public DecoderNative.DecoderState decoderState = DecoderNative.DecoderState.NOT_INITIALIZED;
+        public UnityEvent onInitComplete = new UnityEvent();//  Initialization is asynchronized. Invoked after initialization.
+        public UnityEvent onVideoEnd = new UnityEvent(); //  Invoked on video end.
+    }
+    public class MediaDecoder : BaseDecoder
+    {
 
         private const int AUDIO_FRAME_SIZE = 2048; //  Audio clip data size. Packed from audioDataBuff.
         private const int SWAP_BUFFER_NUM = 4; //	How many audio source to swap.
@@ -26,7 +38,6 @@ namespace UnityPlugin.Decoder
         private double audioProgressTime = -1.0;
         private BackgroundWorker backgroundWorker;
         private int decoderID = -1;
-        private DecoderNative.DecoderState decoderState = DecoderNative.DecoderState.NOT_INITIALIZED;
         private double firstAudioFrameTime = -1.0;
 
         //	Time control
@@ -36,19 +47,12 @@ namespace UnityPlugin.Decoder
         private bool isAudioReadyToReplay;
         private bool isVideoReadyToReplay;
         private DecoderNative.DecoderState lastState = DecoderNative.DecoderState.NOT_INITIALIZED;
-        public string mediaPath; //	Assigned outside.
-        public UnityEvent onInitComplete = new UnityEvent(); //  Initialization is asynchronized. Invoked after initialization.
-        public UnityEvent onVideoEnd = new UnityEvent(); //  Invoked on video end.
         public bool playOnAwake = false;
         private bool seekPreview; //  To preview first frame of seeking when seek under paused state.
         public Material texMaterial;
 
         private bool useDefault = true; //  To set default texture before video initialized.
-        private int videoHeight = -1;
-        private Texture2D videoTexUch;
-        private Texture2D videoTexVch;
-        private Texture2D videoTexYch;
-        private int videoWidth = -1;
+
         private float volume = 1.0f;
 
         public bool isVideoEnabled { get; private set; }

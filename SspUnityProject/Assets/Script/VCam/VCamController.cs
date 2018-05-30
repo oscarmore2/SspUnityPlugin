@@ -10,6 +10,15 @@ public class VCamController
         cam = c;
     }
 
+    public float Volume
+    {
+        get { return 1; }
+        set
+        {
+
+        }
+    }
+
     public void Start()
     {
         if (cam.source != null)

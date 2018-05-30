@@ -12,31 +12,20 @@ using UnityEngine.UI;
 namespace UnityPlugin.Decoder
 {
 
-    public class SspDecoder : MonoBehaviour
+    public class SspDecoder : BaseDecoder
     {
-        private const string VERSION = "1.2";
-
-        private const string LOG_TAG = "[MediaDecoder]";
 
         private const int AUDIO_FRAME_SIZE = 2048; //  Audio clip data size. Packed from audioDataBuff.
         private const int SWAP_BUFFER_NUM = 4; //	How many audio source to swap.
         private const double OVERLAP_TIME = 0.02; //  Our audio clip is defined as: [overlay][audio data][overlap].
         public bool playOnAwake = false;
-        public string mediaPath; //	Assigned outside.
-        public UnityEvent onInitComplete = new UnityEvent();//  Initialization is asynchronized. Invoked after initialization.
-        public UnityEvent onVideoEnd = new UnityEvent(); //  Invoked on video end.
         private DecoderNative.DecoderState lastState = DecoderNative.DecoderState.NOT_INITIALIZED;
-        public DecoderNative.DecoderState decoderState = DecoderNative.DecoderState.NOT_INITIALIZED;
         private int decoderID = -1;
         private bool isAllAudioChEnabled;
 
         private bool useDefault = true; //  To set default texture before video initialized.
         private bool seekPreview; //  To preview first frame of seeking when seek under paused state.
-        private Texture2D videoTexYch;
-        private Texture2D videoTexUch;
-        private Texture2D videoTexVch;
-        private int videoWidth = -1;
-        private int videoHeight = -1;
+
         private readonly AudioSource[] audioSource = new AudioSource[SWAP_BUFFER_NUM];
         private List<float> audioDataBuff; //  Buffer to keep audio data decoded from native.
         private int audioOverlapLength; //  OVERLAP_TIME * audioFrequency.
