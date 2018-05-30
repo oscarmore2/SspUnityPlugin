@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityPlugin.Decoder;
@@ -23,6 +24,15 @@ public abstract class InputSource
     protected abstract bool setProperty(string name, object value);
     public abstract InputConfig ExtracConfig();
 
+    public Action<Texture, Texture, Texture> OnSetTextures = null;
+
+    protected void HandleTextures(Texture y, Texture u, Texture v)
+    {
+        if (OnSetTextures != null)
+        {
+            OnSetTextures(y, u, v);
+        }
+    }
 
 }
 
@@ -30,12 +40,12 @@ public class InputSourceSsp : InputSource
 {
     protected SspDecoder mediaDecoder;
 
-    public InputSourceSsp(string url,GameObject o)
+    public InputSourceSsp(string url)
     {
-        if(null == o)
-         o = new GameObject("Stream:" + url);
+        GameObject o = new GameObject("Stream:" + url);
         mediaDecoder = o.AddComponent<SspDecoder>();
-        //o.hideFlags = HideFlags.HideAndDontSave;
+        mediaDecoder.onSetTexture = HandleTextures;
+        o.hideFlags = HideFlags.HideAndDontSave;
         mediaDecoder.mediaPath = url;
     }
     public override void Begin()
@@ -69,18 +79,19 @@ public class InputSourceSsp : InputSource
     {
         return new InputConfig();
     }
+
 }
 
 public class InputSourceStream :InputSource
 {
     protected MediaDecoder mediaDecoder;
 
-    public InputSourceStream(string url,GameObject o)
+    public InputSourceStream(string url)
     {
-        if (o == null)
-          o = new GameObject("Stream:"+url);
+        GameObject  o = new GameObject("Stream:"+url);
         mediaDecoder = o.AddComponent<MediaDecoder>();
-        //o.hideFlags = HideFlags.HideAndDontSave;
+        mediaDecoder.onSetTexture = HandleTextures;
+        o.hideFlags = HideFlags.HideAndDontSave;
         mediaDecoder.mediaPath = url;
     }
     public override void Begin()

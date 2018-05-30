@@ -175,7 +175,7 @@ namespace UnityPlugin.Decoder
         //    DecoderNative.nativeDestroyDecoder(decID);
         //}
 
-        public Material texMaterial = null;
+        //public Material texMaterial = null;
 
 
         public void mute()
@@ -644,23 +644,25 @@ namespace UnityPlugin.Decoder
 
         private void setTextures(Texture ytex, Texture utex, Texture vtex)
         {
-            if (texMaterial == null)
-                texMaterial = new Material(Shader.Find("Unlit/YUV2RGBA"));
-            var meshRenderer = GetComponent<MeshRenderer>();
-            if (meshRenderer)
-                meshRenderer.material = texMaterial;
-            var image = GetComponent<Image>();
-            if (image)
-                image.material = texMaterial;
-            var rawImage = GetComponent<RawImage>();
-            if (rawImage)
-                rawImage.material = texMaterial;
-            texMaterial.SetTexture("_YTex", ytex);
-            texMaterial.SetTexture("_UTex", utex);
-            texMaterial.SetTexture("_VTex", vtex);
-            texMaterial.SetTexture("_YTex", ytex);
-            texMaterial.SetTexture("_UTex", utex);
-            texMaterial.SetTexture("_VTex", vtex);
+            if (onSetTexture != null)
+                onSetTexture(ytex, utex, vtex);
+            //if (texMaterial == null)
+            //    texMaterial = new Material(Shader.Find("Unlit/YUV2RGBA"));
+            //var meshRenderer = GetComponent<MeshRenderer>();
+            //if (meshRenderer)
+            //    meshRenderer.material = texMaterial;
+            //var image = GetComponent<Image>();
+            //if (image)
+            //    image.material = texMaterial;
+            //var rawImage = GetComponent<RawImage>();
+            //if (rawImage)
+            //    rawImage.material = texMaterial;
+            //texMaterial.SetTexture("_YTex", ytex);
+            //texMaterial.SetTexture("_UTex", utex);
+            //texMaterial.SetTexture("_VTex", vtex);
+            //texMaterial.SetTexture("_YTex", ytex);
+            //texMaterial.SetTexture("_UTex", utex);
+            //texMaterial.SetTexture("_VTex", vtex);
         }
 
         //  Video progress is triggered using Update. Progress time would be set by nativeSetVideoTime.

@@ -43,11 +43,11 @@ public class InputSourceProvider
     {
         if (url.StartsWith(URL_SSP))
         {
-            return new InputSourceSsp(url,o);
+            return new InputSourceSsp(url);
         }
         else
         {
-            return new InputSourceStream(url,o);
+            return new InputSourceStream(url);
         }
     }
 

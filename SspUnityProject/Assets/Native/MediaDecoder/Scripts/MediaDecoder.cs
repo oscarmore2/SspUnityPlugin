@@ -23,6 +23,7 @@ namespace UnityPlugin.Decoder
         public DecoderNative.DecoderState decoderState = DecoderNative.DecoderState.NOT_INITIALIZED;
         public UnityEvent onInitComplete = new UnityEvent();//  Initialization is asynchronized. Invoked after initialization.
         public UnityEvent onVideoEnd = new UnityEvent(); //  Invoked on video end.
+        public Action<Texture, Texture, Texture> onSetTexture;
     }
     public class MediaDecoder : BaseDecoder
     {
@@ -49,7 +50,7 @@ namespace UnityPlugin.Decoder
         private DecoderNative.DecoderState lastState = DecoderNative.DecoderState.NOT_INITIALIZED;
         public bool playOnAwake = false;
         private bool seekPreview; //  To preview first frame of seeking when seek under paused state.
-        public Material texMaterial;
+        //public Material texMaterial;
 
         private bool useDefault = true; //  To set default texture before video initialized.
 
@@ -354,20 +355,22 @@ namespace UnityPlugin.Decoder
 
         private void setTextures(Texture ytex, Texture utex, Texture vtex)
         {
-            if(texMaterial == null)
-             texMaterial = new Material(Shader.Find("Unlit/YUV2RGBA"));
-            var meshRenderer = GetComponent<MeshRenderer>();
-            if (meshRenderer)
-                meshRenderer.material = texMaterial;
-            var image = GetComponent<Image>();
-            if (image)
-                image.material = texMaterial;
-            var rawImage = GetComponent<RawImage>();
-            if (rawImage)
-                rawImage.material = texMaterial;
-            texMaterial.SetTexture("_YTex", ytex);
-            texMaterial.SetTexture("_UTex", utex);
-            texMaterial.SetTexture("_VTex", vtex);
+            if (onSetTexture != null)
+                onSetTexture(ytex, utex, vtex);
+            //if(texMaterial == null)
+            // texMaterial = new Material(Shader.Find("Unlit/YUV2RGBA"));
+            //var meshRenderer = GetComponent<MeshRenderer>();
+            //if (meshRenderer)
+            //    meshRenderer.material = texMaterial;
+            //var image = GetComponent<Image>();
+            //if (image)
+            //    image.material = texMaterial;
+            //var rawImage = GetComponent<RawImage>();
+            //if (rawImage)
+            //    rawImage.material = texMaterial;
+            //texMaterial.SetTexture("_YTex", ytex);
+            //texMaterial.SetTexture("_UTex", utex);
+            //texMaterial.SetTexture("_VTex", vtex);
         }
 
         public void replay()

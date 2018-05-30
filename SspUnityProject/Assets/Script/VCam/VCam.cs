@@ -6,19 +6,39 @@ using UnityEngine.UI;
 public class VCam 
 {
     public InputSource source { get; protected set; }
-    public VCamRender render { get; protected set; }
     public VCamController controller { get; protected set; }
 
-    public VCam()
+    protected List<VCamRender> renders = new List<VCamRender>();
+
+    protected void SetRenders(Texture y, Texture u, Texture v)
     {
+        for (int i = 0; i < renders.Count; ++i)
+        {
+            renders[i].SetTextures(y,u,v);
+        }
+    }
+    public VCam(InputSource s)
+    {
+        source = s;
+        source.OnSetTextures = SetRenders;
         controller = new VCamController(this);
     }
 
-    public VCam(InputSource s, VCamRender r)
+    public void AddRender(VCamRender render)
     {
-        source = s;
-        render = r;
-        controller = new VCamController(this);
+        if(!renders.Contains(render))
+            renders.Add(render);
+    }
+
+    public bool ExistRender(VCamRender render)
+    {
+        return renders.Contains(render);
+    }
+
+    public void RemoveRender(VCamRender render)
+    {
+        if (renders.Contains(render))
+            renders.Remove(render);
     }
 }
 
@@ -29,6 +49,8 @@ public class VCamFactory
     {
         var s = InputSourceProvider.Create(url,o);
         var r = InputRenderProvide.Create(o);
-        return new VCam(s,r);
+        var cam =  new VCam(s);
+        cam.AddRender(r);
+        return cam;
     }
 }
