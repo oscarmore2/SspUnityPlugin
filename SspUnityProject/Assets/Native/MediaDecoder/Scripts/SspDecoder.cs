@@ -140,44 +140,6 @@ namespace UnityPlugin.Decoder
             return decoderState == DecoderNative.DecoderState.EOF;
         }
 
-        //public static void loadVideoThumb(GameObject obj, string filePath, float time)
-        //{
-        //    if (!File.Exists(filePath))
-        //    {
-        //        print(LOG_TAG + " File not found!");
-        //        return;
-        //    }
-        //    var decID = -1;
-        //    var width = 0;
-        //    var height = 0;
-        //    var totalTime = 0.0f;
-        //    DecoderNative.nativeCreateDecoder(filePath, ref decID);
-        //    DecoderNative.nativeGetVideoFormat(decID, ref width, ref height, ref totalTime);
-        //    if (!DecoderNative.nativeStartDecoding(decID))
-        //    {
-        //        print(LOG_TAG + " Decoding not start.");
-        //        return;
-        //    }
-        //    var thumbY = new Texture2D(width, height, TextureFormat.Alpha8, false);
-        //    var thumbU = new Texture2D(width / 2, height / 2, TextureFormat.Alpha8, false);
-        //    var thumbV = new Texture2D(width / 2, height / 2, TextureFormat.Alpha8, false);
-        //    var thumbMat = getMaterial(obj);
-        //    if (thumbMat == null)
-        //    {
-        //        print(LOG_TAG + " Target has no MeshRenderer.");
-        //        DecoderNative.nativeDestroyDecoder(decID);
-        //        return;
-        //    }
-        //    thumbMat.SetTexture("_YTex", thumbY);
-        //    thumbMat.SetTexture("_UTex", thumbU);
-        //    thumbMat.SetTexture("_VTex", thumbV);
-        //    DecoderNative.nativeLoadThumbnail(decID, time, thumbY.GetNativeTexturePtr(), thumbU.GetNativeTexturePtr(), thumbV.GetNativeTexturePtr());
-        //    DecoderNative.nativeDestroyDecoder(decID);
-        //}
-
-        //public Material texMaterial = null;
-
-
         public void mute()
         {
             var temp = volume;
@@ -640,29 +602,6 @@ namespace UnityPlugin.Decoder
             videoTexUch = null;
             videoTexVch = null;
             useDefault = true;
-        }
-
-        private void setTextures(Texture ytex, Texture utex, Texture vtex)
-        {
-            if (onSetTexture != null)
-                onSetTexture(ytex, utex, vtex);
-            //if (texMaterial == null)
-            //    texMaterial = new Material(Shader.Find("Unlit/YUV2RGBA"));
-            //var meshRenderer = GetComponent<MeshRenderer>();
-            //if (meshRenderer)
-            //    meshRenderer.material = texMaterial;
-            //var image = GetComponent<Image>();
-            //if (image)
-            //    image.material = texMaterial;
-            //var rawImage = GetComponent<RawImage>();
-            //if (rawImage)
-            //    rawImage.material = texMaterial;
-            //texMaterial.SetTexture("_YTex", ytex);
-            //texMaterial.SetTexture("_UTex", utex);
-            //texMaterial.SetTexture("_VTex", vtex);
-            //texMaterial.SetTexture("_YTex", ytex);
-            //texMaterial.SetTexture("_UTex", utex);
-            //texMaterial.SetTexture("_VTex", vtex);
         }
 
         //  Video progress is triggered using Update. Progress time would be set by nativeSetVideoTime.

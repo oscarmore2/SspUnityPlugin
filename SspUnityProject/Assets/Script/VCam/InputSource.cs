@@ -33,11 +33,20 @@ public abstract class InputSource
             OnSetTextures(y, u, v);
         }
     }
-
+    public abstract Texture GetResult();
 }
 
 public class InputSourceSsp : InputSource
 {
+    #region implemented abstract members of InputSource
+
+    public override Texture GetResult()
+    {
+        return mediaDecoder.GetResult();
+    }
+
+    #endregion
+
     protected SspDecoder mediaDecoder;
 
     public InputSourceSsp(string url)
@@ -84,6 +93,15 @@ public class InputSourceSsp : InputSource
 
 public class InputSourceStream :InputSource
 {
+    #region implemented abstract members of InputSource
+
+    public override Texture GetResult()
+    {
+        return mediaDecoder.GetResult();
+    }
+
+    #endregion
+
     protected MediaDecoder mediaDecoder;
 
     public InputSourceStream(string url)

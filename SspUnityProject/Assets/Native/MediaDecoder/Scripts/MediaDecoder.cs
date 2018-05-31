@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 namespace UnityPlugin.Decoder
 {
-    public class BaseDecoder:MonoBehaviour
+    public class BaseDecoder : MonoBehaviour
     {
         protected Texture2D videoTexYch;
         protected Texture2D videoTexUch;
@@ -19,49 +19,94 @@ namespace UnityPlugin.Decoder
         protected int videoWidth = -1;
         protected int videoHeight = -1;
         protected const string LOG_TAG = "[Decoder]";
-        public string mediaPath; //	Assigned outside.
+        public string mediaPath;
+        //	Assigned outside.
         public DecoderNative.DecoderState decoderState = DecoderNative.DecoderState.NOT_INITIALIZED;
-        public UnityEvent onInitComplete = new UnityEvent();//  Initialization is asynchronized. Invoked after initialization.
-        public UnityEvent onVideoEnd = new UnityEvent(); //  Invoked on video end.
+        public UnityEvent onInitComplete = new UnityEvent();
+//  Initialization is asynchronized. Invoked after initialization.
+        public UnityEvent onVideoEnd = new UnityEvent();
+        //  Invoked on video end.
         public Action<Texture, Texture, Texture> onSetTexture;
+
+        public CustomRenderTexture resultRT;
+
+        protected void setTextures(Texture ytex, Texture utex, Texture vtex)
+        {
+            if (onSetTexture != null)
+                onSetTexture(ytex, utex, vtex);
+            if (resultRT == null && ytex != null)
+            {
+                resultRT = new CustomRenderTexture(ytex.width, ytex.height);
+                resultRT.Create();
+            }
+            if (resultRT.material == null)
+            {
+                resultRT.material = new Material(Shader.Find("CustomRenderTexture/RT_YUV2RGBA"));
+            }
+            resultRT.material.SetTexture("_YTex", ytex);
+            resultRT.material.SetTexture("_UTex", utex);
+            resultRT.material.SetTexture("_VTex", vtex);
+        }
+
+        public Texture GetResult()
+        {
+            return resultRT;
+        }
     }
+
     public class MediaDecoder : BaseDecoder
     {
 
-        private const int AUDIO_FRAME_SIZE = 2048; //  Audio clip data size. Packed from audioDataBuff.
-        private const int SWAP_BUFFER_NUM = 4; //	How many audio source to swap.
-        private const double OVERLAP_TIME = 0.02; //  Our audio clip is defined as: [overlay][audio data][overlap].
+        private const int AUDIO_FRAME_SIZE = 2048;
+        //  Audio clip data size. Packed from audioDataBuff.
+        private const int SWAP_BUFFER_NUM = 4;
+        //	How many audio source to swap.
+        private const double OVERLAP_TIME = 0.02;
+        //  Our audio clip is defined as: [overlay][audio data][overlap].
         private readonly object _lock = new object();
         private readonly AudioSource[] audioSource = new AudioSource[SWAP_BUFFER_NUM];
-        private List<float> audioDataBuff; //  Buffer to keep audio data decoded from native.
-        private int audioDataLength; //  (AUDIO_FRAME_SIZE + 2 * audioOverlapLength) * audioChannel.
-        private int audioOverlapLength; //  OVERLAP_TIME * audioFrequency.
+        private List<float> audioDataBuff;
+        //  Buffer to keep audio data decoded from native.
+        private int audioDataLength;
+        //  (AUDIO_FRAME_SIZE + 2 * audioOverlapLength) * audioChannel.
+        private int audioOverlapLength;
+        //  OVERLAP_TIME * audioFrequency.
         private double audioProgressTime = -1.0;
         private BackgroundWorker backgroundWorker;
         private int decoderID = -1;
         private double firstAudioFrameTime = -1.0;
 
         //	Time control
-        private double globalStartTime; //  Video and audio progress are based on this start time.
-        private double hangTime = -1.0f; //  Used to set progress time after seek/resume.
+        private double globalStartTime;
+        //  Video and audio progress are based on this start time.
+        private double hangTime = -1.0f;
+        //  Used to set progress time after seek/resume.
         private bool isAllAudioChEnabled;
         private bool isAudioReadyToReplay;
         private bool isVideoReadyToReplay;
         private DecoderNative.DecoderState lastState = DecoderNative.DecoderState.NOT_INITIALIZED;
         public bool playOnAwake = false;
-        private bool seekPreview; //  To preview first frame of seeking when seek under paused state.
+        private bool seekPreview;
+        //  To preview first frame of seeking when seek under paused state.
         //public Material texMaterial;
 
-        private bool useDefault = true; //  To set default texture before video initialized.
+        private bool useDefault = true;
+        //  To set default texture before video initialized.
 
         private float volume = 1.0f;
 
         public bool isVideoEnabled { get; private set; }
+
         public bool isAudioEnabled { get; private set; }
+
         public int audioFrequency { get; private set; }
+
         public int audioChannels { get; private set; }
-        public float videoTotalTime { get; private set; } //  Video duration.
-        public float audioTotalTime { get; private set; } //  Audio duration.
+
+        public float videoTotalTime { get; private set; }
+        //  Video duration.
+        public float audioTotalTime { get; private set; }
+        //  Audio duration.
 
         private void Awake()
         {
@@ -70,6 +115,7 @@ namespace UnityPlugin.Decoder
                 onInitComplete.AddListener(startDecoding);
                 initDecoder(mediaPath);
             }
+
         }
 
         //  Video progress is triggered using Update. Progress time would be set by nativeSetVideoTime.
@@ -102,7 +148,7 @@ namespace UnityPlugin.Decoder
                             }
                             else
                             {
-                                DecoderNative.nativeSetVideoTime(decoderID, (float) setTime);
+                                DecoderNative.nativeSetVideoTime(decoderID, (float)setTime);
                                 GL.IssuePluginEvent(DecoderNative.GetRenderEventFunc(), decoderID);
                             }
                         }
@@ -150,14 +196,15 @@ namespace UnityPlugin.Decoder
             }
 
             if (isVideoEnabled || isAudioEnabled)
-                if ((!isVideoEnabled || isVideoReadyToReplay) &&
+            if ((!isVideoEnabled || isVideoReadyToReplay) &&
                     (!isAudioEnabled || isAllAudioChEnabled || isAudioReadyToReplay))
-                {
-                    decoderState = DecoderNative.DecoderState.EOF;
-                    isVideoReadyToReplay = isAudioReadyToReplay = false;
+            {
+                decoderState = DecoderNative.DecoderState.EOF;
+                isVideoReadyToReplay = isAudioReadyToReplay = false;
 
-                    if (onVideoEnd != null) onVideoEnd.Invoke();
-                }
+                if (onVideoEnd != null)
+                    onVideoEnd.Invoke();
+            }
         }
 
         public void initDecoder(string path, bool enableAllAudioCh = false)
@@ -218,7 +265,8 @@ namespace UnityPlugin.Decoder
 
                 decoderState = DecoderNative.DecoderState.INITIALIZED;
 
-                if (onInitComplete != null) onInitComplete.Invoke();
+                if (onInitComplete != null)
+                    onInitComplete.Invoke();
             }
             else
             {
@@ -244,12 +292,13 @@ namespace UnityPlugin.Decoder
         private void initAudioSource()
         {
             getAudioFormat();
-            audioOverlapLength = (int) (OVERLAP_TIME * audioFrequency + 0.5f);
+            audioOverlapLength = (int)(OVERLAP_TIME * audioFrequency + 0.5f);
 
             audioDataLength = (AUDIO_FRAME_SIZE + 2 * audioOverlapLength) * audioChannels;
             for (var i = 0; i < SWAP_BUFFER_NUM; i++)
             {
-                if (audioSource[i] == null) audioSource[i] = gameObject.AddComponent<AudioSource>();
+                if (audioSource[i] == null)
+                    audioSource[i] = gameObject.AddComponent<AudioSource>();
                 audioSource[i].clip =
                     AudioClip.Create("testSound" + i, audioDataLength, audioChannels, audioFrequency, false);
                 audioSource[i].playOnAwake = false;
@@ -301,11 +350,13 @@ namespace UnityPlugin.Decoder
                         decoderState != DecoderNative.DecoderState.SEEK_FRAME &&
                         audioFrameLength != 0)
                     {
-                        if (firstAudioFrameTime == -1.0) firstAudioFrameTime = audioNativeTime;
+                        if (firstAudioFrameTime == -1.0)
+                            firstAudioFrameTime = audioNativeTime;
 
                         lastTime = audioNativeTime;
                         audioFrameLength *= audioChannels;
-                        if (tempBuff.Length != audioFrameLength) tempBuff = new float[audioFrameLength];
+                        if (tempBuff.Length != audioFrameLength)
+                            tempBuff = new float[audioFrameLength];
                         Marshal.Copy(dataPtr, tempBuff, 0, audioFrameLength);
                         lock (_lock)
                         {
@@ -313,7 +364,8 @@ namespace UnityPlugin.Decoder
                         }
                     }
 
-                    if (audioNativeTime != -1.0) DecoderNative.nativeFreeAudioData(decoderID);
+                    if (audioNativeTime != -1.0)
+                        DecoderNative.nativeFreeAudioData(decoderID);
 
                     Thread.Sleep(2);
                 }
@@ -351,26 +403,6 @@ namespace UnityPlugin.Decoder
             videoTexVch = null;
 
             useDefault = true;
-        }
-
-        private void setTextures(Texture ytex, Texture utex, Texture vtex)
-        {
-            if (onSetTexture != null)
-                onSetTexture(ytex, utex, vtex);
-            //if(texMaterial == null)
-            // texMaterial = new Material(Shader.Find("Unlit/YUV2RGBA"));
-            //var meshRenderer = GetComponent<MeshRenderer>();
-            //if (meshRenderer)
-            //    meshRenderer.material = texMaterial;
-            //var image = GetComponent<Image>();
-            //if (image)
-            //    image.material = texMaterial;
-            //var rawImage = GetComponent<RawImage>();
-            //if (rawImage)
-            //    rawImage.material = texMaterial;
-            //texMaterial.SetTexture("_YTex", ytex);
-            //texMaterial.SetTexture("_UTex", utex);
-            //texMaterial.SetTexture("_VTex", vtex);
         }
 
         public void replay()
@@ -413,7 +445,7 @@ namespace UnityPlugin.Decoder
         {
             print(LOG_TAG + " start audio play coroutine.");
             var swapIndex = 0; //	Swap between audio sources.
-            var audioDataTime = (double) AUDIO_FRAME_SIZE / audioFrequency;
+            var audioDataTime = (double)AUDIO_FRAME_SIZE / audioFrequency;
             var playedAudioDataLength = AUDIO_FRAME_SIZE * audioChannels; //  Data length exclude the overlap length.
 
             print(LOG_TAG + " audioDataTime " + audioDataTime);
@@ -458,7 +490,7 @@ namespace UnityPlugin.Decoder
                                     .SetData(audioDataBuff.GetRange(0, audioDataLength).ToArray(), 0);
                                 audioSource[swapIndex].PlayScheduled(playTime);
                                 audioSource[swapIndex].SetScheduledEndTime(endTime);
-                                audioSource[swapIndex].time = (float) OVERLAP_TIME;
+                                audioSource[swapIndex].time = (float)OVERLAP_TIME;
                                 audioProgressTime += audioDataTime;
                                 swapIndex = (swapIndex + 1) % SWAP_BUFFER_NUM;
 
@@ -553,7 +585,8 @@ namespace UnityPlugin.Decoder
                     }
 
                     audioProgressTime = firstAudioFrameTime = -1.0;
-                    foreach (var src in audioSource) src.Stop();
+                    foreach (var src in audioSource)
+                        src.Stop();
                 }
 
                 return true;
@@ -565,8 +598,8 @@ namespace UnityPlugin.Decoder
         public bool isSeeking()
         {
             return decoderState >= DecoderNative.DecoderState.INITIALIZED &&
-                   (decoderState == DecoderNative.DecoderState.SEEK_FRAME ||
-                    !DecoderNative.nativeIsContentReady(decoderID));
+            (decoderState == DecoderNative.DecoderState.SEEK_FRAME ||
+            !DecoderNative.nativeIsContentReady(decoderID));
         }
 
         public bool isVideoEOF()
@@ -577,13 +610,15 @@ namespace UnityPlugin.Decoder
         public void setStepForward(float sec)
         {
             var targetTime = AudioSettings.dspTime - globalStartTime + sec;
-            if (setSeekTime((float) targetTime)) print(LOG_TAG + " set forward : " + sec);
+            if (setSeekTime((float)targetTime))
+                print(LOG_TAG + " set forward : " + sec);
         }
 
         public void setStepBackward(float sec)
         {
             var targetTime = AudioSettings.dspTime - globalStartTime - sec;
-            if (setSeekTime((float) targetTime)) print(LOG_TAG + " set backward : " + sec);
+            if (setSeekTime((float)targetTime))
+                print(LOG_TAG + " set backward : " + sec);
         }
 
         public void getVideoResolution(ref int width, ref int height)
@@ -596,8 +631,8 @@ namespace UnityPlugin.Decoder
         {
             if (decoderState == DecoderNative.DecoderState.PAUSE ||
                 decoderState == DecoderNative.DecoderState.SEEK_FRAME)
-                return (float) hangTime;
-            return (float) (AudioSettings.dspTime - globalStartTime);
+                return (float)hangTime;
+            return (float)(AudioSettings.dspTime - globalStartTime);
         }
 
         public DecoderNative.DecoderState getDecoderState()
@@ -726,13 +761,15 @@ namespace UnityPlugin.Decoder
         public void setAudioEnable(bool isEnable)
         {
             DecoderNative.nativeSetAudioEnable(decoderID, isEnable);
-            if (isEnable) setSeekTime(getVideoCurrentTime());
+            if (isEnable)
+                setSeekTime(getVideoCurrentTime());
         }
 
         public void setVideoEnable(bool isEnable)
         {
             DecoderNative.nativeSetVideoEnable(decoderID, isEnable);
-            if (isEnable) setSeekTime(getVideoCurrentTime());
+            if (isEnable)
+                setSeekTime(getVideoCurrentTime());
         }
 
         private void OnApplicationQuit()
