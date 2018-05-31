@@ -14,6 +14,11 @@ public class VCamView : IView {
 
     }
 
+    public override void OnUpdateTexture(Texture tex)
+    {
+
+    }
+
     // Use this for initialization
     void Start () {
 		

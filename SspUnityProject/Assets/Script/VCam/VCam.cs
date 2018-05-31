@@ -18,7 +18,7 @@ public class VCam
         {
             renders[i].SetTextures(y,u,v);
         }
-        if (null != OnSetTexture)
+        if (null != OnSetTexture && null != source.GetResult())
         {
             OnSetTexture(source.GetResult());
         }
@@ -28,6 +28,7 @@ public class VCam
         source = s;
         source.OnSetTextures = SetRenders;
         controller = new VCamController(this);
+        VcamList.Instance.Add(this);
     }
 
     public void AddRender(VCamRender render)

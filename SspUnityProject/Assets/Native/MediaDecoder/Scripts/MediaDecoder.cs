@@ -34,18 +34,22 @@ namespace UnityPlugin.Decoder
         {
             if (onSetTexture != null)
                 onSetTexture(ytex, utex, vtex);
-            if (resultRT == null && ytex != null)
+
+            if (null == resultRT && ytex != null)
             {
                 resultRT = new CustomRenderTexture(ytex.width, ytex.height);
                 resultRT.Create();
             }
-            if (resultRT.material == null)
+            if (resultRT)
             {
-                resultRT.material = new Material(Shader.Find("CustomRenderTexture/RT_YUV2RGBA"));
+                if (null == resultRT.material)
+                {
+                    resultRT.material = new Material(Shader.Find("CustomRenderTexture/RT_YUV2RGBA"));
+                }
+                resultRT.material.SetTexture("_YTex", ytex);
+                resultRT.material.SetTexture("_UTex", utex);
+                resultRT.material.SetTexture("_VTex", vtex);
             }
-            resultRT.material.SetTexture("_YTex", ytex);
-            resultRT.material.SetTexture("_UTex", utex);
-            resultRT.material.SetTexture("_VTex", vtex);
         }
 
         public Texture GetResult()

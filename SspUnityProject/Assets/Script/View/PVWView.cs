@@ -11,15 +11,15 @@ public class PVWView : IView {
     void Awake()
     {
         renderProcessManager = RenderProcessFactory.CreateProcessManager(Vector3.zero);
+        renderProcessManager.transform.parent = transform;
         ViewImage = GetComponent<RawImage>();
     }
 
-    public void OnUpdate()
+    public override void OnUpdateTexture(Texture tex)
     {
-        if (ViewImage.mainTexture && !pvwBuffer)
+        if (!pvwBuffer)
         {
-
-            renderProcessManager.StartRender(ViewImage.mainTexture);
+            renderProcessManager.StartRender(tex);
             pvwBuffer = renderProcessManager.PostProcess.ProcessResult;
         }
     }

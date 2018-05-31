@@ -8,6 +8,7 @@ public class VCamTest : MonoBehaviour
     // Use this for initialization
     void Start ()
 	{
+        VcamList.Create();
 	    var cam = VCamFactory.Create(Path.Combine(Application.streamingAssetsPath, "tech.mp4"), gameObject);
         cam.controller.Start();
 	}

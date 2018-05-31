@@ -43,17 +43,20 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
 
     public void StartPush(Texture outputBuffer)
     {
+        encoder.GetComponent<Camera>().enabled = true;
         bufferMaterial.mainTexture = outputBuffer;
         encoder.StartLiveStreaming(config["outputUrl"].ToString());
     }
 
     public void StopPush()
     {
+        encoder.GetComponent<Camera>().enabled = false;
         encoder.StopCapture();
     }
 
     public void SetDefaultConfig()
     {
+        config = new Configuration();
         config["width"] = 1920;
         config["height"] = 1080;
         config["frame"] = 30;

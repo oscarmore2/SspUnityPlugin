@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewManager  {
+public class ViewManager : MonoBehaviour {
 
     public PGMView PGM;
     public PVWView PVW;

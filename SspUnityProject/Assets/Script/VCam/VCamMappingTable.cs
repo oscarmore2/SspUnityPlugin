@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 /// <summary>
 /// List of physical camera
@@ -65,14 +66,17 @@ public class VCamMappingTable : MonoBehaviour,  IConfigable {
                 return;
 
             vcamOld.RemoveRender(IViewRenderDictionary[view]);
+            vcamOld.OnSetTexture -= view.OnUpdateTexture;
             if (!vcam.ExistRender(IViewRenderDictionary[view]))
             {
+                vcam.OnSetTexture += view.OnUpdateTexture;
                 IViewRenderDictionary[view] = InputRenderProvide.Create(view.gameObject);
                 vcam.AddRender(IViewRenderDictionary[view]);
             }
         }
         else
         {
+            vcam.OnSetTexture += view.OnUpdateTexture;
             IViewRenderDictionary[view] = InputRenderProvide.Create(view.gameObject);
             vcam.AddRender(IViewRenderDictionary[view]);
         }

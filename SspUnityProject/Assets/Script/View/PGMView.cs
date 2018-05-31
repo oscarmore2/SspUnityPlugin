@@ -13,6 +13,7 @@ public class PGMView : IView {
     {
         outputBuffer = gameObject.AddComponent<OutputBuffer>();
         renderProcessManager = RenderProcessFactory.CreateProcessManager(Vector3.left * 500);
+        renderProcessManager.transform.parent = transform;
         ViewImage = GetComponent<RawImage>();
     }
 
@@ -21,11 +22,11 @@ public class PGMView : IView {
         outputBuffer.StartPush(pgmBuffer);
     }
 
-    void Update()
+    public override void OnUpdateTexture(Texture tex)
     {
-        if (ViewImage.mainTexture && !pgmBuffer)
+        if (!pgmBuffer)
         {
-            renderProcessManager.StartRender(ViewImage.mainTexture);
+            renderProcessManager.StartRender(tex);
             pgmBuffer = renderProcessManager.PostProcess.ProcessResult;
         }
     }

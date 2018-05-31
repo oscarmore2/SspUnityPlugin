@@ -24,7 +24,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : Singleton<T>
 
             if (_instance == null)
             {
-                LogError("should call Create() in VRApplication.CreateSingleton");
+                LogWarning("should call Create() in VRApplication.CreateSingleton");
             }
 
             return _instance;

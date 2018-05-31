@@ -26,4 +26,5 @@ public abstract class IView : MonoBehaviour {
 
     protected abstract void OnShown();
     protected abstract void OnHided();
+    public abstract void OnUpdateTexture(Texture tex);
 }
