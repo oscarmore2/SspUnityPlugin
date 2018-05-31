@@ -1,16 +1,25 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewManager : MonoBehaviour {
+public class ViewManager  {
 
-    PGMView PGM;
-    PVWView PVW;
+    public PGMView PGM;
+    public PVWView PVW;
+    public List<VCamView> Vcams = new List<VCamView>();
 
-	// Use this for initialization
-	void Start () {
-		
-	}
+    public VCamMappingTable MappingTable;
+
+    public void InitView()
+    {
+        MappingTable.BindVcam(VcamList.Instance.GetList()[0], PGM);
+        MappingTable.BindVcam(VcamList.Instance.GetList()[1], PGM);
+        for (int i = 2; i < VcamList.Instance.GetList().Count; i++)
+        {
+            MappingTable.BindVcam(VcamList.Instance.GetList()[i], Vcams[i-2]);
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -22,9 +31,13 @@ public class ViewManager : MonoBehaviour {
 
     }
 
-    public void OnPushToPVW(VCamView Vcam)
+    public void OnPushToPVW(IView view)
     {
-
+        VCam cam = null;
+        if (MappingTable.GetVcamByView(view, ref cam))
+        {
+            MappingTable.BindVcam(cam, PVW);
+        }
     }
 
     void OnTransitionToPGM()

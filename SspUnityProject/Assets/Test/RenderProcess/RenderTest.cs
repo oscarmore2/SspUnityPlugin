@@ -27,7 +27,7 @@ public class RenderTest : MonoBehaviour {
 
         player.prepareCompleted += started;
 
-        process = RenderProcessFactory.CreateProcessManager();
+        process = RenderProcessFactory.CreateProcessManager(Vector3.zero);
         process.CreateBseicRenderProcess();
         player.Prepare();
         player.Play();

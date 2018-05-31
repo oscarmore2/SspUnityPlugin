@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,12 +30,16 @@ public class InputRenderProvide
 public interface VCamRender
 {
     void SetTextures(Texture y, Texture u, Texture v);
+    event Action OnSetTexture ;
 }
 [RequireComponent(typeof(MeshRenderer))]
 public class InputMeshRender :MonoBehaviour,VCamRender
 {
     protected MeshRenderer meshRenderer;
     protected Material material;
+
+    public event Action OnSetTexture;
+
     public void SetTextures(Texture y, Texture u, Texture v)
     {
         if (null == meshRenderer)
@@ -49,6 +54,10 @@ public class InputMeshRender :MonoBehaviour,VCamRender
         material.SetTexture("_YTex",y);
         material.SetTexture("_UTex", u);
         material.SetTexture("_VTex", v);
+        if (null != OnSetTexture)
+        {
+            OnSetTexture();
+        }
     }
 }
 
@@ -57,6 +66,9 @@ public class InputRawImageRender :MonoBehaviour,VCamRender
 {
     protected RawImage rawImage;
     protected Material material;
+
+    public event Action OnSetTexture;
+
     public void SetTextures(Texture y, Texture u, Texture v)
     {
         if (null == rawImage)
@@ -71,5 +83,10 @@ public class InputRawImageRender :MonoBehaviour,VCamRender
         material.SetTexture("_YTex", y);
         material.SetTexture("_UTex", u);
         material.SetTexture("_VTex", v);
+
+        if (null != OnSetTexture)
+        {
+            OnSetTexture();
+        }
     }
 }

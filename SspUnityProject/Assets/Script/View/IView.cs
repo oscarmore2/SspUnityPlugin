@@ -18,6 +18,12 @@ public abstract class IView : MonoBehaviour {
         OnHided();
     }
 
+    public virtual void SetImage(Texture txd)
+    {
+        ViewImage.texture = txd;
+    }
+    
+
     protected abstract void OnShown();
     protected abstract void OnHided();
 }

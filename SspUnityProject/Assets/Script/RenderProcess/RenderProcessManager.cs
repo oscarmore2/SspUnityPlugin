@@ -141,10 +141,10 @@ public class RenderProcessFactory
         return process;
     }
 
-    public static RenderProcessManager CreateProcessManager()
+    public static RenderProcessManager CreateProcessManager(Vector3 offset)
     {
         GameObject obj = new GameObject("ProcessManager");
-        obj.transform.position = Vector3.left * 3000;
+        obj.transform.position = offset + Vector3.left * 3000;
         RenderProcessManager process = obj.AddComponent<RenderProcessManager>();
         return process;
     }

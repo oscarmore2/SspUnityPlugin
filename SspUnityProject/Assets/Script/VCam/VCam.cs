@@ -30,6 +30,12 @@ public class VCam
             renders.Add(render);
     }
 
+    public void ClearRender()
+    {
+        var num_render = renders.Count;
+        renders.RemoveRange(1, num_render - 1);
+    }
+
     public bool ExistRender(VCamRender render)
     {
         return renders.Contains(render);

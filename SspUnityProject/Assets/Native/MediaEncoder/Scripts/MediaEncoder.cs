@@ -11,7 +11,7 @@ using UnityEngine.VR;
 namespace UnityPlugin.Encoder {
    
     //[RequireComponent(typeof(Camera))]
-    public class MediaEncoder : MonoBehaviour {
+    public class MediaEncoder : Singleton<MediaEncoder> {
 
 
         //[Header("360 Capture Camera")]
@@ -21,7 +21,6 @@ namespace UnityPlugin.Encoder {
         //public Camera depthCubemapCamera;
         private Camera non360Camera;
         private RenderTexture cameraRenderTexture;
-        public static MediaEncoder singleton;
 
         [Header("Capture Options")]
         protected NativeEncoder.CAPTURE_MODE captureMode = NativeEncoder.CAPTURE_MODE.NON_360_CAPTURE;
@@ -117,11 +116,11 @@ namespace UnityPlugin.Encoder {
 
         void Awake() {
 
-            if (singleton != null) {
-                Debug.LogError("There are multiple instances of MediaEncoder.");
-                return;
-            }
-            singleton = this;
+            //if (singleton != null) {
+            //    Debug.LogError("There are multiple instances of MediaEncoder.");
+            //    return;
+            //}
+            //singleton = this;
 
             captureStarted = false;
             screenshotStarted = false;
@@ -963,5 +962,34 @@ namespace UnityPlugin.Encoder {
             NativeEncoder.fbc_setCameraOverlaySettings(widthPercentage, viewPortTopLeftX, viewPortTopLeftY);
         }
 
+        public override void OnInitialize()
+        {
+            
+        }
+
+        public override void OnUninitialize()
+        {
+            
+        }
+    }
+    public class EncoderFactory
+    {
+        public static MediaEncoder InitLiveEncoder(Material imgMat, NativeEncoder.VIDEO_CAPTURE_TYPE type = NativeEncoder.VIDEO_CAPTURE_TYPE.LIVE, int width = 1920, int height = 1080, int frameRate = 30, int bitRate = 400000)
+        {
+            if (!MediaEncoder.Instance)
+            {
+                var renderer = Resources.Load<GameObject>("Prefab/Renderer");
+                MeshRenderer mesh = renderer.GetComponentInChildren<MeshRenderer>();
+                mesh.material = imgMat;
+                renderer.transform.position = (Vector3.down + Vector3.left) * 3000;
+                MediaEncoder.Create(renderer);
+            }
+            MediaEncoder.Instance.videoCaptureType = type;
+            MediaEncoder.Instance.liveVideoWidth = width;
+            MediaEncoder.Instance.liveVideoFrameRate = frameRate;
+            MediaEncoder.Instance.liveVideoHeight = height;
+            MediaEncoder.Instance.liveVideoBitRate = bitRate;
+            return MediaEncoder.Instance;
+        }
     }
 }

@@ -51,6 +51,25 @@ public abstract class Singleton<T> : MonoBehaviour where T : Singleton<T>
         return Instance;
     }
 
+    public static T Create(GameObject obj)
+    {
+        if (_instance == null)
+        {
+            isAppQuitting = false;
+            _instance = obj.AddComponent<T>();
+            obj.name = PREFIX + obj.name;
+            obj.hideFlags = HideFlags.DontSave;
+            DontDestroyOnLoad(obj);
+            Instance.OnInitialize();
+            Log("Created.");
+        }
+        else
+        {
+            LogWarning("already created, not need to create again.");
+        }
+        return Instance;
+    }
+
     public static void Destroy()
     {
         GameObject.Destroy(_instance.gameObject);

@@ -868,6 +868,13 @@ public class JsonData : IJsonWrapper, IEquatable<JsonData> {
 		}
 		return val == null ? "null" : val.ToString();
 	}
+
+        public int ToInt()
+        {
+            int i = int.MinValue;
+            int.TryParse(val.ToString(), out i);
+            return i;
+        }
 }
 
 internal class OrderedDictionaryEnumerator : IDictionaryEnumerator {
