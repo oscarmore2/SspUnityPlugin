@@ -8,6 +8,8 @@ public class VCam
     public InputSource source { get; protected set; }
     public VCamController controller { get; protected set; }
 
+    public System.Action<Texture> OnSetTexture;
+
     protected List<VCamRender> renders = new List<VCamRender>();
 
     protected void SetRenders(Texture y, Texture u, Texture v)
@@ -15,6 +17,10 @@ public class VCam
         for (int i = 0; i < renders.Count; ++i)
         {
             renders[i].SetTextures(y,u,v);
+        }
+        if (null != OnSetTexture)
+        {
+            OnSetTexture(source.GetResult());
         }
     }
     public VCam(InputSource s)

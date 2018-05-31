@@ -30,7 +30,6 @@ public class InputRenderProvide
 public interface VCamRender
 {
     void SetTextures(Texture y, Texture u, Texture v);
-    event Action OnSetTexture ;
 }
 [RequireComponent(typeof(MeshRenderer))]
 public class InputMeshRender :MonoBehaviour,VCamRender
@@ -54,10 +53,6 @@ public class InputMeshRender :MonoBehaviour,VCamRender
         material.SetTexture("_YTex",y);
         material.SetTexture("_UTex", u);
         material.SetTexture("_VTex", v);
-        if (null != OnSetTexture)
-        {
-            OnSetTexture();
-        }
     }
 }
 
@@ -83,10 +78,5 @@ public class InputRawImageRender :MonoBehaviour,VCamRender
         material.SetTexture("_YTex", y);
         material.SetTexture("_UTex", u);
         material.SetTexture("_VTex", v);
-
-        if (null != OnSetTexture)
-        {
-            OnSetTexture();
-        }
     }
 }
