@@ -48,10 +48,24 @@ public class VCam
         return renders.Contains(render);
     }
 
-    public void RemoveRender(VCamRender render)
+    public void RemoveRender(InputMeshRender render)
     {
         if (renders.Contains(render))
+        {
             renders.Remove(render);
+            GameObject.Destroy(render);
+        }
+            
+    }
+
+    public void RemoveRender(InputRawImageRender render)
+    {
+        if (renders.Contains(render))
+        {
+            renders.Remove(render);
+            GameObject.Destroy(render);
+        }
+
     }
 }
 

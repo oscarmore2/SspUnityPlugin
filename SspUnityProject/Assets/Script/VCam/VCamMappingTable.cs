@@ -55,6 +55,7 @@ public class VCamMappingTable : MonoBehaviour,  IConfigable {
 
     private Dictionary<VCam, IView> VCamIViewDictionary = new Dictionary<VCam, IView>();
     private Dictionary<IView, VCamRender> IViewRenderDictionary = new Dictionary<IView, VCamRender>();
+    public Configuration config { get; private set; }
 
     public void BindVcam(VCam vcam, IView view)
     {
@@ -65,7 +66,7 @@ public class VCamMappingTable : MonoBehaviour,  IConfigable {
             if (vcamOld == vcam)
                 return;
 
-            vcamOld.RemoveRender(IViewRenderDictionary[view]);
+            vcamOld.RemoveRender((InputRawImageRender)IViewRenderDictionary[view]);
             vcamOld.OnSetTexture -= view.OnUpdateTexture;
             if (!vcam.ExistRender(IViewRenderDictionary[view]))
             {
@@ -105,7 +106,7 @@ public class VCamMappingTable : MonoBehaviour,  IConfigable {
 
 
 
-    public void LoadConfig(object config)
+    public void LoadConfig()
     {
         if (config == null)
         {

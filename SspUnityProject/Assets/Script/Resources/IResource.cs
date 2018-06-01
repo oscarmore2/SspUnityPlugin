@@ -17,7 +17,7 @@ public abstract class IResource : IConfigable  {
 
 	public abstract object GetFile ();
 
-	public abstract void LoadConfig (object config);
+	public abstract void LoadConfig ();
 
 	public abstract void SetConfig ();
 

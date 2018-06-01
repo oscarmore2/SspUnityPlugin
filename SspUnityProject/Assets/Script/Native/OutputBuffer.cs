@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityPlugin.Encoder;
 
@@ -20,20 +21,25 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
     MediaEncoder encoder = new MediaEncoder();
     
 
-	public void LoadConfig (object config)
+	public void LoadConfig ()
 	{
+        if (config == null)
+            config = (Configuration)IniFiles.LoadFile(Path.Combine(Application.streamingAssetsPath, "/config/StreamSetting.ini"));
         if (config == null)
         {
             SetDefaultConfig();
             return;
         }
+        config.IniReadValue("Output", "outputUrl");
+        config.IniReadValue("Output", "width");
+        config.IniReadValue("Output", "height");
+        config.IniReadValue("Output", "frame");
     }
 
     void Awake()
     {
-        LoadConfig(null);
         bufferMaterial = new Material(Shader.Find("RenderProcess/Output"));
-        encoder = EncoderFactory.InitLiveEncoder(bufferMaterial, NativeEncoder.VIDEO_CAPTURE_TYPE.LIVE, config["width"].ToInt(), config["height"].ToInt(), config["frame"].ToInt());
+        encoder = EncoderFactory.InitLiveEncoder(bufferMaterial, NativeEncoder.VIDEO_CAPTURE_TYPE.LIVE, config[(object)"width"], config[(object)"height"], config[(object)"frame"]);
     }
 
 	public void SetConfig()
@@ -57,9 +63,9 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
     public void SetDefaultConfig()
     {
         config = new Configuration();
-        config["width"] = 1920;
-        config["height"] = 1080;
-        config["frame"] = 30;
+        config[(object)"width"] = 1920;
+        config[(object)"height"] = 1080;
+        config[(object)"frame"] = 30;
         config["outputUrl"] = "rtmp://172.29.1.13/hls/pushtest2";
     }
 }

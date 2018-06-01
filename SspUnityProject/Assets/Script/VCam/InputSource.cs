@@ -52,9 +52,10 @@ public class InputSourceSsp : InputSource
     public InputSourceSsp(string url)
     {
         GameObject o = new GameObject("Stream:" + url);
+        Debug.Log("init with path " + url);
         mediaDecoder = o.AddComponent<SspDecoder>();
         mediaDecoder.onSetTexture = HandleTextures;
-        o.hideFlags = HideFlags.HideAndDontSave;
+        //o.hideFlags = HideFlags.HideAndDontSave;
         mediaDecoder.mediaPath = url;
     }
     public override void Begin()

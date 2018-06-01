@@ -5,11 +5,12 @@ using LitJson;
 
 public interface IConfigable {
 
-	void LoadConfig (object config);
+	void LoadConfig ();
 	void SetConfig();
     void SetDefaultConfig();
 
 }
 
-public class Configuration : JsonData
-{ }
+public class Configuration : IniFiles
+{
+}
