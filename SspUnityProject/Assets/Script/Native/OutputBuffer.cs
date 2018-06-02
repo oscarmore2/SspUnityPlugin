@@ -24,16 +24,12 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
 	public void LoadConfig ()
 	{
         if (config == null)
-            config = (Configuration)IniFiles.LoadFile(Path.Combine(Application.streamingAssetsPath, "/config/StreamSetting.ini"));
+			config = new Configuration(Path.Combine(Application.streamingAssetsPath, "/config/StreamSetting.ini"));
         if (config == null)
         {
             SetDefaultConfig();
             return;
         }
-        config.IniReadValue("Output", "outputUrl");
-        config.IniReadValue("Output", "width");
-        config.IniReadValue("Output", "height");
-        config.IniReadValue("Output", "frame");
     }
 
     void Awake()

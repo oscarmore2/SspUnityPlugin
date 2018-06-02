@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using LitJson;
+using IniParser;
+using IniParser.Model;
 
 public interface IConfigable {
 
@@ -11,6 +13,17 @@ public interface IConfigable {
 
 }
 
-public class Configuration : IniFiles
+public class Configuration : IniData
 {
+	public FileIniDataParser Parser;
+
+	public Configuration()
+	{
+	}
+
+	public Configuration (string path)
+	{
+		Parser = new FileIniDataParser ();
+		Parser.ReadFile (path);
+	}
 }
