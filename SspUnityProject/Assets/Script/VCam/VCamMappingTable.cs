@@ -10,8 +10,9 @@ using System.Linq;
 public class VcamList : Singleton<VcamList>, IConfigable
 {
     List<VCam> Cam = new List<VCam>();
+	Configuration config;
 
-    public void LoadConfig(object config)
+    public void LoadConfig()
     {
         if (config == null)
         {
@@ -27,7 +28,7 @@ public class VcamList : Singleton<VcamList>, IConfigable
 
     public override void OnInitialize()
     {
-        LoadConfig(null);
+        LoadConfig();
     }
 
     public override void OnUninitialize()

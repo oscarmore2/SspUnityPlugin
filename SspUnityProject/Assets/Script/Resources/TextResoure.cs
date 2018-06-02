@@ -9,7 +9,7 @@ public class TextResoure : IResource {
 		
 	}
 
-	public override void LoadConfig (object config)
+	public override void LoadConfig ()
 	{
 		
 	}
