@@ -4,24 +4,11 @@ using UnityEngine;
 
 public class TextResoure : IResource {
 
-	public override void SetConfig ()
-	{
-		
-	}
-
-	public override void LoadConfig ()
-	{
-		
-	}
+	
 
 	public override string GetPath ()
 	{
 		return Path;
-	}
-
-	public override void SetDefaultConfig ()
-	{
-		
 	}
 
 	public override object GetFile ()

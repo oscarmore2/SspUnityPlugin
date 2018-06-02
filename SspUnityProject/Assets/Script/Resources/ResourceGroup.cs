@@ -12,6 +12,9 @@ public class ResourceGroup : MonoBehaviour {
     public bool[] ActivateState = new bool[] { false, false, false, false, false };
     public bool IsAfterTransition;
 
+    public float Scale;
+    public Vector2 Postition;
+
 	// Use this for initialization
 	void Start () {
 		

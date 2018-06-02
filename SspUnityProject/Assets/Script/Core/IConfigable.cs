@@ -21,9 +21,11 @@ public class Configuration : IniData
 	{
 	}
 
-	public Configuration (string path)
+	public Configuration (string path) 
 	{
 		Parser = new FileIniDataParser ();
-		Parser.ReadFile (path);
+		Merge(Parser.ReadFile (path));
 	}
+
+   
 }

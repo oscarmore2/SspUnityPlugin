@@ -7,7 +7,7 @@ public enum ResourceType
 	Text, Image, Sequence, Video
 }
 
-public abstract class IResource : IConfigable  {
+public abstract class IResource   {
 
 	protected byte[] fileRef;
 	protected string Path;
@@ -16,10 +16,4 @@ public abstract class IResource : IConfigable  {
     public abstract string GetPath();
 
 	public abstract object GetFile ();
-
-	public abstract void LoadConfig ();
-
-	public abstract void SetConfig ();
-
-	public abstract void SetDefaultConfig ();
 }

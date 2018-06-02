@@ -28,7 +28,6 @@ public class VCam
         source = s;
         source.OnSetTextures = SetRenders;
         controller = new VCamController(this);
-        VcamList.Instance.Add(this);
     }
 
     public void AddRender(VCamRender render)

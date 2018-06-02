@@ -24,7 +24,7 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
 	public void LoadConfig ()
 	{
         if (config == null)
-			config = new Configuration(Path.Combine(Application.streamingAssetsPath, "/config/StreamSetting.ini"));
+			config = new Configuration(Path.Combine(Application.streamingAssetsPath, "config/StreamSetting.ini"));
         if (config == null)
         {
             SetDefaultConfig();
@@ -32,22 +32,28 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
         }
     }
 
-    void Awake()
+    public void InitFromConfig()
     {
+        LoadConfig();
         bufferMaterial = new Material(Shader.Find("RenderProcess/Output"));
-        encoder = EncoderFactory.InitLiveEncoder(bufferMaterial, NativeEncoder.VIDEO_CAPTURE_TYPE.LIVE, config[(object)"width"], config[(object)"height"], config[(object)"frame"]);
+        int width = int.Parse(config["Output"]["width"]);
+        int height = int.Parse(config["Output"]["height"]);
+        int frame = int.Parse(config["Output"]["frame"]);
+        encoder = EncoderFactory.InitLiveEncoder(bufferMaterial, NativeEncoder.VIDEO_CAPTURE_TYPE.LIVE, width, height, frame);
     }
 
 	public void SetConfig()
 	{
-		
-	}
+        config["Output"]["width"] = 3840.ToString();
+        config["Output"]["height"] = 1920.ToString();
+        config.Parser.SaveFile(Path.Combine(Application.streamingAssetsPath, "/config/StreamSetting.ini"), config);
+    }
 
     public void StartPush(Texture outputBuffer)
     {
         encoder.GetComponent<Camera>().enabled = true;
         bufferMaterial.mainTexture = outputBuffer;
-        encoder.StartLiveStreaming(config["outputUrl"].ToString());
+        encoder.StartLiveStreaming(config["Output"]["outputUrl"].ToString());
     }
 
     public void StopPush()
@@ -58,10 +64,6 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
 
     public void SetDefaultConfig()
     {
-        config = new Configuration();
-        config[(object)"width"] = 1920;
-        config[(object)"height"] = 1080;
-        config[(object)"frame"] = 30;
-        config["outputUrl"] = "rtmp://172.29.1.13/hls/pushtest2";
+        
     }
 }

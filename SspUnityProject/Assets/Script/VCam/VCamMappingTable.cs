@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 /// <summary>
 /// List of physical camera
@@ -14,10 +13,25 @@ public class VcamList : Singleton<VcamList>, IConfigable
 
     public void LoadConfig()
     {
+        config = new Configuration(System.IO.Path.Combine(Application.streamingAssetsPath, "config/StreamSetting.ini"));
+
         if (config == null)
         {
             SetDefaultConfig();
             return;
+        }
+
+        foreach (var key in config["Input"])
+        {
+            if (key.KeyName.Contains("url"))
+            {
+                var obj = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>(""));
+                obj.name = "DefaultBuffer";
+                obj.transform.parent = transform;
+                VCam v = VCamFactory.Create(key.Value, obj);
+                v.controller.Start();
+                Add(v);
+            }
         }
     }
 
