@@ -12,6 +12,7 @@ public class PVWView : IView {
     {
         renderProcessManager = RenderProcessFactory.CreateProcessManager(Vector3.zero);
         renderProcessManager.transform.parent = transform;
+        renderProcessManager.CreateBseicRenderProcess();
         ViewImage = GetComponent<RawImage>();
     }
 

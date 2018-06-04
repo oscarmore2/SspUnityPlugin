@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using UnityEditor;
+//using UnityEditor;
 using UnityEngine.Rendering;
 using UnityEngine.VR;
 
@@ -19,7 +19,7 @@ namespace UnityPlugin.Encoder {
         //public Camera cubemapCamera;
         //[Tooltip("Reference to camera that renders the depth cubemap")]
         //public Camera depthCubemapCamera;
-        private Camera non360Camera;
+        public Camera non360Camera;
         private RenderTexture cameraRenderTexture;
 
         [Header("Capture Options")]
@@ -129,7 +129,7 @@ namespace UnityPlugin.Encoder {
             non360Camera = GetComponent<Camera>();
             if (null == non360Camera)
                 non360Camera = gameObject.AddComponent<Camera>();
-            non360Camera.hideFlags = HideFlags.HideAndDontSave;
+            //non360Camera.hideFlags = HideFlags.HideAndDontSave;
             non360Camera.enabled = false;
             cameraRenderTexture = new RenderTexture(4096,2048,0,RenderTextureFormat.ARGB32);
             cameraRenderTexture.Create();
@@ -829,7 +829,7 @@ namespace UnityPlugin.Encoder {
             outputHeight = height;
 
             outputTexture = new RenderTexture(outputWidth, captureTextureFormat == NativeEncoder.CAPTURE_TEXTURE_FORMAT.RGBD_CAPTURE ? outputHeight * 2 : outputHeight, 0, RenderTextureFormat.ARGB32);
-            outputTexture.hideFlags = HideFlags.HideAndDontSave;
+            //outputTexture.hideFlags = HideFlags.HideAndDontSave;
             outputTexture.Create();
 
 //            if (captureMode == NativeEncoder.CAPTURE_MODE._360_CAPTURE) {

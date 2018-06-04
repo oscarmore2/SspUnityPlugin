@@ -54,7 +54,7 @@ public class InputSourceSsp : InputSource
         GameObject o = new GameObject("Stream:" + url);
         mediaDecoder = o.AddComponent<SspDecoder>();
         mediaDecoder.onSetTexture = HandleTextures;
-        o.hideFlags = HideFlags.HideAndDontSave;
+        //o.hideFlags = HideFlags.HideAndDontSave;
         mediaDecoder.mediaPath = url;
     }
     public override void Begin()
@@ -109,7 +109,7 @@ public class InputSourceStream :InputSource
         GameObject  o = new GameObject("Stream:"+url);
         mediaDecoder = o.AddComponent<MediaDecoder>();
         mediaDecoder.onSetTexture = HandleTextures;
-        o.hideFlags = HideFlags.HideAndDontSave;
+        //o.hideFlags = HideFlags.HideAndDontSave;
         mediaDecoder.mediaPath = url;
     }
     public override void Begin()

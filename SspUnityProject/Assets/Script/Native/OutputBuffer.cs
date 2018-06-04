@@ -16,8 +16,10 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
 
     //RenderTexture buffer;
     Material bufferMaterial;
+
     public Configuration config { get; private set; }
-    MediaEncoder encoder = new MediaEncoder();
+
+    public MediaEncoder encoder = new MediaEncoder();
     
 
 	public void LoadConfig (object config)
@@ -33,7 +35,7 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
     {
         LoadConfig(null);
         bufferMaterial = new Material(Shader.Find("RenderProcess/Output"));
-        encoder = EncoderFactory.InitLiveEncoder(bufferMaterial, NativeEncoder.VIDEO_CAPTURE_TYPE.LIVE, config["width"].ToInt(), config["height"].ToInt(), config["frame"].ToInt());
+        //encoder = EncoderFactory.InitLiveEncoder(bufferMaterial, NativeEncoder.VIDEO_CAPTURE_TYPE.LIVE, config["width"].ToInt(), config["height"].ToInt(), config["frame"].ToInt());
     }
 
 	public void SetConfig()
@@ -41,11 +43,14 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
 		
 	}
 
-    public void StartPush(Texture outputBuffer)
+    public void StartPush(Texture outputBuffer, string address = null)
     {
         encoder.GetComponent<Camera>().enabled = true;
         bufferMaterial.mainTexture = outputBuffer;
-        encoder.StartLiveStreaming(config["outputUrl"].ToString());
+        if (address == null)
+            encoder.StartLiveStreaming(config["outputUrl"].ToString());
+        else
+            encoder.StartLiveStreaming(address);
     }
 
     public void StopPush()

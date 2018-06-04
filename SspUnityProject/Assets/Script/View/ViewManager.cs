@@ -14,10 +14,10 @@ public class ViewManager : MonoBehaviour {
     public void InitView()
     {
         MappingTable.BindVcam(VcamList.Instance.GetList()[0], PGM);
-        MappingTable.BindVcam(VcamList.Instance.GetList()[1], PGM);
-        for (int i = 2; i < VcamList.Instance.GetList().Count; i++)
+        MappingTable.BindVcam(VcamList.Instance.GetList()[1], PVW);
+        for (int i = 0; i < VcamList.Instance.GetList().Count; i++)
         {
-            MappingTable.BindVcam(VcamList.Instance.GetList()[i], Vcams[i-2]);
+            MappingTable.BindVcam(VcamList.Instance.GetList()[i], Vcams[i]);
         }
     }
 	

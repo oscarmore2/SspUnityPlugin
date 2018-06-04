@@ -4,9 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public abstract class IView : MonoBehaviour {
-
-    [SerializeField]
-    protected RawImage ViewImage;
+    
+    public RawImage ViewImage;
 
     public virtual void ShowView()
     {

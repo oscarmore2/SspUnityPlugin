@@ -70,14 +70,14 @@ public class VCamMappingTable : MonoBehaviour,  IConfigable {
             if (!vcam.ExistRender(IViewRenderDictionary[view]))
             {
                 vcam.OnSetTexture += view.OnUpdateTexture;
-                IViewRenderDictionary[view] = InputRenderProvide.Create(view.gameObject);
+                IViewRenderDictionary[view] = InputRenderProvide.Create(view.ViewImage);
                 vcam.AddRender(IViewRenderDictionary[view]);
             }
         }
         else
         {
             vcam.OnSetTexture += view.OnUpdateTexture;
-            IViewRenderDictionary[view] = InputRenderProvide.Create(view.gameObject);
+            IViewRenderDictionary[view] = InputRenderProvide.Create(view.ViewImage);
             vcam.AddRender(IViewRenderDictionary[view]);
         }
     }

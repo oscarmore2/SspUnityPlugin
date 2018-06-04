@@ -18,6 +18,8 @@ public class VCam
         {
             renders[i].SetTextures(y,u,v);
         }
+
+
         if (null != OnSetTexture && null != source.GetResult())
         {
             OnSetTexture(source.GetResult());
@@ -60,10 +62,16 @@ public class VCamFactory
 {
     public static VCam Create(string url, GameObject o)
     {
+        Debug.LogWarning("URL is "+url);
         var s = InputSourceProvider.Create(url,o);
         var r = InputRenderProvide.Create(o);
         var cam =  new VCam(s);
+        if (null == r)
+        {
+            throw new System.NullReferenceException("Renderer return null");
+        }
         cam.AddRender(r);
+
         return cam;
     }
 }

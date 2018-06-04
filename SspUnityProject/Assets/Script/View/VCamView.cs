@@ -2,8 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class VCamView : IView {
+
+    void Awake()
+    {
+        ViewImage = GetComponent<RawImage>();
+    }
+
     protected override void OnHided()
     {
 
