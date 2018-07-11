@@ -8,8 +8,10 @@
 #ifdef ENABLE_LOG
 #define LOG(...) Logger::instance()->log(__VA_ARGS__)
 #else
-#define LOG
+#define LOG(...)
 #endif
+
+
 typedef void(__stdcall * UnityLog) (const char * str);
 class Logger {
 public:

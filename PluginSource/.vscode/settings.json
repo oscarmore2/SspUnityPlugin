@@ -1,0 +1,27 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true
+    },
+    "astyle.cmd_options": [
+        "--style=attach",
+        "--convert-tabs",
+        "--indent=spaces=4",
+        "--add-brackets",
+        "--pad-header",
+        "--unpad-paren",
+        "--pad-oper",
+        "--max-code-length=100",
+        "--formatted",
+        "--align-pointer=type",
+        "--align-reference=type",
+        "--break-blocks",
+        "-Y"
+    ],
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+}
