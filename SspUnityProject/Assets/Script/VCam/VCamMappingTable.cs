@@ -9,7 +9,7 @@ using UnityEngine;
 public class VcamList : Singleton<VcamList>, IConfigable
 {
     List<VCam> Cam = new List<VCam>();
-	Configuration config;
+    Configuration config;
 
     public void LoadConfig()
     {
@@ -66,10 +66,12 @@ public class VcamList : Singleton<VcamList>, IConfigable
     }
 }
 
-public class VCamMappingTable : MonoBehaviour,  IConfigable {
+public class VCamMappingTable : MonoBehaviour,  IConfigable
+{
 
     private Dictionary<VCam, IView> VCamIViewDictionary = new Dictionary<VCam, IView>();
     private Dictionary<IView, VCamRender> IViewRenderDictionary = new Dictionary<IView, VCamRender>();
+
     public Configuration config { get; private set; }
 
     public void BindVcam(VCam vcam, IView view)
@@ -81,20 +83,20 @@ public class VCamMappingTable : MonoBehaviour,  IConfigable {
             if (vcamOld == vcam)
                 return;
 
-            vcamOld.RemoveRender((InputRawImageRender)IViewRenderDictionary[view]);
-            vcamOld.OnSetTexture -= view.OnUpdateTexture;
-            if (!vcam.ExistRender(IViewRenderDictionary[view]))
-            {
-                vcam.OnSetTexture += view.OnUpdateTexture;
-                IViewRenderDictionary[view] = InputRenderProvide.Create(view.gameObject);
-                vcam.AddRender(IViewRenderDictionary[view]);
-            }
+//            vcamOld.RemoveRender((InputRawImageRender)IViewRenderDictionary[view]);
+//            vcamOld.OnSetTexture -= view.OnUpdateTexture;
+//            if (!vcam.ExistRender(IViewRenderDictionary[view]))
+//            {
+//                vcam.OnSetTexture += view.OnUpdateTexture;
+//                IViewRenderDictionary[view] = InputRenderProvide.Create(view.gameObject);
+//                vcam.AddRender(IViewRenderDictionary[view]);
+//            }
         }
         else
         {
-            vcam.OnSetTexture += view.OnUpdateTexture;
-            IViewRenderDictionary[view] = InputRenderProvide.Create(view.gameObject);
-            vcam.AddRender(IViewRenderDictionary[view]);
+//            vcam.OnSetTexture += view.OnUpdateTexture;
+//            IViewRenderDictionary[view] = InputRenderProvide.Create(view.gameObject);
+//            vcam.AddRender(IViewRenderDictionary[view]);
         }
     }
 
@@ -110,11 +112,11 @@ public class VCamMappingTable : MonoBehaviour,  IConfigable {
 
         foreach (var v in VcamList.Instance.GetList())
         {
-            if (v.ExistRender(IViewRenderDictionary[view]))
-            {
-                vcam = v;
-                return true;
-            }
+//            if (v.ExistRender(IViewRenderDictionary[view]))
+//            {
+//                vcam = v;
+//                return true;
+//            }
         }
         return false;
     }
