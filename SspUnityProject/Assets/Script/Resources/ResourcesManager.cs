@@ -5,20 +5,21 @@ using UnityEngine;
 
 public class ResourcesManager : MonoBehaviour {
 
+    [SerializeField]
     ResourcesListContainor containor;
 
     public Transform ResourcePool;
 
-    void OnInit()
+    public void OnInit()
     {
         containor = new ResourcesListContainor();
-        ResourceGenerator.OnGenerate("", ref containor);
+        ResourceGenerator.OnGenerate(Paths.CONFIG+ "resourceConfig.json", ref containor);
         gameObject.SetActive(true);
     }
 
     void OnEnable()
     {
-        if (containor != null)
+        if (containor == null)
         {
             gameObject.SetActive(false);
             return;
@@ -28,14 +29,12 @@ public class ResourcesManager : MonoBehaviour {
         {
             for (int i = 0; i < containor.Count; i++)
             {
-                var o = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>(""));
+                var o = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefab/ResourceItem"));
                 var rect = o.GetComponent<Transform>();
                 rect.parent = ResourcePool;
-
-
+                o.GetComponent<ResourceItem>().SetContent(containor[i]);
             }
         }
-            
     }
 }
 
@@ -44,18 +43,21 @@ public class ResourceGenerator
     public static void OnGenerate(string path, ref ResourcesListContainor containor)
     {
         var ResourceConfig = new JsonConfiguration(path);
-        var TextResource = (JsonConfiguration) ResourceConfig["Texts"];
-        var ImageResource = (JsonConfiguration) ResourceConfig["Images"];
+        var TextResource = ResourceConfig["Texts"];
+        var ImageResource = ResourceConfig["Images"];
 
         for (int i = 0; i < TextResource.Count; i++)
         {
-            containor.AddResource(TextResource[i].GetData<TextResoure>());
+            var res = JsonConfiguration.GetData<TextResoure>(TextResource[i]);
+            containor.AddResource(res);
         }
 
-        for (int i = 0; i < TextResource.Count; i++)
+        for (int i = 0; i < ImageResource.Count; i++)
         {
-            containor.AddResource(ImageResource[i].GetData<TextResoure>());
+            var res = JsonConfiguration.GetData<ImageResource>(ImageResource[i]);
+            containor.AddResource(res);
         }
     }
+    
 }
 

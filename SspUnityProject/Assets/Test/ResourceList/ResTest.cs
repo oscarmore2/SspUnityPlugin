@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResourceGroupListAttacher : MonoBehaviour {
+public class ResTest : MonoBehaviour {
+
+    [SerializeField]
+    ResourcesManager manager;
 
 	// Use this for initialization
-	void Awake () {
-        
-    }
+	void Start () {
+        manager.OnInit();
+	}
 	
 	// Update is called once per frame
 	void Update () {

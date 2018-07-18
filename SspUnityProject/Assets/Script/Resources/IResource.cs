@@ -9,8 +9,11 @@ public enum ResourceType
 
 public abstract class IResource   {
 
-	protected byte[] fileRef;
-	protected string Path;
+    public string Name;
+	public string Path;
+    public Dictionary<string, string> Attrs;
+    
+    protected byte[] fileRef;
 
     public abstract ResourceType GetType();
     public abstract string GetPath();

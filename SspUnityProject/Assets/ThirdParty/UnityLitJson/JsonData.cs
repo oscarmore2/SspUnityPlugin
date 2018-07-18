@@ -18,12 +18,12 @@ namespace LitJson {
 /// This isthe default type returned by JsonMapper.ToObject().
 /// </summary>
 public class JsonData : IJsonWrapper, IEquatable<JsonData> {
-	private object val;
-	private string json;
-	private JsonType type;
+	protected object val;
+    protected string json;
+    protected JsonType type;
 
-	// Used to implement the IOrderedDictionary interface
-	private IList<KeyValuePair<string, JsonData>> list;
+    // Used to implement the IOrderedDictionary interface
+    protected IList<KeyValuePair<string, JsonData>> list;
 
 	#region JsonData Properties
 
@@ -671,7 +671,7 @@ public class JsonData : IJsonWrapper, IEquatable<JsonData> {
 		throw new InvalidOperationException("The JsonData instance has to be initialized first");
 	}
 
-	private IDictionary EnsureDictionary() {
+	protected IDictionary EnsureDictionary() {
 		if (IsObject) {
 			return (IDictionary)val;
 		}

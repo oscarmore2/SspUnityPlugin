@@ -32,15 +32,13 @@ public class Configuration : IniData
 
 public class JsonConfiguration : JsonData
 {
-    public JsonMapper Parser;
 
-    public JsonConfiguration()
-    {
-    }
+    JsonData data = new JsonData();
 
     public JsonConfiguration(string path)
     {
-        this.Add(JsonMapper.ToObject(LoadFromFile(path)));
+        var s = LoadFromFile(path);
+        data = JsonMapper.ToObject(s);
     }
 
     string LoadFromFile(string path)
@@ -66,15 +64,31 @@ public class JsonConfiguration : JsonData
         }
     }
 
-    public JsonConfiguration this[int id]
+    public JsonData this[int id]
     {
         get {
-            return (JsonConfiguration)this[id];
+            return data[id];
+        }
+        set
+        {
+            data[id] = value;
         }
     }
 
-    public T GetData<T>()
+    public JsonData this[string str]
     {
-        return JsonMapper.ToObject<T>(this.ToJson());
+        get
+        {
+            return data[str];
+        }
+        set
+        {
+            data[str] = value;
+        }
+    }
+
+    public static T GetData<T>(JsonData data)
+    {
+        return JsonMapper.ToObject<T>(data.ToJson());
     }
 }
