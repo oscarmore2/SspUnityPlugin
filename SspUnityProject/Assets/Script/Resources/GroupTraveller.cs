@@ -1,16 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
+using Resource;
 
-public class GroupTraveller : MonoBehaviour {
+public class GroupTraveller {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public GroupTraveller()
+    {
+        ResourceGroupList.Instance.OnResourceGroupChange += OnTravel;
+    }
+
+
+    public void OnTravel()
+    {
+
+    }
 }

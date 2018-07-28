@@ -4,42 +4,46 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class ResourcesListContainor : IEnumerable
+namespace Resource
 {
-    List<IResource> containorList = new List<IResource>();
-
-    public int CurrentSelection = -1;
-
-    public IEnumerator GetEnumerator()
+    public class ResourcesListContainor : IEnumerable
     {
-        return containorList.GetEnumerator();
-    }
+        List<IResource> containorList = new List<IResource>();
 
-    public void AddResource(IResource res)
-    {
-        containorList.Add(res);
-    }
+        public int CurrentSelection = -1;
 
-    public IResource this[int id]
-    {
-        get {
-            return containorList[id];
-        }
-    }
-
-    public int Count
-    {
-        get { return containorList.Count; }
-    }
-
-    public T GetResource<T>(int id) where T : IResource
-    {
-        IResource res = containorList[id];
-        if (typeof(T).BaseType == typeof(IResource))
+        public IEnumerator GetEnumerator()
         {
-            T des = (T)(containorList[id]);
-            return des;
+            return containorList.GetEnumerator();
         }
-        return null;
+
+        public void AddResource(IResource res)
+        {
+            containorList.Add(res);
+        }
+
+        public IResource this[int id]
+        {
+            get
+            {
+                return containorList[id];
+            }
+        }
+
+        public int Count
+        {
+            get { return containorList.Count; }
+        }
+
+        public T GetResource<T>(int id) where T : IResource
+        {
+            IResource res = containorList[id];
+            if (typeof(T).BaseType == typeof(IResource))
+            {
+                T des = (T)(containorList[id]);
+                return des;
+            }
+            return null;
+        }
     }
 }

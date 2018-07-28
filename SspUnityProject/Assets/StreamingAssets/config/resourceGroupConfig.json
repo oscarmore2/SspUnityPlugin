@@ -1,0 +1,46 @@
+{
+    "list":[
+    {
+        "Name":"Group1",
+        "Priority":1,
+        "VCamBiding":[false, false, false, false, false, false, false, false, false],
+        "ResourceRefs":[
+            {
+                "type":"Texts",
+                "index":2
+            },
+            {
+                "type":"Images",
+                "index":1
+            }
+        ],
+        "ActivateState":[false, false, false],
+        "IsAfterTransition":false,
+        "Scale":1.0,
+        "XAxis":0.0,
+        "YAxis":2.0,
+        "Duration":2.2
+    },
+    {
+        "Name":"Group2",
+        "Priority":2,
+        "VCamBiding":[false, false, false, false, false, false, false, false, false],
+        "ResourceRefs":[
+            {
+                "type":"Texts",
+                "index":1
+            },
+            {
+                "type":"Images",
+                "index":2
+            }
+        ],
+        "ActivateState":[false, false, false],
+        "IsAfterTransition":false,
+        "Scale":1.0,
+        "XAxis":100.0,
+        "YAxis":200.0,
+        "Duration":2.2
+    }
+]
+}

@@ -2,62 +2,74 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class ResourcesManager : MonoBehaviour {
-
-    [SerializeField]
-    ResourcesListContainor containor;
-
-    public Transform ResourcePool;
-
-    public void OnInit()
+namespace Resource
+{
+    public class ResourcesManager : MonoBehaviour
     {
-        containor = new ResourcesListContainor();
-        ResourceGenerator.OnGenerate(Paths.CONFIG+ "resourceConfig.json", ref containor);
-        gameObject.SetActive(true);
-    }
-
-    void OnEnable()
-    {
-        if (containor == null)
-        {
-            gameObject.SetActive(false);
-            return;
+        private ResourcesListContainor containor;
+        public ResourcesListContainor Containor {
+            get {
+                return containor;
+            }
         }
 
-        if (ResourcePool.childCount < containor.Count)
+        public Transform ResourcePool;
+
+        public ToggleGroup TaggleGroup;
+
+        public void OnInit()
         {
-            for (int i = 0; i < containor.Count; i++)
+            containor = new ResourcesListContainor();
+            ResourceGenerator.OnGenerate(Paths.CONFIG + "resourceConfig.json", ref containor);
+            gameObject.SetActive(true);
+        }
+
+        void OnEnable()
+        {
+            if (containor == null)
             {
-                var o = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefab/ResourceItem"));
-                var rect = o.GetComponent<Transform>();
-                rect.parent = ResourcePool;
-                o.GetComponent<ResourceItem>().SetContent(containor[i]);
+                gameObject.SetActive(false);
+                return;
+            }
+
+            if (ResourcePool.childCount < containor.Count)
+            {
+                for (int i = 0; i < containor.Count; i++)
+                {
+                    var o = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefab/ResourceItem"));
+                    var rect = o.GetComponent<Transform>();
+                    rect.parent = ResourcePool;
+                    o.GetComponent<ResourceItem>().SetContent(containor[i]);
+                    var t = o.GetComponentInChildren<Toggle>();
+                    TaggleGroup.RegisterToggle(t);
+                }
             }
         }
     }
-}
 
-public class ResourceGenerator
-{
-    public static void OnGenerate(string path, ref ResourcesListContainor containor)
+    public class ResourceGenerator
     {
-        var ResourceConfig = new JsonConfiguration(path);
-        var TextResource = ResourceConfig["Texts"];
-        var ImageResource = ResourceConfig["Images"];
-
-        for (int i = 0; i < TextResource.Count; i++)
+        public static void OnGenerate(string path, ref ResourcesListContainor containor)
         {
-            var res = JsonConfiguration.GetData<TextResoure>(TextResource[i]);
-            containor.AddResource(res);
+            var ResourceConfig = new JsonConfiguration(path);
+            var TextResource = ResourceConfig["Texts"];
+            var ImageResource = ResourceConfig["Images"];
+
+            for (int i = 0; i < TextResource.Count; i++)
+            {
+                var res = JsonConfiguration.GetData<TextResoure>(TextResource[i]);
+                containor.AddResource(res);
+            }
+
+            for (int i = 0; i < ImageResource.Count; i++)
+            {
+                var res = JsonConfiguration.GetData<ImageResource>(ImageResource[i]);
+                containor.AddResource(res);
+            }
         }
 
-        for (int i = 0; i < ImageResource.Count; i++)
-        {
-            var res = JsonConfiguration.GetData<ImageResource>(ImageResource[i]);
-            containor.AddResource(res);
-        }
     }
-    
 }
 

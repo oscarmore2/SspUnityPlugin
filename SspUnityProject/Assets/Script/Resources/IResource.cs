@@ -2,21 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ResourceType
+namespace Resource
 {
-	Text, Image, Sequence, Video
-}
+    public enum ResourceType
+    {
+        Text, Image, Sequence, Video
+    }
 
-public abstract class IResource   {
+    public abstract class IResource
+    {
 
-    public string Name;
-	public string Path;
-    public Dictionary<string, string> Attrs;
-    
-    protected byte[] fileRef;
+        public string Name;
+        public string Path;
+        public Dictionary<string, string> Attrs;
 
-    public abstract ResourceType GetType();
-    public abstract string GetPath();
+        protected byte[] fileRef;
 
-	public abstract object GetFile ();
+        public abstract ResourceType GetType();
+        public abstract string GetPath();
+
+        public abstract object GetFile();
+    }
 }
