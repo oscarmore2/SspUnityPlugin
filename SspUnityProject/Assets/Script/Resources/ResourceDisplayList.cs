@@ -1,19 +1,24 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Resource;
 
-public class ResourceDisplayList : MonoBehaviour {
+public class ResourceDisplayList : Singleton<ResourceDisplayList> {
 
-    public List<string> PreRenderList = new List<string>();
-    public List<string> PostRenderList = new List<string>();
+    public List<IResource> PreviewPreRenderList = new List<IResource>();
+    public List<IResource> PreviewPostRenderList = new List<IResource>();
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public List<IResource> PGMPreRenderList = new List<IResource>();
+    public List<IResource> PGMPostRenderList = new List<IResource>();
+
+    public override void OnInitialize()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void OnUninitialize()
+    {
+        throw new NotImplementedException();
+    }
 }
