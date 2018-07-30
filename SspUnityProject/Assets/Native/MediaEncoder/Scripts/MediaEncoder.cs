@@ -670,14 +670,9 @@ namespace UnityPlugin.Encoder
         private IEnumerator ScreenBufferBlit(RenderTexture src)
         {
             yield return new WaitForEndOfFrame();
-            if (null == src)
-            {
-                yield break;
-            }
             if (captureStarted || screenshotStarted)
             {
                 RenderTexture active = RenderTexture.active;
-                RenderTexture.active = src;
                 Graphics.Blit(src, outputTexture);
                 RenderTexture.active = active;
                 if (screenshotStarted)
