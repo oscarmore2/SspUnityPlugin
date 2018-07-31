@@ -2,18 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ConfigProperty<Value>
-{
-    public string name { get; protected set; }
 
-    public Value defaultValue { get; protected set; }
-
-    public ConfigProperty(string n, Value d)
-    {
-        name = n;
-        defaultValue = d;
-    }
-}
 
 public class InputConfig
 {

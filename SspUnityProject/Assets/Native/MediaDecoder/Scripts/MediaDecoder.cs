@@ -72,7 +72,7 @@ namespace UnityPlugin.Decoder
             }
         }
 
-        public Texture GetResult()
+        public virtual Texture GetResult()
         {
             return resultRT;
         }

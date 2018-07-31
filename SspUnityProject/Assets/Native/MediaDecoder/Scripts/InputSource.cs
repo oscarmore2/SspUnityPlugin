@@ -34,21 +34,31 @@ public class InputSource : IInputSource
 	public static readonly string URL_HTTP = "http://";
 	public static readonly string URL_SSP = "ssp://";
 	public static readonly string URL_FILE = "file://";
+	public static readonly string URL_DECKLINK = "decklink://";
 
+	
 	protected MediaDecoder mediaDecoder;
 
-	public InputSource(string url)
+	public static Type FindDecoderType(string url) 
 	{
-		GameObject o = new GameObject("Stream:" + url);
-		Debug.Log("init with path " + url);
 		if (url.StartsWith(URL_SSP))
 		{
-			mediaDecoder = o.AddComponent<SspDecoder>();
+			return typeof(SspDecoder);
+		}
+		else if (url.StartsWith(URL_DECKLINK)) 
+		{
+			return typeof(DeckLinkDecoder);
 		}
 		else
 		{
-			mediaDecoder = o.AddComponent<FFmpegDecoder>();
+			return typeof(FFmpegDecoder);
 		}
+	}
+	public InputSource(string url)
+	{
+		GameObject o = new GameObject("Stream:" + url);
+		Type decoderType = FindDecoderType(url);
+		o.AddComponent(decoderType);
 		mediaDecoder.mediaPath = url;
 	}
 
