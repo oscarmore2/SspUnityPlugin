@@ -1,5 +1,8 @@
 
-
+using System;
+using System.Runtime.InteropServices;
+using UnityEngine;
+using RenderHeads.Media.AVProDeckLink;
 namespace UnityPlugin.Decoder 
 {
     public class DeckLinkDecoder : MediaDecoder
