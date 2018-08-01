@@ -5,7 +5,7 @@ using UnityEngine;
 
 
 
-public abstract class IRenderProcess : MonoBehaviour  {
+public abstract class CommonRenderProcess : MonoBehaviour  {
 
     protected List<IResourceRenderer> ResourceOverlays = new List<IResourceRenderer>();
 

@@ -9,4 +9,9 @@ public class ImageRenderer : IResourceRenderer {
     {
         throw new NotImplementedException();
     }
+
+    public override void HideRender()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class RenderProcessManager: MonoBehaviour {
 
-    List<IRenderProcess> branchProcessPath = new List<IRenderProcess>();
+    List<CommonRenderProcess> branchProcessPath = new List<CommonRenderProcess>();
     int currentProcessIndex = -1;
 
 	public EffectRenderProcess EffectProcess;
@@ -16,7 +16,7 @@ public class RenderProcessManager: MonoBehaviour {
 
 	public PostRenderProcess PostProcess;
 
-	public void RegisterProcess(int position, IRenderProcess process)
+	public void RegisterProcess(int position, CommonRenderProcess process)
     {
 		if (position > branchProcessPath.Count + 1) {
 			branchProcessPath.Add (process);
@@ -104,7 +104,7 @@ public class RenderProcessManager: MonoBehaviour {
 
 public class RenderProcessFactory
 {
-    public static T CreateProcess<T>(GameObject processManager) where T : IRenderProcess
+    public static T CreateProcess<T>(GameObject processManager) where T : CommonRenderProcess
     {
         T process = null;
         GameObject obj = new GameObject ();
@@ -114,28 +114,28 @@ public class RenderProcessFactory
         {
             obj.name = "EffectRenderProcess";
             obj.transform.position += Vector3.up * 1000;
-            IRenderProcess temp = obj.AddComponent<EffectRenderProcess>();
+            CommonRenderProcess temp = obj.AddComponent<EffectRenderProcess>();
             process = (T)temp;
         }
         else if (typeof(T) == typeof(PreRenderProcess))
         {
             obj.name = "PreRenderProcess";
             obj.transform.position += Vector3.up * 2000;
-            IRenderProcess temp = obj.AddComponent<PreRenderProcess>();
+            CommonRenderProcess temp = obj.AddComponent<PreRenderProcess>();
             process = (T)temp;
         }
         else if (typeof(T) == typeof(TransitionRenderPrecess))
         {
             obj.name = "TransitionRenderPrecess";
             obj.transform.position += Vector3.up * 3000;
-            IRenderProcess temp = obj.AddComponent<TransitionRenderPrecess>();
+            CommonRenderProcess temp = obj.AddComponent<TransitionRenderPrecess>();
             process = (T)temp;
         }
         else if (typeof(T) == typeof(PostRenderProcess))
         {
             obj.name = "PostRenderProcess";
             obj.transform.position += Vector3.up * 4000;
-            IRenderProcess temp = obj.AddComponent<PostRenderProcess>();
+            CommonRenderProcess temp = obj.AddComponent<PostRenderProcess>();
             process = (T)temp;
         }
         return process;

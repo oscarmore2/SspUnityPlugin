@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class TransitionRenderPrecess : IRenderProcess
+public class TransitionRenderPrecess : CommonRenderProcess
 {
     public override void SetupProcess(Texture inputTex)
     {
