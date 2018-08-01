@@ -6,9 +6,6 @@ namespace Resource
 {
     public class TextResoure : IResource
     {
-
-
-
         public override string GetPath()
         {
             return Path;
@@ -17,14 +14,14 @@ namespace Resource
         public override object GetFile()
         {
             if (null == fileRef)
-            {
+            {   
                 return null;
             }
 
             return (object)System.Text.Encoding.Default.GetString(fileRef);
         }
 
-        IEnumerator LoadFile()
+        public IEnumerator LoadFile()
         {
             WaitUntil wait = new WaitUntil(() =>
             {

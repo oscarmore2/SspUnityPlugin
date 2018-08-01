@@ -1,16 +1,35 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AppInit : MonoBehaviour {
+public class AppInit : Singleton<AppInit> {
+
+    public WaitUntil OnInitInterface;
+
+    public WaitUntil OnLoadConfigs;
+
+    public WaitUntil OnLoadResouce;
+
+    public WaitUntil OnLoadDevice;
 
 	// Use this for initialization
 	void Start () {
+        AppInit.Create();
+    }
+
+    public override void OnInitialize()
+    {
         
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+
+    IEnumerator StartUpApp()
+    {
+        yield return new WaitForEndOfFrame();
+    }
+
+    public override void OnUninitialize()
+    {
+        throw new NotImplementedException();
+    }
 }

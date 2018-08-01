@@ -22,7 +22,7 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
     
 
 	public void LoadConfig ()
-	{
+	{ 
         if (config == null)
 			config = new Configuration(Path.Combine(Application.streamingAssetsPath, "config/StreamSetting.ini"));
         if (config == null)
