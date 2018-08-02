@@ -10,8 +10,9 @@ public class ResTest : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        manager.OnInit();
-	}
+        ResourcesManager.Create();
+        manager = ResourcesManager.Instance;
+    }
 	
 	// Update is called once per frame
 	void Update () {

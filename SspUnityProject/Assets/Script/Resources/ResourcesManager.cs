@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Resource
 {
-    public class ResourcesManager : MonoBehaviour
+    public class ResourcesManager : Singleton<ResourcesManager>
     {
         private ResourcesListContainor containor;
         public ResourcesListContainor Containor {
@@ -15,16 +15,15 @@ namespace Resource
             }
         }
 
-        public Transform ResourcePool;
-
-        public ToggleGroup TaggleGroup;
-
-        public void OnInit()
+        public void Init()
         {
-            containor = new ResourcesListContainor();
             ResourceGenerator.OnGenerate(Paths.CONFIG + "resourceConfig.json", ref containor);
             gameObject.SetActive(true);
         }
+
+        public Transform ResourcePool;
+
+        public ToggleGroup TaggleGroup;
 
         void OnEnable()
         {
@@ -46,6 +45,15 @@ namespace Resource
                     TaggleGroup.RegisterToggle(t);
                 }
             }
+        }
+
+        public override void OnInitialize()
+        {
+            containor = new ResourcesListContainor();
+        }
+
+        public override void OnUninitialize()
+        {
         }
     }
 

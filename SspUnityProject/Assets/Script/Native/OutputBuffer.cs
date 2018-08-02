@@ -13,7 +13,7 @@ public class OutputConfig
 	public string OutputPath;
 }
 
-public class OutputBuffer : MonoBehaviour, IConfigable {
+public class OutputBuffer : Singleton<OutputBuffer>, IConfigable {
 
     //RenderTexture buffer;
     Material bufferMaterial;
@@ -51,8 +51,7 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
 
     public void StartPush(Texture outputBuffer)
     {
-        encoder.GetComponent<Camera>().enabled = true;
-        bufferMaterial.mainTexture = outputBuffer;
+        encoder.EncodeFrame((RenderTexture)outputBuffer);
         encoder.StartLiveStreaming(config["Output"]["outputUrl"].ToString());
     }
 
@@ -63,6 +62,16 @@ public class OutputBuffer : MonoBehaviour, IConfigable {
     }
 
     public void SetDefaultConfig()
+    {
+        
+    }
+
+    public override void OnInitialize()
+    {
+        
+    }
+
+    public override void OnUninitialize()
     {
         
     }

@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Resource
 {
-    public class ResourceGroupManager : MonoBehaviour
+    public class ResourceGroupManager : Singleton<ResourceGroupManager>
     {
         public Transform ResourceGroupContainor;
 
@@ -62,6 +63,16 @@ namespace Resource
             var rect = o.GetComponent<Transform>();
             rect.parent = ResourceGroupContainor;
             o.GetComponent<ResourceGroupItem>().SetContent(rg);
+        }
+
+        public override void OnInitialize()
+        {
+
+        }
+
+        public override void OnUninitialize()
+        {
+
         }
     }
 

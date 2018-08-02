@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RenderProcessManager: MonoBehaviour {
+public class RenderProcessManager: Singleton<RenderProcessManager> {
 
     List<CommonRenderProcess> branchProcessPath = new List<CommonRenderProcess>();
     int currentProcessIndex = -1;
@@ -99,6 +99,14 @@ public class RenderProcessManager: MonoBehaviour {
 
             yield return new WaitForEndOfFrame();
         }
+    }
+
+    public override void OnInitialize()
+    {
+    }
+
+    public override void OnUninitialize()
+    {
     }
 }
 

@@ -4,15 +4,9 @@ using System;
 using UnityEngine;
 using Resource;
 
-public class GroupTraveller {
+public class GroupTraveller : Singleton<GroupTraveller> {
 
     public event Action PreviewListChange;
-
-    public GroupTraveller()
-    {
-        ResourceDisplayList.Create();
-        ResourceGroupList.Instance.OnResourceGroupChange += OnTravel;
-    }
 
 
     public void OnTravel()
@@ -56,6 +50,16 @@ public class GroupTraveller {
             }
             
         }
+    }
+
+    public override void OnInitialize()
+    {
+        ResourceGroupList.Instance.OnResourceGroupChange += OnTravel;
+    }
+
+    public override void OnUninitialize()
+    {
+        ResourceGroupList.Instance.OnResourceGroupChange -= OnTravel;
     }
 }
 

@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class VcamList : Singleton<VcamList>, IConfigable
 {
-    List<VCam> Cam = new List<VCam>();
+    List<VCam> Cam = new List<VCam>(); 
     Configuration config;
 
     public void LoadConfig()
@@ -28,8 +28,8 @@ public class VcamList : Singleton<VcamList>, IConfigable
                 var obj = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>(""));
                 obj.name = "DefaultBuffer";
                 obj.transform.parent = transform;
-                VCam v = VCamFactory.Create(key.Value, obj);
-                v.controller.Start();
+                InputSource source = new InputSource(key.Value);
+                VCam v = new VCam(source);
                 Add(v);
             }
         }
@@ -42,7 +42,7 @@ public class VcamList : Singleton<VcamList>, IConfigable
 
     public override void OnInitialize()
     {
-        LoadConfig();
+
     }
 
     public override void OnUninitialize()
