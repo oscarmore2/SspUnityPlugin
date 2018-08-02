@@ -6,6 +6,9 @@ using UnityPlugin.Decoder;
 
 public abstract class IInputSource
 {
+	public static readonly ConfigProperty<float> Exposure = new ConfigProperty<float>("Exposure", 1f);
+    public static readonly ConfigProperty<float> Temperature = new ConfigProperty<float>("Temperature", 1f);
+
 	public abstract void Begin();
 
 	public abstract void Pause();
@@ -14,19 +17,8 @@ public abstract class IInputSource
 
 	public abstract void End();
 
-	public bool ApplyConfig(InputConfig config)
-	{
-		foreach (var p in config.All)
-		{
-			setProperty(p.Key, p.Value);
-		}
+	public abstract Surface CreateSurface(Rect rect);
 
-		return true;
-	}
-
-	protected abstract bool setProperty(string name, object value);
-
-	public abstract InputConfig ExtracConfig();
 }
 
 public class InputSource : IInputSource
@@ -36,7 +28,6 @@ public class InputSource : IInputSource
 	public static readonly string URL_FILE = "file://";
 	public static readonly string URL_DECKLINK = "decklink://";
 
-	
 	protected MediaDecoder mediaDecoder;
 
 	public static Type FindDecoderType(string url) 
@@ -83,18 +74,8 @@ public class InputSource : IInputSource
 		mediaDecoder.stopDecoding();
 	}
 
-	protected override bool setProperty(string name, object value)
+	public override Surface CreateSurface(Rect rect)
 	{
-		throw new System.NotImplementedException();
-	}
-
-	public override InputConfig ExtracConfig()
-	{
-		return new InputConfig();
-	}
-
-	public Surface CreateSurface()
-	{
-		return new Surface(mediaDecoder);
+		return new Surface(mediaDecoder, rect);
 	}
 }

@@ -27,7 +27,7 @@ public class InputSourceProvider
 		return false;
 	}
 
-	public static bool IsSourceAvaliable(string url, InputConfig config)
+	public static bool IsSourceAvaliable(string url, ConfigTable config)
 	{
 		return false;
 	}

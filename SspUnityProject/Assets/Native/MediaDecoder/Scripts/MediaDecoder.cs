@@ -11,32 +11,6 @@ using UnityEngine.UI;
 
 namespace UnityPlugin.Decoder
 {
-    public class Surface
-    {
-        protected MediaDecoder decoder = null;
-        protected Rect rect = new Rect(0, 0, 1, 1);
-
-        public Texture GetTexture()
-        {
-            return decoder.GetResult();
-        }
-
-        public Rect GetRect()
-        {
-            return rect;
-        }
-
-        public void SetRect(Rect r)
-        {
-            rect = r;
-        }
-
-        public Surface(MediaDecoder d)
-        {
-            decoder = d;
-        }
-    }
-
     public abstract class MediaDecoder : MonoBehaviour
     {
         protected const string LOG_TAG = "[Decoder]";
