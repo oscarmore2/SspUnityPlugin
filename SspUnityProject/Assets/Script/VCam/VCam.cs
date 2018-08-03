@@ -10,8 +10,6 @@ public class VCam
 
     public VCamController controller { get; protected set; }
 
-	public Surface currentSurface{ get; set;}
-
     public VCam(IInputSource s)
     {
         source = s;

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Resource
 {
-    public class ResourceGroupManager : Singleton<ResourceGroupManager>
+    public class ResourceGroupManager : MonoBehaviour
     {
         public Transform ResourceGroupContainor;
 
@@ -42,7 +42,7 @@ namespace Resource
 
         void OnEnable()
         {
-            if (ResourceGroupContainor == null)
+            if (ResourceGroupContainor == null || ResourceGroupList.Instance == null)
             {
                 gameObject.SetActive(false);
                 return;
@@ -65,15 +65,6 @@ namespace Resource
             o.GetComponent<ResourceGroupItem>().SetContent(rg);
         }
 
-        public override void OnInitialize()
-        {
-
-        }
-
-        public override void OnUninitialize()
-        {
-
-        }
     }
 
 

@@ -25,9 +25,6 @@ public class VcamList : Singleton<VcamList>, IConfigable
         {
             if (key.KeyName.Contains("url"))
             {
-                var obj = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>(""));
-                obj.name = "DefaultBuffer";
-                obj.transform.parent = transform;
                 InputSource source = new InputSource(key.Value);
 				source.CreateSurface (new Rect (1, 1, 1, 1));
                 VCam v = new VCam(source);
@@ -71,17 +68,16 @@ public class VCamMappingTable : MonoBehaviour,  IConfigable
 {
 
     private Dictionary<VCam, IView> VCamIViewDictionary = new Dictionary<VCam, IView>();
-    private Dictionary<IView, VCamRender> IViewRenderDictionary = new Dictionary<IView, VCamRender>();
 
     public Configuration config { get; private set; }
 
-	public void BindVcam(ref VCam vcam, VCamView view, Rect rect)
+	public void BindVcam(VCam vcam, VCamView view, Rect rect)
     {
 		var source = (InputSource)vcam.source;
 		var surface = source.CreateSurface (rect);
         VCamIViewDictionary[vcam] = view;
-		vcam.currentSurface = surface;
-		view.SetImage (surface);
+		view.SetSurface (surface);
+        source.Begin();
     }
 
     public IView GetViewByVcam(VCam cam)
@@ -91,16 +87,16 @@ public class VCamMappingTable : MonoBehaviour,  IConfigable
 
     public bool GetVcamByView(IView view, ref VCam vcam)
     {
-        if (!IViewRenderDictionary.ContainsKey(view))
+        if (!VCamIViewDictionary.ContainsValue(view))
             return false;
 
-        foreach (var v in VcamList.Instance.GetList())
+        foreach (var kp in VCamIViewDictionary)
         {
-//            if (v.ExistRender(IViewRenderDictionary[view]))
-//            {
-//                vcam = v;
-//                return true;
-//            }
+            if (kp.Value == view)
+            {
+                vcam = kp.Key;
+                return true;
+            }
         }
         return false;
     }

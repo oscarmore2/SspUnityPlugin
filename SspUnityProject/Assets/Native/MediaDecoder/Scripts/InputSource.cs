@@ -49,7 +49,7 @@ public class InputSource : IInputSource
 	{
 		GameObject o = new GameObject("Stream:" + url);
 		Type decoderType = FindDecoderType(url);
-		o.AddComponent(decoderType);
+        mediaDecoder = (MediaDecoder)o.AddComponent(decoderType);
 		mediaDecoder.mediaPath = url;
 	}
 

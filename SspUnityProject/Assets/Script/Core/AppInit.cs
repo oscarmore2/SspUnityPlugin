@@ -15,30 +15,29 @@ public class AppInit : Singleton<AppInit> {
     public event Func<bool> OnLoadDevice;
 
 	// Use this for initialization
-	void Start () {
+	public void Init () {
+        StartCoroutine(StartUpApp());
+    }
+
+    public override void OnInitialize()
+    {
         OnInitInterface += new Func<bool>(() =>
         {
-            Resource.ResourcesManager.Create();
-            Resource.ResourceGroupManager.Create();
             Resource.ResourceGroupList.Create();
             GroupTraveller.Create();
             RendererContainor.Create();
             VcamList.Create();
             RenderProcessManager.Create();
             OutputBuffer.Create();
-			ViewManager.Create();
-			AppInit.Create();
             return true;
         });
 
 
-        OnLoadResouce += new Func<bool>(()=>{
-            Resource.ResourcesManager.Instance.Init();
-            Resource.ResourceGroupManager.Instance.OnInit(Resource.ResourcesManager.Instance);
-            return true;
-        });
+        //OnLoadResouce += new Func<bool>(() => {
+        //    return true;
+        //});
 
-        OnSetUpRenderer += new Func<bool>(()=> {
+        OnSetUpRenderer += new Func<bool>(() => {
             RenderProcessManager.Instance.CreateBseicRenderProcess();
             return true;
         });
@@ -48,11 +47,6 @@ public class AppInit : Singleton<AppInit> {
             OutputBuffer.Instance.LoadConfig();
             return true;
         });
-    }
-
-    public override void OnInitialize()
-    {
-        StartCoroutine(StartUpApp());
     }
 
     IEnumerator StartUpApp()

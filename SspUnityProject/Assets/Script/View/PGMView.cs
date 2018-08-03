@@ -11,10 +11,10 @@ public class PGMView : IView {
 
     void Awake()
     {
-        outputBuffer = gameObject.AddComponent<OutputBuffer>();
-        outputBuffer.InitFromConfig();
-        renderProcessManager = RenderProcessFactory.CreateProcessManager(Vector3.left * 500);
-        renderProcessManager.transform.parent = transform;
+        //outputBuffer = gameObject.AddComponent<OutputBuffer>();
+        //outputBuffer.InitFromConfig();
+        //renderProcessManager = RenderProcessFactory.CreateProcessManager(Vector3.left * 500);
+        //renderProcessManager.transform.parent = transform;
         ViewImage = GetComponent<RawImage>();
     }
 

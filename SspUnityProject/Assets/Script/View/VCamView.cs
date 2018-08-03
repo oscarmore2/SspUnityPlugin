@@ -2,8 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityPlugin.Decoder;
 
 public class VCamView : IView {
+
+    Surface surface;
+
     protected override void OnHided()
     {
 
@@ -14,9 +18,14 @@ public class VCamView : IView {
 
     }
 
+    public void SetSurface(Surface _surface)
+    {
+        surface = _surface;
+    }
+
     public override void OnUpdateTexture(Texture tex)
     {
-
+        SetImage(tex);
     }
 
     // Use this for initialization
@@ -26,7 +35,10 @@ public class VCamView : IView {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (null != surface)
+        {
+            OnUpdateTexture(surface.GetTexture());
+        }
 	}
 
     

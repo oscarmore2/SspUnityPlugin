@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Resource
 {
-    public class ResourcesManager : Singleton<ResourcesManager>
+    public class ResourcesManager : MonoBehaviour
     {
         private ResourcesListContainor containor;
         public ResourcesListContainor Containor {
@@ -17,6 +17,7 @@ namespace Resource
 
         public void Init()
         {
+            containor = new ResourcesListContainor();
             ResourceGenerator.OnGenerate(Paths.CONFIG + "resourceConfig.json", ref containor);
             gameObject.SetActive(true);
         }
@@ -45,15 +46,6 @@ namespace Resource
                     TaggleGroup.RegisterToggle(t);
                 }
             }
-        }
-
-        public override void OnInitialize()
-        {
-            containor = new ResourcesListContainor();
-        }
-
-        public override void OnUninitialize()
-        {
         }
     }
 

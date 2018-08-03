@@ -10,9 +10,8 @@ public class resourceGroupTest : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        ResourcesManager.Create();
-        ResourceGroupList.Create();
-        ResGroupManager.OnInit(ResourcesManager.Instance);
+        ResManager.Init();
+        ResGroupManager.OnInit(ResManager);
     }
 	
 	// Update is called once per frame

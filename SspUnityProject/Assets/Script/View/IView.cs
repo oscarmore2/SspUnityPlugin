@@ -8,6 +8,11 @@ public abstract class IView : MonoBehaviour {
     [SerializeField]
     protected RawImage ViewImage;
 
+    void Awake()
+    {
+        ViewImage = GetComponent<RawImage>();
+    }
+
     public virtual void ShowView()
     {
         OnShown();
