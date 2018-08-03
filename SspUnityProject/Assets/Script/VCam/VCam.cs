@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityPlugin.Decoder;
 
 public class VCam
 {
     public IInputSource source { get; protected set; }
 
     public VCamController controller { get; protected set; }
+
+	public Surface currentSurface{ get; set;}
 
     public VCam(IInputSource s)
     {

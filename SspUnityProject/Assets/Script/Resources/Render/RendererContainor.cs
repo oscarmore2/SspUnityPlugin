@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class RendererContainor : Singleton<RendererContainor> {
 
+	Dictionary<string, IResourceRenderer> RenderPathMapping = new Dictionary<string, IResourceRenderer>();
+
     public override void OnInitialize()
     {
         
@@ -15,13 +17,5 @@ public class RendererContainor : Singleton<RendererContainor> {
         
     }
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    
 }

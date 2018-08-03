@@ -26,6 +26,8 @@ public class AppInit : Singleton<AppInit> {
             VcamList.Create();
             RenderProcessManager.Create();
             OutputBuffer.Create();
+			ViewManager.Create();
+			AppInit.Create();
             return true;
         });
 

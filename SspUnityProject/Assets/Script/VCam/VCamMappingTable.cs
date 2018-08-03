@@ -29,6 +29,7 @@ public class VcamList : Singleton<VcamList>, IConfigable
                 obj.name = "DefaultBuffer";
                 obj.transform.parent = transform;
                 InputSource source = new InputSource(key.Value);
+				source.CreateSurface (new Rect (1, 1, 1, 1));
                 VCam v = new VCam(source);
                 Add(v);
             }
@@ -74,30 +75,13 @@ public class VCamMappingTable : MonoBehaviour,  IConfigable
 
     public Configuration config { get; private set; }
 
-    public void BindVcam(VCam vcam, IView view)
+	public void BindVcam(ref VCam vcam, VCamView view, Rect rect)
     {
+		var source = (InputSource)vcam.source;
+		var surface = source.CreateSurface (rect);
         VCamIViewDictionary[vcam] = view;
-        VCam vcamOld = null;
-        if (GetVcamByView(view, ref vcamOld))
-        {
-            if (vcamOld == vcam)
-                return;
-
-//            vcamOld.RemoveRender((InputRawImageRender)IViewRenderDictionary[view]);
-//            vcamOld.OnSetTexture -= view.OnUpdateTexture;
-//            if (!vcam.ExistRender(IViewRenderDictionary[view]))
-//            {
-//                vcam.OnSetTexture += view.OnUpdateTexture;
-//                IViewRenderDictionary[view] = InputRenderProvide.Create(view.gameObject);
-//                vcam.AddRender(IViewRenderDictionary[view]);
-//            }
-        }
-        else
-        {
-//            vcam.OnSetTexture += view.OnUpdateTexture;
-//            IViewRenderDictionary[view] = InputRenderProvide.Create(view.gameObject);
-//            vcam.AddRender(IViewRenderDictionary[view]);
-        }
+		vcam.currentSurface = surface;
+		view.SetImage (surface);
     }
 
     public IView GetViewByVcam(VCam cam)

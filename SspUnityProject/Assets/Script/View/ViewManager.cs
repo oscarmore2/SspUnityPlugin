@@ -3,27 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ViewManager : MonoBehaviour {
+public class ViewManager : Singleton<ViewManager> {
 
     public PGMView PGM;
     public PVWView PVW;
-    public List<VCamView> Vcams = new List<VCamView>();
+    public List<VCamView> VCamView = new List<VCamView>();
 
     public VCamMappingTable MappingTable;
 
     public void InitView()
     {
-        MappingTable.BindVcam(VcamList.Instance.GetList()[0], PGM);
         for (int i = 0; i < VcamList.Instance.GetList().Count; i++)
         {
-            MappingTable.BindVcam(VcamList.Instance.GetList()[i], Vcams[i]);
+			MappingTable.BindVcam(ref VcamList.Instance.GetList()[i], VCamView[i], new Rect(1, 1, 1, 1));
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
     void OnChangeBiding()
     {
@@ -35,7 +29,7 @@ public class ViewManager : MonoBehaviour {
         VCam cam = null;
         if (MappingTable.GetVcamByView(view, ref cam))
         {
-            MappingTable.BindVcam(cam, PVW);
+			MappingTable.BindVcam(ref cam, PVW, new Rect(1, 1, 1, ,1));
         }
     }
 
@@ -53,4 +47,13 @@ public class ViewManager : MonoBehaviour {
     {
 
     }
+
+	public override void OnInitialize()
+	{
+		
+	}
+
+	public override void OnUninitialize()
+	{
+	}
 }
