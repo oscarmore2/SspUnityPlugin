@@ -5,23 +5,18 @@
     <ClCompile Include="..\..\source\NativeDecoder\DecoderFFmpeg.cpp" />
     <ClCompile Include="..\..\source\NativeDecoder\DecoderSsp.cpp" />
     <ClCompile Include="..\..\source\NativeDecoder\DX11TextureObject.cpp" />
-    <ClCompile Include="..\..\source\NativeDecoder\FileIOContext.cpp" />
     <ClCompile Include="..\..\source\NativeDecoder\Logger.cpp" />
     <ClCompile Include="..\..\source\NativeDecoder\NativeDecoder.cpp" />
-    <ClCompile Include="..\..\source\NativeDecoder\SspIOContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\NativeDecoder\AVHandler.h" />
     <ClInclude Include="..\..\source\NativeDecoder\DecoderFFmpeg.h" />
     <ClInclude Include="..\..\source\NativeDecoder\DecoderSsp.h" />
     <ClInclude Include="..\..\source\NativeDecoder\DX11TextureObject.h" />
-    <ClInclude Include="..\..\source\NativeDecoder\FileIOContext.h" />
     <ClInclude Include="..\..\source\NativeDecoder\IDecoder.h" />
-    <ClInclude Include="..\..\source\NativeDecoder\IIOContext.h" />
     <ClInclude Include="..\..\source\NativeDecoder\ITextureObject.h" />
     <ClInclude Include="..\..\source\NativeDecoder\Logger.h" />
     <ClInclude Include="..\..\source\NativeDecoder\NativeDecoder.h" />
-    <ClInclude Include="..\..\source\NativeDecoder\SspIOContext.h" />
     <ClInclude Include="..\..\source\NativeDecoder\Unity\IUnityGraphics.h">
       <Filter>Unity</Filter>
     </ClInclude>
