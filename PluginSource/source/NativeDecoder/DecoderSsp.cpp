@@ -44,7 +44,7 @@ DecoderSsp::DecoderSsp()
 	mSwrContext = NULL;
 	mVideoBuffMax = 12;
 	mAudioBuffMax = 24;
-	mQueueMaxSize = 25;
+	mQueueMaxSize = 3;
 	memset(&mVideoInfo, 0, sizeof(VideoInfo));
 	memset(&mAudioInfo, 0, sizeof(AudioInfo));
 	memset(&mVideoMeta, 0, sizeof(imf::SspVideoMeta));
@@ -516,16 +516,21 @@ int DecoderSsp::getMetaData(char**& key, char**& value)
 	return metaCount;
 }
 
+bool DecoderSsp::isContentReady()
+{
+	return mIsConnected;
+}
+
 void DecoderSsp::on_264(uint8_t * data, size_t len, uint64_t pts, uint32_t frm_no, uint32_t type)
 {
-	H264Data* h264 = pack_h264_data(data, len, pts, frm_no, type);
-	mH264Queue.queue(h264);
 	if (mH264Queue.size() >= mQueueMaxSize)
 	{
 		LOG("H264 queue size is full, the decoder is too slow.\n");
 	}
 	else
 	{
+		H264Data* h264 = pack_h264_data(data, len, pts, frm_no, type);
+		mH264Queue.queue(h264);
 		LOG("Receive H264 and current size %d.\n", mH264Queue.size());
 	}
 }
@@ -541,12 +546,12 @@ void DecoderSsp::on_meta(struct imf::SspVideoMeta *v, struct imf::SspAudioMeta *
 	mAudioInfo.sampleRate = mAudioMeta.sample_rate;
 	mAudioInfo.bufferState = IDecoder::EMPTY;
 	memcpy(&mSSpMeta, s, sizeof(imf::SspMeta));
+	mIsConnected = true;
 }
 
 void DecoderSsp::on_disconnect()
 {
 	LOG("Ssp is disconnected.\n");
 	mDtsIndex = 0;
-	//TODO: reconnect ssp server or push flush packet
 }
 

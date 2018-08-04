@@ -130,6 +130,11 @@ void AVHandler::setSeekTime(float sec) {
 	mDecoderState = SEEK;
 }
 
+bool AVHandler::isContentReady()
+{
+	return mIDecoder->isContentReady();
+}
+
 IDecoder::VideoInfo AVHandler::getVideoInfo() {
 	return mIDecoder->getVideoInfo();
 }

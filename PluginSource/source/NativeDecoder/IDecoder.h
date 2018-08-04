@@ -41,6 +41,6 @@ public:
 	virtual double getAudioFrame(unsigned char** outputFrame, int& frameSize) = 0;
 	virtual void freeVideoFrame() = 0;
 	virtual void freeAudioFrame() = 0;
-
+	virtual bool isContentReady() = 0;
 	virtual int getMetaData(char**& key, char**& value) = 0;
 };

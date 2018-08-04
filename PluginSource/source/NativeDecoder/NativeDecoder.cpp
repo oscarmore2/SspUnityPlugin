@@ -140,7 +140,7 @@ void DoRendering (int id)
 					if (ptrY != NULL && curFrameTime != -1 && localVideoContext->lastUpdateTime != curFrameTime) {
 						localVideoContext->textureObj->upload(ptrY, ptrU, ptrV);
 						localVideoContext->lastUpdateTime = (float)curFrameTime;
-						localVideoContext->isContentReady = true;
+						//localVideoContext->isContentReady = true;
 					}
 					localAVHandler->freeVideoFrame();
 				}
@@ -163,7 +163,7 @@ int nativeCreateDecoderAsync(const char* filePath, int& id) {
 	id = context.id;
 	context.path = (char*)malloc(sizeof(char) * (strlen(filePath) + 1));
 	strcpy_s(context.path, strlen(filePath) + 1, filePath);
-	context.isContentReady = false;
+	//context.isContentReady = false;
 	videoContexts.push_back(std::move(context));
 
 	getVideoContextIter(id, &iter);
@@ -187,7 +187,7 @@ int nativeCreateDecoder(const char* filePath, int& id) {
 	context.id = newID;
 	id = context.id;
 	context.path = NULL;
-	context.isContentReady = false;
+	//context.isContentReady = false;
 	context.avhandler->init(filePath);
 
 	videoContexts.push_back(std::move(context));
@@ -225,9 +225,9 @@ bool nativeStartDecoding(int id) {
 		avhandler->startDecoding();
 	}
 
-	if (!avhandler->getVideoInfo().isEnabled) {
-		iter->isContentReady = true;
-	}
+	//if (!avhandler->getVideoInfo().isEnabled) {
+	//	iter->isContentReady = true;
+	//}
 
 	return true;
 }
@@ -259,7 +259,7 @@ void nativeDestroyDecoder(int id) {
 		iter->textureObj = NULL;
 	}
 
-	iter->isContentReady = false;
+	//iter->isContentReady = false;
 
 	videoContexts.erase(iter);
 }
@@ -345,21 +345,21 @@ void nativeFreeAudioData(int id) {
 }
 
 void nativeSetSeekTime(int id, float sec) {
-	VideoContextIter iter;
-	if (!getVideoContextIter(id, &iter)) { return; }
+	//VideoContextIter iter;
+	//if (!getVideoContextIter(id, &iter)) { return; }
 
-	if (iter->avhandler->getDecoderState() < AVHandler::DecoderState::INITIALIZED) {
-		LOG("Decoder is unavailable currently. \n");
-		return;
-	}
+	//if (iter->avhandler->getDecoderState() < AVHandler::DecoderState::INITIALIZED) {
+	//	LOG("Decoder is unavailable currently. \n");
+	//	return;
+	//}
 
-	LOG("nativeSetSeekTime %f. \n", sec);
-	iter->avhandler->setSeekTime(sec);
-	if (!iter->avhandler->getVideoInfo().isEnabled) {
-		iter->isContentReady = true;
-	} else {
-		iter->isContentReady = false;
-	}
+	//LOG("nativeSetSeekTime %f. \n", sec);
+	//iter->avhandler->setSeekTime(sec);
+	//if (!iter->avhandler->getVideoInfo().isEnabled) {
+	//	iter->isContentReady = true;
+	//} else {
+	//	iter->isContentReady = false;
+	//}
 }
 
 bool nativeIsSeekOver(int id) {
@@ -457,7 +457,7 @@ bool nativeIsContentReady(int id) {
 	VideoContextIter iter;
 	if (!getVideoContextIter(id, &iter)) { return false; }
 
-	return iter->isContentReady;
+	return iter->avhandler->isContentReady() && iter->textureObj!=NULL;
 }
 
 void nativeSetVideoEnable(int id, bool isEnable) {

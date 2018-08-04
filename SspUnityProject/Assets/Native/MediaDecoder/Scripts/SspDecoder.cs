@@ -470,7 +470,13 @@ namespace UnityPlugin.Decoder
 			var nativeTexturePtrY = new IntPtr();
 			var nativeTexturePtrU = new IntPtr();
 			var nativeTexturePtrV = new IntPtr();
-			DecoderNative.nativeCreateTexture(decoderID, ref nativeTexturePtrY, ref nativeTexturePtrU, ref nativeTexturePtrV);
+            var duration = 0.0f;
+            DecoderNative.nativeGetVideoFormat(decoderID, ref videoWidth, ref videoHeight, ref duration);
+            videoTotalTime = duration > 0 ? duration : -1.0f;
+            print(LOG_TAG + " Video format: (" + videoWidth + ", " + videoHeight + ")");
+            if (videoTotalTime > 0)
+                print(LOG_TAG + " Total time: " + videoTotalTime);
+            DecoderNative.nativeCreateTexture(decoderID, ref nativeTexturePtrY, ref nativeTexturePtrU, ref nativeTexturePtrV);
 			videoTexYch = Texture2D.CreateExternalTexture(videoWidth, videoHeight, TextureFormat.Alpha8, false, false, nativeTexturePtrY);
 			videoTexUch = Texture2D.CreateExternalTexture(videoWidth / 2, videoHeight / 2, TextureFormat.Alpha8, false, false, nativeTexturePtrU);
 			videoTexVch = Texture2D.CreateExternalTexture(videoWidth / 2, videoHeight / 2, TextureFormat.Alpha8, false, false, nativeTexturePtrV);
@@ -512,36 +518,36 @@ namespace UnityPlugin.Decoder
 			if (result == 1)
 			{
 				print(LOG_TAG + " Init success.");
-				isVideoEnabled = DecoderNative.nativeIsVideoEnabled(decoderID);
-				if (isVideoEnabled)
-				{
-					var duration = 0.0f;
-					DecoderNative.nativeGetVideoFormat(decoderID, ref videoWidth, ref videoHeight, ref duration);
-					videoTotalTime = duration > 0 ? duration : -1.0f;
-					print(LOG_TAG + " Video format: (" + videoWidth + ", " + videoHeight + ")");
-					if (videoTotalTime > 0)
-						print(LOG_TAG + " Total time: " + videoTotalTime);
-					setTextures(null, null, null);
-					useDefault = true;
-				}
+                isVideoEnabled = DecoderNative.nativeIsVideoEnabled(decoderID);
+                //if (isVideoEnabled)
+                //{
+                //	var duration = 0.0f;
+                //	DecoderNative.nativeGetVideoFormat(decoderID, ref videoWidth, ref videoHeight, ref duration);
+                //	videoTotalTime = duration > 0 ? duration : -1.0f;
+                //	print(LOG_TAG + " Video format: (" + videoWidth + ", " + videoHeight + ")");
+                //	if (videoTotalTime > 0)
+                //		print(LOG_TAG + " Total time: " + videoTotalTime);
+                //	setTextures(null, null, null);
+                //	useDefault = true;
+                //}
 
-				//	Initialize audio.
-				isAudioEnabled = DecoderNative.nativeIsAudioEnabled(decoderID);
-				print(LOG_TAG + " isAudioEnabled = " + isAudioEnabled);
-				if (isAudioEnabled)
-				{
-					if (isAllAudioChEnabled)
-					{
-						DecoderNative.nativeSetAudioAllChDataEnable(decoderID, isAllAudioChEnabled);
-						getAudioFormat();
-					}
-					else
-					{
-						getAudioFormat();
-						initAudioSource();
-					}
-				}
-				decoderState = DecoderNative.DecoderState.INITIALIZED;
+                ////	Initialize audio.
+                isAudioEnabled = DecoderNative.nativeIsAudioEnabled(decoderID);
+                //print(LOG_TAG + " isAudioEnabled = " + isAudioEnabled);
+                //if (isAudioEnabled)
+                //{
+                //	if (isAllAudioChEnabled)
+                //	{
+                //		DecoderNative.nativeSetAudioAllChDataEnable(decoderID, isAllAudioChEnabled);
+                //		getAudioFormat();
+                //	}
+                //	else
+                //	{
+                //		getAudioFormat();
+                //		initAudioSource();
+                //	}
+                //}
+                decoderState = DecoderNative.DecoderState.INITIALIZED;
 				if (onInitComplete != null)
 				{
 					onInitComplete.Invoke();
@@ -631,16 +637,16 @@ namespace UnityPlugin.Decoder
 				case DecoderNative.DecoderState.START:
 					if (isVideoEnabled)
 					{
-						//  Prevent empty texture generate green screen.(default 0,0,0 in YUV which is green in RGB)
-						if (useDefault && DecoderNative.nativeIsContentReady(decoderID))
-						{
-							getTextureFromNative();
-							setTextures(videoTexYch, videoTexUch, videoTexVch);
-							useDefault = false;
-						}
+                        //  Prevent empty texture generate green screen.(default 0,0,0 in YUV which is green in RGB)
+                        if (useDefault && DecoderNative.nativeIsContentReady(decoderID))
+                        {
+                            getTextureFromNative();
+                            setTextures(videoTexYch, videoTexUch, videoTexVch);
+                            useDefault = false;
+                        }
 
-						//	Update video frame by dspTime.
-						var setTime = curRealTime - globalStartTime;
+                        //	Update video frame by dspTime.
+                        var setTime = curRealTime - globalStartTime;
 
 						//	Normal update frame.
 						if (setTime < videoTotalTime || videoTotalTime <= 0)
@@ -661,8 +667,8 @@ namespace UnityPlugin.Decoder
 						{
 							isVideoReadyToReplay = true;
 						}
-					}
-					if (DecoderNative.nativeIsVideoBufferEmpty(decoderID) && !DecoderNative.nativeIsEOF(decoderID))
+                    }
+                    if (DecoderNative.nativeIsVideoBufferEmpty(decoderID) && !DecoderNative.nativeIsEOF(decoderID))
 					{
 						decoderState = DecoderNative.DecoderState.BUFFERING;
 						hangTime = curRealTime - globalStartTime;

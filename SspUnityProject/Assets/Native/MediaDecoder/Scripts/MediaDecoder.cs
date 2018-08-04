@@ -14,8 +14,11 @@ namespace UnityPlugin.Decoder
     public abstract class MediaDecoder : MonoBehaviour
     {
         protected const string LOG_TAG = "[Decoder]";
+        [SerializeField]
         protected Texture2D videoTexYch;
+        [SerializeField]
         protected Texture2D videoTexUch;
+        [SerializeField]
         protected Texture2D videoTexVch;
         protected int videoWidth = -1;
         protected int videoHeight = -1;
@@ -32,14 +35,15 @@ namespace UnityPlugin.Decoder
             if (null == resultRT && ytex != null)
             {
                 resultRT = new CustomRenderTexture(ytex.width, ytex.height);
+                //resultRT.initializationMode = CustomRenderTextureUpdateMode.Realtime;
                 resultRT.Create();
-            }
-            if (resultRT)
-            {
                 if (null == resultRT.material)
                 {
                     resultRT.material = new Material(Shader.Find("CustomRenderTexture/RT_YUV2RGBA"));
                 }
+            }
+            if (resultRT != null)
+            {
                 resultRT.material.SetTexture("_YTex", ytex);
                 resultRT.material.SetTexture("_UTex", utex);
                 resultRT.material.SetTexture("_VTex", vtex);
@@ -48,7 +52,7 @@ namespace UnityPlugin.Decoder
 
         public virtual Texture GetResult()
         {
-            return resultRT;
+            return videoTexYch;
         }
 
         public abstract void setResume();

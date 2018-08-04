@@ -19,7 +19,7 @@ public:
 	void startDecoding();
 	void stopDecoding();
 	void setSeekTime(float sec);
-	
+	bool isContentReady();
 	double getVideoFrame(uint8_t** outputY, uint8_t** outputU, uint8_t** outputV);
 	double getAudioFrame(uint8_t** outputFrame, int& frameSize);
 	void freeVideoFrame();

@@ -382,6 +382,11 @@ int DecoderFFmpeg::getMetaData(char**& key, char**& value) {
 	return metaCount;
 }
 
+bool DecoderFFmpeg::isContentReady()
+{
+	return mVideoFrames.size() > 0;
+}
+
 void DecoderFFmpeg::destroy() {
 	if (mVideoCodecContext != NULL) {
 		avcodec_close(mVideoCodecContext);
