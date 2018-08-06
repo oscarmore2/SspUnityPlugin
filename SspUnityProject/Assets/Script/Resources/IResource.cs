@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using LitJson;
 using UnityEngine;
 
 namespace Resource
@@ -9,7 +11,7 @@ namespace Resource
         Text, Image, Sequence, Video
     }
 
-    public abstract class IResource
+    public abstract class IResource : IJsonConfigable
     {
 
         public string Name;
@@ -18,9 +20,15 @@ namespace Resource
 
         protected byte[] fileRef;
 
+
         public abstract ResourceType GetType();
         public abstract string GetPath();
 
         public abstract object GetFile();
+
+        public abstract void LoadConfig(JsonData data);
+
+        public abstract void SetConfig(JsonData data);
+        }
     }
 }

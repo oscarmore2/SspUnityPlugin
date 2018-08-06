@@ -5,13 +5,16 @@ using LitJson;
 using IniParser;
 using IniParser.Model;
 
-public interface IConfigable {
-
-
+public interface IIniConfigable {
 	void LoadConfig ();
 	void SetConfig();
     void SetDefaultConfig();
+}
 
+public interface IJsonConfigable
+{
+    void LoadConfig(JsonData data);
+    void SetConfig(JsonData data);
 }
 
 public class Configuration : IniData

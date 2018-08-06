@@ -51,22 +51,28 @@ namespace Resource
 
     public class ResourceGenerator
     {
+        public static Dictionary<string, Delegate> InitionMapping = new Dictionary<string, Delegate>();
         public static void OnGenerate(string path, ref ResourcesListContainor containor)
         {
             var ResourceConfig = new JsonConfiguration(path);
-            var TextResource = ResourceConfig["Texts"];
-            var ImageResource = ResourceConfig["Images"];
+            //var TextResource = ResourceConfig["Texts"];
+            //var ImageResource = ResourceConfig["Images"];
 
-            for (int i = 0; i < TextResource.Count; i++)
-            {
-                var res = JsonConfiguration.GetData<TextResoure>(TextResource[i]);
-                containor.AddResource(res);
-            }
+            //for (int i = 0; i < TextResource.Count; i++)
+            //{
+            //    var res = JsonConfiguration.GetData<TextResoure>(TextResource[i]);
+            //    containor.AddResource(res);
+            //}
 
-            for (int i = 0; i < ImageResource.Count; i++)
+            //for (int i = 0; i < ImageResource.Count; i++)
+            //{
+            //    var res = JsonConfiguration.GetData<ImageResource>(ImageResource[i]);
+            //    containor.AddResource(res);
+            //}
+
+            for (int i = 0; i < ResourceConfig.Count; i++)
             {
-                var res = JsonConfiguration.GetData<ImageResource>(ImageResource[i]);
-                containor.AddResource(res);
+                
             }
         }
 
