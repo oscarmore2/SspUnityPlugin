@@ -5,50 +5,6 @@
 #include <fstream>
 #include <string>
 
-/*	Update log:
-*	2015.03.17 Move sws_scale to decode thread, so that render thread would not cost time to do type-transform.
-*	2015.04.01 Add error handling for re-initialize and re-start.
-*	2015.04.09 Add null check for pop video/audio frame.
-*	2015.04.14 Add API for control the A/V decoding.
-*	2015.04.17 Fix replay frame broken issue.
-*	2015.04.20 Fix the AVPicture release position when re-initialize. Otherwise it would cause glTexSubImage2D crash.
-*	2015.04.24 Fix the crash when audio stream not found.
-*	2015.04.27 Fix the output video frame resolution to fit the PBO using.
-*	2015.04.29 Expand to double buffer for smooth video play.
-*	2015.04.30 Fix the double-buffering index switch mechanism.
-*	2015.05.04 Modify to triple buffering.
-*	2015.05.13 Found memory leak. AVFrame should be av_frame_unref after not using. Add av_free_packet.
-*	2015.05.15 Fix a issue of reach databuffer == 0.
-*	2015.05.19 Fix memory leak of mutex, queue and AVPackets. Fix reinitialize error from target with audio to without audio.
-*	2015.05.21 Remove mutex, modify the audio data pop process to consist with video data pop.
-*	2015.06.05 Replace state-based bool with enum.
-*	2015.07.21 Fix video seek function and add api to query the state.
-*	2015.08.12 Replace AVPicture with AVFrame to avoid sws_scale.
-*	2015.08.14 Solve non sequential frames side effect of remove sws_scale by change VideoCodecContext.
-*	2015.08.24 Modify get audio total time for prevent *.avi time error.
-*	2015.08.27 Modify get duration flow.
-*	2015.08.28 Modify popAudio to output the audio data length.
-*	2016.01.04 Replace pthread with std::thread to reduce library dependency.
-*	2016.01.15 Fix error when video is disabled by add flag to decode thread.
-*	2016.02.16 Fix crash in pure audio case in seek function.
-*	2016.03.25 Fix seek crash by move seek process to decode thread.
-*	2016.03.25 Fix seek over 2000 value overflow issue.
-*	2016.03.30 Fix seek flow to avoid redundant wait.
-*	2016.05.02 Extract decoder interface and refactor FFmpeg decoding code.
-*	2016.05.04 Extract logger to singleton.
-*	2016.05.12 Fix pure video related bugs.
-*	2016.07.21 Fix audio jitter caused by video buffer blocking audio buffer.
-*	2016.07.25 Fix memory leak.
-*	2016.08.31 Refactor to dynamic buffering. Add BufferState which record either FULL or EMPTY state for buffering judgement.
-*	2016.09.08 Fix the issue of state error.
-*	2016.10.27 Add API to get all audio channels.
-*	2016.10.28 Fix 32 bits dll loading fail problem. Root cause: lack of module definition(*.def), it may be included only for 64 bits.
-*	2016.11.03 Fix seek occasionally crash. Root cause: multi-thread race condition to operate buffer.
-*	2016.11.04 Fix performance issue that lock_guard too much.
-*	2016.11.16 Add native config file loading.
-*	2017.01.17 Separate video/audio buffer and mutex.
-*/
-
 DecoderFFmpeg::DecoderFFmpeg() {
 	mAVFormatContext = NULL;
 	mVideoStream = NULL;
@@ -78,11 +34,14 @@ DecoderFFmpeg::~DecoderFFmpeg() {
 
 bool DecoderFFmpeg::init(const char* filePath) {
 	if (mIsInitialized) {
-		LOG("Decoder has been init. \n");
+		LOG("DecoderFFmpeg has been init.\n");
 		return true;
 	}
-
-	if (filePath == NULL) {
+	std::string url = { filePath };
+	if (strncmp(filePath, "file://", strlen("file://")) == 0) {
+		url = std::string(filePath + strlen("file://"));
+	}
+	if (url.size()<=0) {
 		LOG("File path is NULL. \n");
 		return false;
 	}
@@ -96,8 +55,6 @@ bool DecoderFFmpeg::init(const char* filePath) {
 	int errorCode = 0;
 	errorCode = loadConfig();
 	if (errorCode < 0) {
-		LOG("config loading error. \n");
-		LOG("Use default settings. \n");
 		mVideoBuffMax = 64;
 		mAudioBuffMax = 128;
 		mUseTCP = false;
@@ -108,11 +65,11 @@ bool DecoderFFmpeg::init(const char* filePath) {
 	if (mUseTCP) {
 		av_dict_set(&opts, "rtsp_transport", "tcp", 0);
 	}
-	
-	errorCode = avformat_open_input(&mAVFormatContext, filePath, NULL, &opts);
+
+	errorCode = avformat_open_input(&mAVFormatContext, url.c_str(), NULL, &opts);
 	av_dict_free(&opts);
 	if (errorCode < 0) {
-		LOG("avformat_open_input error(%x). \n", errorCode);
+		LOG("avformat_open_input error(%x), path: %s\n", errorCode, url.c_str());
 		printErrorMsg(errorCode);
 		return false;
 	}
@@ -131,13 +88,14 @@ bool DecoderFFmpeg::init(const char* filePath) {
 	if (videoStreamIndex < 0) {
 		LOG("video stream not found. \n");
 		mVideoInfo.isEnabled = false;
-	} else {
+	}
+	else {
 		mVideoInfo.isEnabled = true;
 		mVideoStream = mAVFormatContext->streams[videoStreamIndex];
 		mVideoCodecContext = mVideoStream->codec;
 		mVideoCodecContext->refcounted_frames = 1;
 		mVideoCodec = avcodec_find_decoder(mVideoCodecContext->codec_id);
-		
+
 		if (mVideoCodec == NULL) {
 			LOG("Video codec not available. \n");
 			return false;
@@ -166,7 +124,8 @@ bool DecoderFFmpeg::init(const char* filePath) {
 	if (audioStreamIndex < 0) {
 		LOG("audio stream not found. \n");
 		mAudioInfo.isEnabled = false;
-	} else {
+	}
+	else {
 		mAudioInfo.isEnabled = true;
 		mAudioStream = mAVFormatContext->streams[audioStreamIndex];
 		mAudioCodecContext = mAudioStream->codec;
@@ -213,7 +172,8 @@ bool DecoderFFmpeg::decode() {
 
 		if (mVideoInfo.isEnabled && mPacket.stream_index == mVideoStream->index) {
 			updateVideoFrame();
-		} else if (mAudioInfo.isEnabled && mPacket.stream_index == mAudioStream->index) {
+		}
+		else if (mAudioInfo.isEnabled && mPacket.stream_index == mAudioStream->index) {
 			updateAudioFrame();
 		}
 
@@ -280,7 +240,7 @@ int DecoderFFmpeg::initSwrContext() {
 		inChannelLayout, inSampleFormat, inSampleRate,
 		0, NULL);
 
-	
+
 	if (swr_is_initialized(mSwrContext) == 0) {
 		errorCode = swr_init(mSwrContext);
 	}
@@ -289,13 +249,13 @@ int DecoderFFmpeg::initSwrContext() {
 	mAudioInfo.channels = av_get_channel_layout_nb_channels(outChannelLayout);
 	mAudioInfo.sampleRate = outSampleRate;
 	mAudioInfo.totalTime = mAudioStream->duration <= 0 ? (double)(mAVFormatContext->duration) / AV_TIME_BASE : mAudioStream->duration * av_q2d(mAudioStream->time_base);
-	
+
 	return errorCode;
 }
 
 double DecoderFFmpeg::getVideoFrame(unsigned char** outputY, unsigned char** outputU, unsigned char** outputV) {
 	std::lock_guard<std::mutex> lock(mVideoMutex);
-	
+
 	if (!mIsInitialized || mVideoFrames.size() == 0) {
 		LOG("Video frame not available. \n");
 		*outputY = *outputU = *outputV = NULL;
@@ -317,7 +277,7 @@ double DecoderFFmpeg::getVideoFrame(unsigned char** outputY, unsigned char** out
 double DecoderFFmpeg::getAudioFrame(unsigned char** outputFrame, int& frameSize) {
 	std::lock_guard<std::mutex> lock(mAudioMutex);
 	if (!mIsInitialized || mAudioFrames.size() == 0) {
-		LOG("Audio frame not available. \n");
+		//LOG("Audio frame not available. \n");
 		*outputFrame = NULL;
 		return -1;
 	}
@@ -338,7 +298,7 @@ void DecoderFFmpeg::seek(double time) {
 		return;
 	}
 
-	uint64_t timeStamp = (uint64_t) time * AV_TIME_BASE;
+	uint64_t timeStamp = (uint64_t)time * AV_TIME_BASE;
 
 	if (0 > av_seek_frame(mAVFormatContext, -1, timeStamp, mIsSeekToAny ? AVSEEK_FLAG_ANY : AVSEEK_FLAG_BACKWARD)) {
 		LOG("Seek time fail.\n");
@@ -352,7 +312,7 @@ void DecoderFFmpeg::seek(double time) {
 		flushBuffer(&mVideoFrames, &mVideoMutex);
 		mVideoInfo.lastTime = -1;
 	}
-	
+
 	if (mAudioInfo.isEnabled) {
 		if (mAudioCodecContext != NULL) {
 			avcodec_flush_buffers(mAudioCodecContext);
@@ -392,37 +352,37 @@ void DecoderFFmpeg::destroy() {
 		avcodec_close(mVideoCodecContext);
 		mVideoCodecContext = NULL;
 	}
-	
+
 	if (mAudioCodecContext != NULL) {
 		avcodec_close(mAudioCodecContext);
 		mAudioCodecContext = NULL;
 	}
-	
+
 	if (mAVFormatContext != NULL) {
 		avformat_close_input(&mAVFormatContext);
 		avformat_free_context(mAVFormatContext);
 		mAVFormatContext = NULL;
 	}
-	
+
 	if (mSwrContext != NULL) {
 		swr_close(mSwrContext);
 		swr_free(&mSwrContext);
 		mSwrContext = NULL;
 	}
-	
+
 	flushBuffer(&mVideoFrames, &mVideoMutex);
 	flushBuffer(&mAudioFrames, &mAudioMutex);
-	
+
 	mVideoCodec = NULL;
 	mAudioCodec = NULL;
-	
+
 	mVideoStream = NULL;
 	mAudioStream = NULL;
 	av_packet_unref(&mPacket);
-	
+
 	memset(&mVideoInfo, 0, sizeof(VideoInfo));
 	memset(&mAudioInfo, 0, sizeof(AudioInfo));
-	
+
 	mIsInitialized = false;
 	mIsAudioAllChEnabled = false;
 	mVideoBuffMax = 64;
@@ -447,12 +407,12 @@ bool DecoderFFmpeg::isBuffBlocked() {
 void DecoderFFmpeg::updateVideoFrame() {
 	int isFrameAvailable = 0;
 	AVFrame* frame = av_frame_alloc();
-	clock_t start = clock();
+	//clock_t start = clock();
 	if (avcodec_decode_video2(mVideoCodecContext, frame, &isFrameAvailable, &mPacket) < 0) {
 		LOG("Error processing data. \n");
 		return;
 	}
-	LOG("updateVideoFrame = %f\n", (float)(clock() - start) / CLOCKS_PER_SEC);
+	//LOG("updateVideoFrame = %f\n", (float)(clock() - start) / CLOCKS_PER_SEC);
 
 	if (isFrameAvailable) {
 		std::lock_guard<std::mutex> lock(mVideoMutex);
@@ -515,9 +475,11 @@ void DecoderFFmpeg::updateBufferState() {
 	if (mVideoInfo.isEnabled) {
 		if (mVideoFrames.size() >= mVideoBuffMax) {
 			mVideoInfo.bufferState = BufferState::FULL;
-		} else if(mVideoFrames.size() == 0) {
+		}
+		else if (mVideoFrames.size() == 0) {
 			mVideoInfo.bufferState = BufferState::EMPTY;
-		} else {
+		}
+		else {
 			mVideoInfo.bufferState = BufferState::NORMAL;
 		}
 	}
@@ -525,9 +487,11 @@ void DecoderFFmpeg::updateBufferState() {
 	if (mAudioInfo.isEnabled) {
 		if (mAudioFrames.size() >= mAudioBuffMax) {
 			mAudioInfo.bufferState = BufferState::FULL;
-		} else if (mAudioFrames.size() == 0) {
+		}
+		else if (mAudioFrames.size() == 0) {
 			mAudioInfo.bufferState = BufferState::EMPTY;
-		} else {
+		}
+		else {
 			mAudioInfo.bufferState = BufferState::NORMAL;
 		}
 	}
@@ -536,7 +500,7 @@ void DecoderFFmpeg::updateBufferState() {
 int DecoderFFmpeg::loadConfig() {
 	std::ifstream configFile("config", std::ifstream::in);
 	if (!configFile) {
-		LOG("config does not exist.\n");
+		//LOG("config does not exist.\n");
 		return -1;
 	}
 
@@ -552,8 +516,9 @@ int DecoderFFmpeg::loadConfig() {
 			else if (token == "BUFF_VIDEO_MAX") { buffVideoMax = stoi(value); }
 			else if (token == "BUFF_AUDIO_MAX") { buffAudioMax = stoi(value); }
 			else if (token == "SEEK_ANY") { seekAny = stoi(value); }
-		
-		} catch (...) {
+
+		}
+		catch (...) {
 			return -1;
 		}
 	}

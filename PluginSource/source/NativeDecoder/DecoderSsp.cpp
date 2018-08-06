@@ -114,7 +114,7 @@ AVFrame* DecoderSsp::convertToYUV420P(AVFrame* src)
 	dst->height = src->height;
 	if (NULL == mSwsContext)
 	{
-		mSwsContext = sws_getContext(src->width, src->height, (AVPixelFormat)src->format, 
+		mSwsContext = sws_getContext(src->width, src->height, (AVPixelFormat)src->format,
 			dst->width, dst->height, AV_PIX_FMT_YUV420P, SWS_BICUBIC, NULL, NULL, NULL);
 	}
 	int result = sws_scale(mSwsContext, (const uint8_t * const*)src->data, src->linesize, 0, src->height, dst->data, dst->linesize);
@@ -221,7 +221,7 @@ bool DecoderSsp::init(const char* filePath)
 		LOG("Decoder has been init. \n");
 		return true;
 	}
-	if (filePath == NULL ||strncmp(filePath,"ssp://",strlen("ssp://"))!=0) {
+	if (filePath == NULL || strncmp(filePath, "ssp://", strlen("ssp://")) != 0) {
 		LOG("Path is not a ssp url or null \n");
 		return false;
 	}
@@ -260,12 +260,12 @@ bool DecoderSsp::init(const char* filePath)
 	else
 	{
 		LOG("Init video codec: %s\n", mVideoCodec->long_name);
-		LOG("Codec pixel-format: %s, color-space: %s, color-range: %s. \n", 
+		LOG("Codec pixel-format: %s, color-space: %s, color-range: %s. \n",
 			av_get_pix_fmt_name(mVideoCodecContext->pix_fmt),
 			av_get_colorspace_name(mVideoCodecContext->colorspace),
 			av_color_range_name(mVideoCodecContext->color_range));
 	}
-	mThreadLooper = new imf::ThreadLoop(std::bind(&DecoderSsp::setup, this, _1,filePath+strlen("ssp://")));
+	mThreadLooper = new imf::ThreadLoop(std::bind(&DecoderSsp::setup, this, _1, filePath + strlen("ssp://")));
 	mThreadLooper->start();
 	mVideoInfo.isEnabled = true;
 	mAudioInfo.isEnabled = false;
@@ -291,7 +291,6 @@ bool DecoderSsp::decode()
 		auto start = clock();
 		av_init_packet(&mPacket);
 		mPacket.data = h264Data->data;
-		//mPacket.dts = (++mDtsIndex);
 		mPacket.size = h264Data->len;
 		int errorCode = avcodec_send_packet(mVideoCodecContext, &mPacket);
 		if (errorCode != 0)
@@ -325,8 +324,9 @@ bool DecoderSsp::decode()
 					frameDecoded->pkt_dts = ++mDtsIndex;
 					pushVideoFrame(frameDecoded);
 				}
-				if (frameCount > 0)
+				if (frameCount > 0) {
 					LOG("Decoder output more than 1 frame in 1 packet.\n");
+				}
 				frameCount++;
 			}
 		}
@@ -463,7 +463,7 @@ double DecoderSsp::getVideoFrame(unsigned char** outputY, unsigned char** output
 		*outputV = frame->data[1];
 		mVideoInfo.lastTime = (double)frame->pkt_dts / (double)mVideoMeta.timescale * (double)mVideoMeta.unit;
 	}
-		break;
+	break;
 	default:
 		break;
 	}
@@ -474,7 +474,7 @@ double DecoderSsp::getAudioFrame(unsigned char** outputFrame, int& frameSize)
 {
 	std::lock_guard<std::mutex> lock(mAudioMutex);
 	if (!mIsInitialized || mAudioFrames.size() == 0) {
-		LOG("Audio frame not available. ");
+		//LOG("Audio frame not available. ");
 		*outputFrame = NULL;
 		return -1;
 	}
