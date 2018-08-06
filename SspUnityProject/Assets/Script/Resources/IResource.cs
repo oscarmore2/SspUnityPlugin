@@ -20,15 +20,19 @@ namespace Resource
 
         protected byte[] fileRef;
 
+		public string GUID;
+
 
         public abstract ResourceType GetType();
         public abstract string GetPath();
 
+		public abstract IEnumerator LoadFile (Action callback);
         public abstract object GetFile();
+
+		public abstract byte[] GetBytes ();
 
         public abstract void LoadConfig(JsonData data);
 
         public abstract void SetConfig(JsonData data);
-        }
     }
 }

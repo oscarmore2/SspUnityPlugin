@@ -45,5 +45,15 @@ namespace Resource
             }
             return null;
         }
+
+		public IResource GetResourceByGUID(string GUID)
+		{
+			foreach (var res in containorList) {
+				if (res.GUID == GUID) {
+					return res;
+				}
+			}
+			return null;
+		}
     }
 }

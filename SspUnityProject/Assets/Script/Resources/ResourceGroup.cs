@@ -38,6 +38,7 @@ namespace Resource
         public class ResourceRefSerializer
         {
             public string type;
+			public string GUID;
             public int index;
         }
         public string Name;
@@ -58,20 +59,7 @@ namespace Resource
             foreach (var r in ResourceRefs)
             {
                 IResourceRef resRef;
-                if (r.type == "Texts")
-                {
-                    var res = resManager.Containor[r.index - 1];
-                    resRef = new IResourceRef(res);
-                }
-                else if (r.type == "Images")
-                {
-                    var res = resManager.Containor[Mathf.Clamp(r.index * 2 - 1, 2, 3)];
-                    resRef = new IResourceRef(res);
-                }
-                else
-                {
-                    resRef = new IResourceRef(null);
-                }
+				resRef = new IResourceRef(resManager.Containor.GetResourceByGUID(r.GUID));
                 resList.Add(resRef);
             }
             ResourceGroup rg = new ResourceGroup(resList);

@@ -18,7 +18,9 @@ namespace Resource
         public void Init()
         {
             containor = new ResourcesListContainor();
-            ResourceGenerator.OnGenerate(Paths.CONFIG + "resourceConfig.json", ref containor);
+			ResourceGenerator.InitionMapping ["Text"] = Resource.TextResoure.TextResoureGenerator.Generate;
+			ResourceGenerator.InitionMapping ["Image"] = Resource.ImageResource.ImageResourceGenerator.Generate;
+            ResourceGenerator.OnGenerate(Paths.CONFIG + "resourceConfig_new.json", ref containor);
             gameObject.SetActive(true);
         }
 
@@ -51,7 +53,8 @@ namespace Resource
 
     public class ResourceGenerator
     {
-        public static Dictionary<string, Delegate> InitionMapping = new Dictionary<string, Delegate>();
+		public delegate IResource Creator(LitJson.JsonData _data); 
+		public static Dictionary<string, Creator> InitionMapping = new Dictionary<string, Creator>();
         public static void OnGenerate(string path, ref ResourcesListContainor containor)
         {
             var ResourceConfig = new JsonConfiguration(path);
@@ -72,7 +75,8 @@ namespace Resource
 
             for (int i = 0; i < ResourceConfig.Count; i++)
             {
-                
+				var res  = InitionMapping [ResourceConfig [i] ["Type"].ToString()] (ResourceConfig [i]);
+				containor.AddResource(res);
             }
         }
 

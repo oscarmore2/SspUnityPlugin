@@ -9,6 +9,8 @@ namespace Resource
     public class ImageResource : IResource
     {
         Texture2D Data;
+		public int Width;
+		public int Height;
         public override object GetFile()
         {
             if (null == fileRef)
@@ -29,31 +31,64 @@ namespace Resource
             return ResourceType.Image;
         }
 
-        public override void LoadConfig(JsonData data)
-        {
-            
-        }
+		public override byte[] GetBytes ()
+		{
+			return fileRef;
+		}
 
-        public static ImageResource Generate(JsonData data)
-        {
-            var res = JsonConfiguration.GetData<ImageResource>(data);
-            return res;
-        }
+		public override void LoadConfig(JsonData data)
+		{
+			var _Path = data ["Path"].ToString();
+			_Path = _Path.Replace ("%streamingAssetsPath%", Application.streamingAssetsPath);
+			this.Path = _Path;
+		}
 
-        public IEnumerator LoadFile()
+		public override IEnumerator LoadFile(Action callback)
         {
-            WaitUntil wait = new WaitUntil(() =>
+            WaitUntil loadByte = new WaitUntil(() =>
             {
-                fileRef = System.IO.File.ReadAllBytes(Path);
-                return fileRef != null;
+				if (System.IO.File.Exists(Path))
+				{
+					fileRef = System.IO.File.ReadAllBytes(Path);
+					return fileRef != null;
+				}
+				else{
+					return true;	
+				}
             });
-            yield return wait;
-            Data.LoadImage(fileRef);
+            
+			WaitUntil convertImage = new WaitUntil(() =>
+				{
+					if (fileRef != null)
+					{
+						Data = new Texture2D(Width, Height);
+						Data.LoadImage(fileRef);
+						return Data.GetRawTextureData().Length > 0;
+					}
+					else{
+						return true;	
+					}
+				});
+			yield return loadByte;
+			yield return 1;
+			yield return convertImage;
+			callback ();
         }
 
         public override void SetConfig(JsonData data)
         {
-            throw new NotImplementedException();
+            
         }
+
+		public class ImageResourceGenerator
+		{
+			public static JsonData data;
+			public static ImageResource Generate(JsonData _data)
+			{
+				var res = JsonConfiguration.GetData<ImageResource>(_data);
+				res.LoadConfig (_data);
+				return res;
+			}
+		}
     }
 }
