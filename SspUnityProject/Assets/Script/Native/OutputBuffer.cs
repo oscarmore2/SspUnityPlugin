@@ -13,7 +13,7 @@ public class OutputConfig
 	public string OutputPath;
 }
 
-public class OutputBuffer : Singleton<OutputBuffer>, IConfigable {
+public class OutputBuffer : Singleton<OutputBuffer>, IIniConfigable {
 
     //RenderTexture buffer;
     Material bufferMaterial;

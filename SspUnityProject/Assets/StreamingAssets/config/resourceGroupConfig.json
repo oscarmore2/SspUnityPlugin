@@ -7,10 +7,12 @@
         "ResourceRefs":[
             {
                 "type":"Texts",
+                "GUID":"987496bc165880b168aed37b102d58d3",
                 "index":2
             },
             {
                 "type":"Images",
+                "GUID":"4d2f34fc3c3ffd2ab67319e64f92e984",
                 "index":1
             }
         ],
@@ -28,10 +30,12 @@
         "ResourceRefs":[
             {
                 "type":"Texts",
+                "GUID":"70145ba633a74ead406b371644d6a18f",
                 "index":1
             },
             {
                 "type":"Images",
+                "GUID":"1eb872e78e6e349553811c5bcb607bfb",
                 "index":2
             }
         ],

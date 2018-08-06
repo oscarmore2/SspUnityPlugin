@@ -6,7 +6,7 @@ using UnityEngine;
 /// <summary>
 /// List of physical camera
 /// </summary>
-public class VcamList : Singleton<VcamList>, IConfigable
+public class VcamList : Singleton<VcamList>, IIniConfigable
 {
     List<VCam> Cam = new List<VCam>(); 
     Configuration config;
@@ -64,7 +64,7 @@ public class VcamList : Singleton<VcamList>, IConfigable
     }
 }
 
-public class VCamMappingTable : MonoBehaviour,  IConfigable
+public class VCamMappingTable : MonoBehaviour,  IIniConfigable
 {
 
     private Dictionary<VCam, IView> VCamIViewDictionary = new Dictionary<VCam, IView>();

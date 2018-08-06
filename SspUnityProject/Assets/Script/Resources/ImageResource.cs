@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using LitJson;
 using UnityEngine;
 
 namespace Resource
@@ -28,6 +29,17 @@ namespace Resource
             return ResourceType.Image;
         }
 
+        public override void LoadConfig(JsonData data)
+        {
+            
+        }
+
+        public static ImageResource Generate(JsonData data)
+        {
+            var res = JsonConfiguration.GetData<ImageResource>(data);
+            return res;
+        }
+
         public IEnumerator LoadFile()
         {
             WaitUntil wait = new WaitUntil(() =>
@@ -37,6 +49,11 @@ namespace Resource
             });
             yield return wait;
             Data.LoadImage(fileRef);
+        }
+
+        public override void SetConfig(JsonData data)
+        {
+            throw new NotImplementedException();
         }
     }
 }
