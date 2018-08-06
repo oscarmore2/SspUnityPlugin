@@ -32,15 +32,18 @@ namespace UnityPlugin.Decoder
 
         protected void setTextures(Texture ytex, Texture utex, Texture vtex)
         {
-            if (null == resultRT && ytex != null)
+            if(null == ytex || null == utex || null == vtex)
             {
-                resultRT = new CustomRenderTexture(ytex.width, ytex.height);
-                //resultRT.initializationMode = CustomRenderTextureUpdateMode.Realtime;
-                resultRT.Create();
-                if (null == resultRT.material)
-                {
-                    resultRT.material = new Material(Shader.Find("CustomRenderTexture/RT_YUV2RGBA"));
-                }
+                return;
+            }
+            if (null == resultRT)
+            {
+                var res  = Resources.Load<CustomRenderTexture>("YUV2RGBA");
+                resultRT = CustomRenderTexture.Instantiate(res);
+                resultRT.material = new Material(Shader.Find("CustomRenderTexture/RT_YUV2RGBA"));
+                resultRT.width = ytex.width;
+                resultRT.height = ytex.height;
+                resultRT.Initialize();
             }
             if (resultRT != null)
             {
@@ -52,7 +55,7 @@ namespace UnityPlugin.Decoder
 
         public virtual Texture GetResult()
         {
-            return videoTexYch;
+            return resultRT;
         }
 
         public abstract void setResume();
