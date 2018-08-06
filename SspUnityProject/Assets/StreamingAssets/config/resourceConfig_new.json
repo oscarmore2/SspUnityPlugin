@@ -34,6 +34,8 @@
             "Path":"%streamingAssetsPath%/Resources/image/台标.png",
             "Type":"Image",
             "GUID":"70145ba633a74ead406b371644d6a18f",
+            "Width":158,
+            "Height":151,
             "Attrs":
                 {
                     "显示比例":"50%",
@@ -47,6 +49,8 @@
             "Path":"%streamingAssetsPath%/Resources/image/广告.png",
             "Type":"Image",
             "GUID":"1eb872e78e6e349553811c5bcb607bfb",
+            "Width":116,
+            "Height":90,
             "Attrs":
                 {
                     "显示比例":"50%",

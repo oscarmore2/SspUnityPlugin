@@ -33,6 +33,8 @@ public class Configuration : IniData
     
 }
 
+
+
 public class JsonConfiguration : JsonData
 {
 
@@ -77,6 +79,13 @@ public class JsonConfiguration : JsonData
             data[id] = value;
         }
     }
+
+	public int Count
+	{
+		get{ 
+			return data.Count;
+		}
+	}
 
     public JsonData this[string str]
     {
