@@ -111,6 +111,9 @@ public:
 
 	virtual int getMetaData(char**& key, char**& value) override;
 
+
+	virtual bool isContentReady() override;
+
 private:
 	std::mutex mVideoMutex;
 	std::mutex mAudioMutex;

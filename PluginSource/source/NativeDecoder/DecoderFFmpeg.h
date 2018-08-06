@@ -33,6 +33,9 @@ public:
 
 	int getMetaData(char**& key, char**& value);
 	
+
+	virtual bool isContentReady() override;
+
 private:
 	bool mIsInitialized;
 	bool mIsAudioAllChEnabled;
@@ -55,7 +58,7 @@ private:
 	SwrContext*	mSwrContext;
 	int initSwrContext();
 
-	VideoInfo	mVideoInfo;
+	VideoInfo	   mVideoInfo;
 	AudioInfo	mAudioInfo;
 	void updateBufferState();
 

@@ -15,18 +15,23 @@
     <ClCompile Include="..\..\source\NativeDecoder\DecoderFFmpeg.cpp" />
     <ClCompile Include="..\..\source\NativeDecoder\DecoderSsp.cpp" />
     <ClCompile Include="..\..\source\NativeDecoder\DX11TextureObject.cpp" />
+    <ClCompile Include="..\..\source\NativeDecoder\FileIOContext.cpp" />
     <ClCompile Include="..\..\source\NativeDecoder\Logger.cpp" />
     <ClCompile Include="..\..\source\NativeDecoder\NativeDecoder.cpp" />
+    <ClCompile Include="..\..\source\NativeDecoder\SspIOContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\NativeDecoder\AVHandler.h" />
     <ClInclude Include="..\..\source\NativeDecoder\DecoderFFmpeg.h" />
     <ClInclude Include="..\..\source\NativeDecoder\DecoderSsp.h" />
     <ClInclude Include="..\..\source\NativeDecoder\DX11TextureObject.h" />
+    <ClInclude Include="..\..\source\NativeDecoder\FileIOContext.h" />
     <ClInclude Include="..\..\source\NativeDecoder\IDecoder.h" />
+    <ClInclude Include="..\..\source\NativeDecoder\IIOContext.h" />
     <ClInclude Include="..\..\source\NativeDecoder\ITextureObject.h" />
     <ClInclude Include="..\..\source\NativeDecoder\Logger.h" />
     <ClInclude Include="..\..\source\NativeDecoder\NativeDecoder.h" />
+    <ClInclude Include="..\..\source\NativeDecoder\SspIOContext.h" />
     <ClInclude Include="..\..\source\NativeDecoder\Unity\IUnityGraphics.h" />
     <ClInclude Include="..\..\source\NativeDecoder\Unity\IUnityGraphicsD3D11.h" />
     <ClInclude Include="..\..\source\NativeDecoder\Unity\IUnityInterface.h" />
@@ -123,7 +128,7 @@ ENDLOCAL
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <AdditionalIncludeDirectories>../../include/libuv/include;../../include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swresample.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -133,7 +138,7 @@ ENDLOCAL
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>../../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\DELL\Desktop\NativeRenderingPlugin\PluginSource\lib\win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>SETLOCAL
