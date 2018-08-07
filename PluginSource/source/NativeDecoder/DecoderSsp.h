@@ -52,7 +52,7 @@ public:
 	{
 		std::lock_guard<std::mutex> lock(mOpMutex);
 		if (mDataList.size() <= 0)
-			return NULL;
+			return nullptr;
 
 		H264Data* data = mDataList.front();
 		mDataList.pop_front();
@@ -111,7 +111,6 @@ public:
 
 	virtual int getMetaData(char**& key, char**& value) override;
 
-
 	virtual bool isContentReady() override;
 
 private:
@@ -120,38 +119,33 @@ private:
 
 	bool mIsInitialized;
 	bool mIsAudioAllChEnabled;
-	bool mUseTCP;				//	For RTSP stream.
 	bool mIsConnected;
-	bool mIsSeekToAny;
 	int64_t mDtsIndex;
-
 	int mFrameBufferNum;
 
-	AVFormatContext* mAVFormatContext;
-	AVCodec*		mVideoCodec;
-	AVCodec*		mAudioCodec;
-	AVCodecContext*	mVideoCodecContext;
-	AVCodecContext*	mAudioCodecContext;
-	SwrContext*	mSwrContext;
-	SwsContext*   mSwsContext;
-	imf::SspClient * mSspClient;
-	imf::ThreadLoop * mThreadLooper;
+	AVFormatContext* 	mAVFormatContext;
+	AVCodec*			mVideoCodec;
+	AVCodec*			mAudioCodec;
+	AVCodecContext*		mVideoCodecContext;
+	AVCodecContext*		mAudioCodecContext;
+	SwrContext*			mSwrContext;
+	SwsContext*   		mSwsContext;
+	imf::SspClient * 	mSspClient;
+	imf::ThreadLoop * 	mThreadLooper;
 
-	AVPacket	mPacket;
-	H264Queue mH264Queue;
+	AVPacket			mPacket;
+	H264Queue 			mH264Queue;
 	std::list<AVFrame*> mVideoFrames;
 	std::list<AVFrame*> mAudioFrames;
-	unsigned int mVideoBuffMax;
-	unsigned int mAudioBuffMax;
-	unsigned int mQueueMaxSize;
-	std::string mUrl;
-	imf::SspVideoMeta mVideoMeta;
-	imf::SspAudioMeta mAudioMeta;
-	imf::SspAudioMeta mSSpMeta;
-
-
-	VideoInfo		mVideoInfo;
-	AudioInfo	mAudioInfo;
+	unsigned int 		mVideoBuffMax;
+	unsigned int 		mAudioBuffMax;
+	unsigned int 		mQueueMaxSize;
+	std::string 		mUrl;
+	imf::SspVideoMeta 	mVideoMeta;
+	imf::SspAudioMeta 	mAudioMeta;
+	imf::SspAudioMeta 	mSSpMeta;
+	VideoInfo			mVideoInfo;
+	AudioInfo			mAudioInfo;
 
 	int initSwrContext();
 	AVFrame* convertToYUV420P(AVFrame* src);

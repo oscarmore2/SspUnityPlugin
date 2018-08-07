@@ -492,20 +492,3 @@ void nativeRegistLogHandler(UnityLog fp)
 {
 	//Logger::_unity = fp;
 }
-//extern "C" EXPORT_API void nativeGetTextureType(void* ptr0) {
-//	ID3D11Texture2D* d3dtex = (ID3D11Texture2D*)(ptr0);
-//	D3D11_TEXTURE2D_DESC desc;
-//	d3dtex->GetDesc(&desc);
-//	LOG("Texture format = %d \n", desc.Format);
-//}
-
-//int saveByteBuffer(const unsigned char* buff, int fileLength, const char* filePath){
-//	FILE *fout = fopen(filePath, "wb+");
-//	if (!fout){
-//		printf("Can't open output file\n");
-//		return 1;
-//	}
-//	fwrite(buff, sizeof(char)*fileLength, 1, fout);
-//	fclose(fout);
-//	return NO_ERROR;
-//}

@@ -3,9 +3,9 @@
 #include "libavutil\imgutils.h"
 
 using namespace std::placeholders;
-static H264Data* pack_h264_data(uint8_t* d, size_t l, uint32_t p, uint32_t f, uint32_t t)
+static H264Data *pack_h264_data(uint8_t *d, size_t l, uint32_t p, uint32_t f, uint32_t t)
 {
-	H264Data* re = new H264Data();
+	H264Data *re = new H264Data();
 	re->len = l;
 	re->frm_no = f;
 	re->type = t;
@@ -22,7 +22,7 @@ static H264Data* pack_h264_data(uint8_t* d, size_t l, uint32_t p, uint32_t f, ui
 	}
 	return re;
 }
-static void release_h264_data(H264Data* data)
+static void release_h264_data(H264Data *data)
 {
 	if (data != NULL)
 	{
@@ -53,8 +53,6 @@ DecoderSsp::DecoderSsp()
 	mIsConnected = false;
 	mIsInitialized = false;
 	mIsAudioAllChEnabled = false;
-	mUseTCP = false;
-	mIsSeekToAny = false;
 }
 
 DecoderSsp::~DecoderSsp()
@@ -64,7 +62,8 @@ DecoderSsp::~DecoderSsp()
 
 int DecoderSsp::initSwrContext()
 {
-	if (mAudioCodecContext == NULL) {
+	if (mAudioCodecContext == NULL)
+	{
 		LOG("Audio context is null. \n");
 		return -1;
 	}
@@ -77,37 +76,35 @@ int DecoderSsp::initSwrContext()
 	int inSampleRate = mAudioCodecContext->sample_rate;
 	int outSampleRate = inSampleRate;
 
-	if (mSwrContext != NULL) {
+	if (mSwrContext != NULL)
+	{
 		swr_close(mSwrContext);
 		swr_free(&mSwrContext);
 		mSwrContext = NULL;
 	}
 
 	mSwrContext = swr_alloc_set_opts(NULL,
-		outChannelLayout, outSampleFormat, outSampleRate,
-		inChannelLayout, inSampleFormat, inSampleRate,
-		0, NULL);
+									 outChannelLayout, outSampleFormat, outSampleRate,
+									 inChannelLayout, inSampleFormat, inSampleRate,
+									 0, NULL);
 
-
-	if (swr_is_initialized(mSwrContext) == 0) {
+	if (swr_is_initialized(mSwrContext) == 0)
+	{
 		errorCode = swr_init(mSwrContext);
 	}
-
 	//	Save the output audio format
 	mAudioInfo.channels = av_get_channel_layout_nb_channels(outChannelLayout);
 	mAudioInfo.sampleRate = outSampleRate;
-	//mAudioInfo.totalTime = mAudioStream->duration <= 0 ? (double)(mAVFormatContext->duration) / AV_TIME_BASE : mAudioStream->duration * av_q2d(mAudioStream->time_base);
-
 	return errorCode;
 }
 
-AVFrame* DecoderSsp::convertToYUV420P(AVFrame* src)
+AVFrame *DecoderSsp::convertToYUV420P(AVFrame *src)
 {
 	if (NULL == src)
 		return NULL;
-	AVFrame* dst = av_frame_alloc();
+	AVFrame *dst = av_frame_alloc();
 	int numBytes = avpicture_get_size(AV_PIX_FMT_YUV420P, src->width, src->height);
-	uint8_t* buffer = (uint8_t *)av_malloc(numBytes * sizeof(uint8_t));
+	uint8_t *buffer = (uint8_t *)av_malloc(numBytes * sizeof(uint8_t));
 	avpicture_fill((AVPicture *)dst, buffer, AV_PIX_FMT_YUV420P, src->width, src->height);
 	dst->format = AV_PIX_FMT_YUV420P;
 	dst->width = src->width;
@@ -115,9 +112,9 @@ AVFrame* DecoderSsp::convertToYUV420P(AVFrame* src)
 	if (NULL == mSwsContext)
 	{
 		mSwsContext = sws_getContext(src->width, src->height, (AVPixelFormat)src->format,
-			dst->width, dst->height, AV_PIX_FMT_YUV420P, SWS_BICUBIC, NULL, NULL, NULL);
+									 dst->width, dst->height, AV_PIX_FMT_YUV420P, SWS_BICUBIC, NULL, NULL, NULL);
 	}
-	int result = sws_scale(mSwsContext, (const uint8_t * const*)src->data, src->linesize, 0, src->height, dst->data, dst->linesize);
+	int result = sws_scale(mSwsContext, (const uint8_t *const *)src->data, src->linesize, 0, src->height, dst->data, dst->linesize);
 	if (result < 0)
 	{
 		LOG("Convert frame format to YUV420P failed.\n");
@@ -129,26 +126,34 @@ AVFrame* DecoderSsp::convertToYUV420P(AVFrame* src)
 
 void DecoderSsp::updateBufferState()
 {
-	if (mVideoInfo.isEnabled) {
-		if (mVideoFrames.size() >= mVideoBuffMax) {
+	if (mVideoInfo.isEnabled)
+	{
+		if (mVideoFrames.size() >= mVideoBuffMax)
+		{
 			mVideoInfo.bufferState = BufferState::FULL;
 		}
-		else if (mVideoFrames.size() == 0) {
+		else if (mVideoFrames.size() == 0)
+		{
 			mVideoInfo.bufferState = BufferState::EMPTY;
 		}
-		else {
+		else
+		{
 			mVideoInfo.bufferState = BufferState::NORMAL;
 		}
 	}
 
-	if (mAudioInfo.isEnabled) {
-		if (mAudioFrames.size() >= mAudioBuffMax) {
+	if (mAudioInfo.isEnabled)
+	{
+		if (mAudioFrames.size() >= mAudioBuffMax)
+		{
 			mAudioInfo.bufferState = BufferState::FULL;
 		}
-		else if (mAudioFrames.size() == 0) {
+		else if (mAudioFrames.size() == 0)
+		{
 			mAudioInfo.bufferState = BufferState::EMPTY;
 		}
-		else {
+		else
+		{
 			mAudioInfo.bufferState = BufferState::NORMAL;
 		}
 	}
@@ -157,36 +162,40 @@ void DecoderSsp::updateBufferState()
 bool DecoderSsp::isBuffBlocked()
 {
 	bool ret = false;
-	if (mVideoInfo.isEnabled && mVideoFrames.size() >= mVideoBuffMax) {
+	if (mVideoInfo.isEnabled && mVideoFrames.size() >= mVideoBuffMax)
+	{
 		ret = true;
 	}
 
-	if (mAudioInfo.isEnabled && mAudioFrames.size() >= mAudioBuffMax) {
+	if (mAudioInfo.isEnabled && mAudioFrames.size() >= mAudioBuffMax)
+	{
 		ret = true;
 	}
 
 	return ret;
 }
 
-void DecoderSsp::freeFrontFrame(std::list<AVFrame*>* frameBuff, std::mutex * mutex)
+void DecoderSsp::freeFrontFrame(std::list<AVFrame *> *frameBuff, std::mutex *mutex)
 {
 	std::lock_guard<std::mutex> lock(*mutex);
-	if (!mIsInitialized || frameBuff->size() == 0) {
+	if (!mIsInitialized || frameBuff->size() == 0)
+	{
 		LOG("Not initialized or buffer empty. \n");
 		return;
 	}
 
-	AVFrame* frame = frameBuff->front();
+	AVFrame *frame = frameBuff->front();
 	av_free(frame->data[0]);
 	av_frame_free(&frame);
 	frameBuff->pop_front();
 	updateBufferState();
 }
 
-void DecoderSsp::flushBuffer(std::list<AVFrame*>* frameBuff, std::mutex * mutex)
+void DecoderSsp::flushBuffer(std::list<AVFrame *> *frameBuff, std::mutex *mutex)
 {
 	std::lock_guard<std::mutex> lock(*mutex);
-	while (!frameBuff->empty()) {
+	while (!frameBuff->empty())
+	{
 		av_frame_free(&(frameBuff->front()));
 		frameBuff->pop_front();
 	}
@@ -204,7 +213,7 @@ void DecoderSsp::printErrorMsg(int errorCode)
 	LOG("Decoder Ssp Error: %s. \n", msg);
 }
 
-void DecoderSsp::setup(imf::Loop *loop, const char* url)
+void DecoderSsp::setup(imf::Loop *loop, const char *url)
 {
 	std::string ip(url);
 	mSspClient = new imf::SspClient(ip, loop, 0x400000);
@@ -215,26 +224,31 @@ void DecoderSsp::setup(imf::Loop *loop, const char* url)
 	mSspClient->start();
 }
 
-bool DecoderSsp::init(const char* filePath)
+bool DecoderSsp::init(const char *filePath)
 {
-	if (mIsInitialized) {
+	if (mIsInitialized)
+	{
 		LOG("Decoder has been init. \n");
 		return true;
 	}
-	if (filePath == NULL || strncmp(filePath, "ssp://", strlen("ssp://")) != 0) {
+
+	if (filePath == NULL || strncmp(filePath, "ssp://", strlen("ssp://")) != 0)
+	{
 		LOG("Path is not a ssp url or null \n");
 		return false;
 	}
-
+	std::string url = {filePath + strlen("ssp://")};
 	av_register_all();
 	av_log_set_level(AV_LOG_DEBUG);
 
-	if (NULL == mAVFormatContext) {
+	if (NULL == mAVFormatContext)
+	{
 		mAVFormatContext = avformat_alloc_context();
 	}
 
 	//TODO: It's a nvidia cuvid codec. Notice the default pixel format is AV_PIX_FMT_NV12.
-	if (NULL == mVideoCodec) {
+	if (NULL == mVideoCodec)
+	{
 		mVideoCodec = avcodec_find_decoder_by_name("h264_cuvid");
 	}
 
@@ -243,18 +257,21 @@ bool DecoderSsp::init(const char* filePath)
 	//	mVideoCodec = avcodec_find_decoder_by_name("h264_qsv");
 	//}
 
-	if (mVideoCodec == NULL) {
+	if (mVideoCodec == NULL)
+	{
 		mVideoCodec = avcodec_find_decoder(AV_CODEC_ID_H264);
 	}
 
-	if (mVideoCodec == NULL) {
+	if (mVideoCodec == NULL)
+	{
 		LOG("Could not find any video h264 codecs. \n");
 		return false;
 	}
 	mVideoCodecContext = avcodec_alloc_context3(mVideoCodec);
 	avcodec_get_context_defaults3(mVideoCodecContext, mVideoCodec);
 	int errorCode = avcodec_open2(mVideoCodecContext, mVideoCodec, NULL);
-	if (errorCode < 0) {
+	if (errorCode < 0)
+	{
 		printErrorMsg(errorCode);
 	}
 	else
@@ -265,7 +282,7 @@ bool DecoderSsp::init(const char* filePath)
 			av_get_colorspace_name(mVideoCodecContext->colorspace),
 			av_color_range_name(mVideoCodecContext->color_range));
 	}
-	mThreadLooper = new imf::ThreadLoop(std::bind(&DecoderSsp::setup, this, _1, filePath + strlen("ssp://")));
+	mThreadLooper = new imf::ThreadLoop(std::bind(&DecoderSsp::setup, this, _1, url.c_str()));
 	mThreadLooper->start();
 	mVideoInfo.isEnabled = true;
 	mAudioInfo.isEnabled = false;
@@ -276,13 +293,14 @@ bool DecoderSsp::init(const char* filePath)
 
 bool DecoderSsp::decode()
 {
-	if (!mIsInitialized) {
+	if (!mIsInitialized)
+	{
 		LOG("Not initialized. \n");
 		return false;
 	}
 	if (isH264QueueReady() && !isBuffBlocked())
 	{
-		H264Data* h264Data = mH264Queue.dequeue();
+		H264Data *h264Data = mH264Queue.dequeue();
 		if (NULL == h264Data)
 		{
 			LOG("H264 queue is empty or used up, maybe network is unstable.");
@@ -300,7 +318,7 @@ bool DecoderSsp::decode()
 		int frameCount = 0;
 		while (true)
 		{
-			AVFrame* frameDecoded = av_frame_alloc();
+			AVFrame *frameDecoded = av_frame_alloc();
 			errorCode = avcodec_receive_frame(mVideoCodecContext, frameDecoded);
 			if (errorCode != 0)
 			{
@@ -324,7 +342,8 @@ bool DecoderSsp::decode()
 					frameDecoded->pkt_dts = ++mDtsIndex;
 					pushVideoFrame(frameDecoded);
 				}
-				if (frameCount > 0) {
+				if (frameCount > 0)
+				{
 					LOG("Decoder output more than 1 frame in 1 packet.\n");
 				}
 				frameCount++;
@@ -336,17 +355,16 @@ bool DecoderSsp::decode()
 	}
 	if (isBuffBlocked())
 	{
-		//LOG("Video frames buffer is full.\n");
+		LOG("Video frames buffer is full. Renderring is too slow\n");
 	}
 	updateBufferState();
 	return true;
 }
 
-void DecoderSsp::pushVideoFrame(AVFrame* frameDecoded)
+void DecoderSsp::pushVideoFrame(AVFrame *frameDecoded)
 {
 	std::lock_guard<std::mutex> lock(mVideoMutex);
 	mVideoFrames.push_back(frameDecoded);
-	//LOG("Push video frame: %d %f", mVideoFrames.size(), (double)frameDecoded->pts / (double)mVideoMeta.timescale * (double)mVideoMeta.unit);
 }
 
 bool DecoderSsp::isH264QueueReady()
@@ -356,7 +374,6 @@ bool DecoderSsp::isH264QueueReady()
 
 void DecoderSsp::seek(double time)
 {
-
 }
 
 void DecoderSsp::destroy()
@@ -367,9 +384,6 @@ void DecoderSsp::destroy()
 		mSspClient->setOnH264DataCallback(NULL);
 		mSspClient->setOnDisconnectedCallback(NULL);
 		mSspClient->setOnMetaCallback(NULL);
-		mSspClient->setOnRecvBufferFullCallback(NULL);
-		mSspClient->setOnAudioDataCallback(NULL);
-		mSspClient->setOnExceptionCallback(NULL);
 	}
 	if (mThreadLooper != NULL)
 	{
@@ -382,20 +396,24 @@ void DecoderSsp::destroy()
 		delete mSspClient;
 		mSspClient = NULL;
 	}
-	if (mVideoCodecContext != NULL) {
+	if (mVideoCodecContext != NULL)
+	{
 		avcodec_close(mVideoCodecContext);
 		mVideoCodecContext = NULL;
 	}
-	if (mAudioCodecContext != NULL) {
+	if (mAudioCodecContext != NULL)
+	{
 		avcodec_close(mAudioCodecContext);
 		mAudioCodecContext = NULL;
 	}
-	if (mAVFormatContext != NULL) {
+	if (mAVFormatContext != NULL)
+	{
 		avformat_close_input(&mAVFormatContext);
 		avformat_free_context(mAVFormatContext);
 		mAVFormatContext = NULL;
 	}
-	if (mSwrContext != NULL) {
+	if (mSwrContext != NULL)
+	{
 		swr_close(mSwrContext);
 		swr_free(&mSwrContext);
 		mSwrContext = NULL;
@@ -407,6 +425,12 @@ void DecoderSsp::destroy()
 	}
 	flushBuffer(&mVideoFrames, &mVideoMutex);
 	flushBuffer(&mAudioFrames, &mAudioMutex);
+
+	while (mH264Queue.size() > 0)
+	{
+		auto data = mH264Queue.dequeue();
+		release_h264_data(data);
+	}
 	mH264Queue.release();
 }
 
@@ -436,16 +460,17 @@ void DecoderSsp::setAudioAllChDataEnable(bool isEnable)
 	initSwrContext();
 }
 
-double DecoderSsp::getVideoFrame(unsigned char** outputY, unsigned char** outputU, unsigned char** outputV)
+double DecoderSsp::getVideoFrame(unsigned char **outputY, unsigned char **outputU, unsigned char **outputV)
 {
 	std::lock_guard<std::mutex> lock(mVideoMutex);
 
-	if (!mIsInitialized || mVideoFrames.size() == 0) {
+	if (!mIsInitialized || mVideoFrames.size() == 0)
+	{
 		LOG("Video frames buffer is empty. \n");
 		*outputY = *outputU = *outputV = NULL;
 		return -1;
 	}
-	AVFrame* frame = mVideoFrames.front();
+	AVFrame *frame = mVideoFrames.front();
 
 	switch (frame->format)
 	{
@@ -467,19 +492,19 @@ double DecoderSsp::getVideoFrame(unsigned char** outputY, unsigned char** output
 	default:
 		break;
 	}
-	return  mVideoInfo.lastTime;
+	return mVideoInfo.lastTime;
 }
 
-double DecoderSsp::getAudioFrame(unsigned char** outputFrame, int& frameSize)
+double DecoderSsp::getAudioFrame(unsigned char **outputFrame, int &frameSize)
 {
 	std::lock_guard<std::mutex> lock(mAudioMutex);
-	if (!mIsInitialized || mAudioFrames.size() == 0) {
-		//LOG("Audio frame not available. ");
+	if (!mIsInitialized || mAudioFrames.size() == 0)
+	{
 		*outputFrame = NULL;
 		return -1;
 	}
 
-	AVFrame* frame = mAudioFrames.front();
+	AVFrame *frame = mAudioFrames.front();
 	*outputFrame = frame->data[0];
 	frameSize = frame->nb_samples;
 	return 0;
@@ -495,19 +520,21 @@ void DecoderSsp::freeAudioFrame()
 	freeFrontFrame(&mAudioFrames, &mAudioMutex);
 }
 
-int DecoderSsp::getMetaData(char**& key, char**& value)
+int DecoderSsp::getMetaData(char **&key, char **&value)
 {
-	if (!mIsInitialized || key != NULL || value != NULL) {
+	if (!mIsInitialized || key != NULL || value != NULL)
+	{
 		return 0;
 	}
 
 	AVDictionaryEntry *tag = NULL;
 	int metaCount = av_dict_count(mAVFormatContext->metadata);
 
-	key = (char**)malloc(sizeof(char*) * metaCount);
-	value = (char**)malloc(sizeof(char*) * metaCount);
+	key = (char **)malloc(sizeof(char *) * metaCount);
+	value = (char **)malloc(sizeof(char *) * metaCount);
 
-	for (int i = 0; i < metaCount; i++) {
+	for (int i = 0; i < metaCount; i++)
+	{
 		tag = av_dict_get(mAVFormatContext->metadata, "", tag, AV_DICT_IGNORE_SUFFIX);
 		key[i] = tag->key;
 		value[i] = tag->value;
@@ -521,15 +548,15 @@ bool DecoderSsp::isContentReady()
 	return mIsConnected;
 }
 
-void DecoderSsp::on_264(uint8_t * data, size_t len, uint64_t pts, uint32_t frm_no, uint32_t type)
+void DecoderSsp::on_264(uint8_t *data, size_t len, uint64_t pts, uint32_t frm_no, uint32_t type)
 {
 	if (mH264Queue.size() >= mQueueMaxSize)
 	{
-		LOG("H264 queue size is full, the decoder is too slow.\n");
+		LOG("Queue H264 is full, the decoder is too slow.\n");
 	}
 	else
 	{
-		H264Data* h264 = pack_h264_data(data, len, pts, frm_no, type);
+		H264Data *h264 = pack_h264_data(data, len, pts, frm_no, type);
 		mH264Queue.queue(h264);
 		LOG("Receive H264 and current size %d.\n", mH264Queue.size());
 	}
@@ -551,7 +578,7 @@ void DecoderSsp::on_meta(struct imf::SspVideoMeta *v, struct imf::SspAudioMeta *
 
 void DecoderSsp::on_disconnect()
 {
+	mIsConnected = false;
 	LOG("Ssp is disconnected.\n");
 	mDtsIndex = 0;
 }
-
