@@ -6,7 +6,7 @@ using Resource;
 
 public class GroupTraveller : Singleton<GroupTraveller> {
 
-    public event Action PreviewListChange;
+    public event Action ResourceChange;
 
 
     public void OnTravel()
@@ -16,39 +16,32 @@ public class GroupTraveller : Singleton<GroupTraveller> {
             var ResGroup = ResourceGroupList.Instance[i];
             if (ResGroup.ActivateState[0] == true)
             {
-                if (ResGroup.IsAfterTransition)
+                for (int j = 0; i < ResGroup.ResourceRefs.Count; j++)
                 {
-                    ResourceDisplayList.Instance.PreviewPostRenderList.Clear();
-                    for (int j = 0; i < ResGroup.ResourceRefs.Count; j++)
-                    {
-                        ResourceDisplayList.Instance.PreviewPostRenderList.Add(ResGroup.ResourceRefs[j].Resources);
-                    }
+                    RendererContainor.Instance.PVWRender(ResGroup.ResourceRefs[j].Resources, ResGroup.IsAfterTransition);
                 }
-                else
-                {
-                    ResourceDisplayList.Instance.PreviewPreRenderList.Clear();
-                    for (int j = 0; i < ResGroup.ResourceRefs.Count; j++)
-                    {
-                        ResourceDisplayList.Instance.PreviewPostRenderList.Add(ResGroup.ResourceRefs[j].Resources);
-                    }
-                }
-                
             }
             else if (ResGroup.ActivateState[1] == true)
             {
                 for (int j = 0; i < ResGroup.ResourceRefs.Count; j++)
                 {
-
+                    RendererContainor.Instance.PGMRender(ResGroup.ResourceRefs[j].Resources, ResGroup.IsAfterTransition);
                 }
             }
             else if (ResGroup.ActivateState[2] == true)
             {
+                //TODO : add login in this toggle.
+            }
+            else
+            {
                 for (int j = 0; i < ResGroup.ResourceRefs.Count; j++)
                 {
-
+                    
                 }
             }
-            
+
+            if (ResourceChange != null)
+                ResourceChange();
         }
     }
 

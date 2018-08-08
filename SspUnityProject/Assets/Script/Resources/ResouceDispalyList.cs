@@ -3,19 +3,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResouceDispalyList : MonoBehaviour, IIniConfigable
+public class ResourceDisplayList : Singleton<ResourceDisplayList>
 {
-    public void LoadConfig()
+    Canvas PVWPreRenderPipeLine;
+    Canvas PGMPreRenderPipeLine;
+
+    Canvas PVWPostRenderPipeLine;
+    Canvas PGMPostRenderPipeLine;
+
+    public Camera PVWPreRenderPipeLineCamera;
+    public Camera PGMPreRenderPipeLineCamera;
+
+    public Camera PVWPostRenderPipeLineCamera;
+    public Camera PGMPostRenderPipeLineCamera;
+
+    public override void OnInitialize()
     {
-        
+        this.initProcess("PVWPreRenderPipeLine", ref PVWPreRenderPipeLine, ref PVWPreRenderPipeLineCamera);
+        this.initProcess("PGMPreRenderPipeLine", ref PGMPreRenderPipeLine, ref PGMPreRenderPipeLineCamera);
+
+        this.initProcess("PGMPostRenderPipeLine", ref PVWPostRenderPipeLine, ref PVWPostRenderPipeLineCamera);
+        this.initProcess("PGMPostRenderPipeLine", ref PGMPostRenderPipeLine, ref PGMPostRenderPipeLineCamera);
     }
 
-    public void SetConfig()
+    void initProcess(string name, ref Canvas canvas, ref Camera cam)
     {
-        
+        GameObject obj = new GameObject(name);
+        obj.transform.parent = transform;
+        obj.transform.localPosition = Vector3.zero;
+        canvas = obj.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        var scaler = obj.AddComponent<UnityEngine.UI.CanvasScaler>();
+        scaler.referenceResolution = new Vector2(OutputBuffer.Instance.OutputConf.Width, OutputBuffer.Instance.OutputConf.Height);
+        cam = obj.AddComponent<Camera>();
+        canvas.worldCamera = cam;
+        cam.aspect = 1.77f;
     }
 
-    public void SetDefaultConfig()
+    public override void OnUninitialize()
     {
         
     }
