@@ -1,6 +1,4 @@
-﻿//========= Copyright 2015-2018, HTC Corporation. All rights reserved. ===========
-
-#include "Unity\IUnityGraphics.h"
+﻿#include "Unity\IUnityGraphics.h"
 #include "NativeDecoder.h"
 #include "AVHandler.h"
 #include "Logger.h"
@@ -139,6 +137,7 @@ void DoRendering (int id)
 					double curFrameTime = localAVHandler->getVideoFrame(&ptrY, &ptrU, &ptrV);
 					if (ptrY != NULL && curFrameTime != -1 && localVideoContext->lastUpdateTime != curFrameTime) {
 						localVideoContext->textureObj->upload(ptrY, ptrU, ptrV);
+						//localVideoContext->textureObj->uploadOnce()
 						localVideoContext->lastUpdateTime = (float)curFrameTime;
 						//localVideoContext->isContentReady = true;
 					}
@@ -211,6 +210,14 @@ void nativeCreateTexture(int id, void*& tex0, void*& tex1, void*& tex2) {
 
 	iter->textureObj->getResourcePointers(tex0, tex1, tex2);
 }
+
+void nativeCreateOneTexture(int id, void*& tex) {
+	VideoContextIter iter;
+	if (!getVideoContextIter(id, &iter) || iter->textureObj == NULL) { return; }
+
+	iter->textureObj->getResourcePointer(tex);
+}
+
 
 bool nativeStartDecoding(int id) {
 	VideoContextIter iter;
@@ -384,48 +391,48 @@ bool nativeIsVideoBufferEmpty(int id) {
 }
 
 /*	This function is for thumbnail extraction.*/
-void nativeLoadThumbnail(int id, float time, void* texY, void* texU, void* texV) {
-	if (g_D3D11Device == NULL) {
-		LOG("g_D3D11Device is null. \n");
-		return;
-	}
+// void nativeLoadThumbnail(int id, float time, void* texY, void* texU, void* texV) {
+// 	if (g_D3D11Device == NULL) {
+// 		LOG("g_D3D11Device is null. \n");
+// 		return;
+// 	}
 
-	VideoContextIter iter;
-	if (!getVideoContextIter(id, &iter)) { return; }
+// 	VideoContextIter iter;
+// 	if (!getVideoContextIter(id, &iter)) { return; }
 
-	//	1.Initialize variable and texture
-	AVHandler* avhandler = iter->avhandler;
-	IDecoder::VideoInfo* videoInfo = &(avhandler->getVideoInfo());
-	int width = (int) (ceil((float) videoInfo->width / ITextureObject::CPU_ALIGMENT) * ITextureObject::CPU_ALIGMENT);
-	int height = videoInfo->height;
+// 	//	1.Initialize variable and texture
+// 	AVHandler* avhandler = iter->avhandler;
+// 	IDecoder::VideoInfo* videoInfo = &(avhandler->getVideoInfo());
+// 	int width = (int) (ceil((float) videoInfo->width / ITextureObject::CPU_ALIGMENT) * ITextureObject::CPU_ALIGMENT);
+// 	int height = videoInfo->height;
 
-	//	2.Get thumbnail data and update texture
-	avhandler->setSeekTime(time);
-	std::thread thumbnailThread([&]() {
-		uint8_t* yptr = NULL, *uptr = NULL, *vptr = NULL;
+// 	//	2.Get thumbnail data and update texture
+// 	avhandler->setSeekTime(time);
+// 	std::thread thumbnailThread([&]() {
+// 		uint8_t* yptr = NULL, *uptr = NULL, *vptr = NULL;
 			
-		avhandler->getVideoFrame(&yptr, &uptr, &vptr);
-		while (yptr == NULL) {
-			avhandler->freeVideoFrame();
-			avhandler->getVideoFrame(&yptr, &uptr, &vptr);
-		}
+// 		avhandler->getVideoFrame(&yptr, &uptr, &vptr);
+// 		while (yptr == NULL) {
+// 			avhandler->freeVideoFrame();
+// 			avhandler->getVideoFrame(&yptr, &uptr, &vptr);
+// 		}
 			
-		ID3D11DeviceContext* ctx = NULL;
-		ID3D11Texture2D* d3dtex0 = (ID3D11Texture2D*)texY;
-		ID3D11Texture2D* d3dtex1 = (ID3D11Texture2D*)texU;
-		ID3D11Texture2D* d3dtex2 = (ID3D11Texture2D*)texV;
+// 		ID3D11DeviceContext* ctx = NULL;
+// 		ID3D11Texture2D* d3dtex0 = (ID3D11Texture2D*)texY;
+// 		ID3D11Texture2D* d3dtex1 = (ID3D11Texture2D*)texU;
+// 		ID3D11Texture2D* d3dtex2 = (ID3D11Texture2D*)texV;
 			
-		g_D3D11Device->GetImmediateContext(&ctx);
-		ctx->UpdateSubresource(d3dtex0, 0, NULL, yptr, width, 0);
-		ctx->UpdateSubresource(d3dtex1, 0, NULL, uptr, width / 2, 0);
-		ctx->UpdateSubresource(d3dtex2, 0, NULL, vptr, width / 2, 0);
-		ctx->Release();
-	});
+// 		g_D3D11Device->GetImmediateContext(&ctx);
+// 		ctx->UpdateSubresource(d3dtex0, 0, NULL, yptr, width, 0);
+// 		ctx->UpdateSubresource(d3dtex1, 0, NULL, uptr, width / 2, 0);
+// 		ctx->UpdateSubresource(d3dtex2, 0, NULL, vptr, width / 2, 0);
+// 		ctx->Release();
+// 	});
 	
-	if (thumbnailThread.joinable()) {
-		thumbnailThread.join();
-	}
-}
+// 	if (thumbnailThread.joinable()) {
+// 		thumbnailThread.join();
+// 	}
+// }
 
 int nativeGetMetaData(const char* filePath, char*** key, char*** value) {
 	AVHandler* avhandler = new AVHandler(filePath);

@@ -11,6 +11,17 @@
         "typeinfo": "cpp",
         "algorithm": "cpp",
         "memory": "cpp",
-        "__mutex_base": "cpp"
+        "__mutex_base": "cpp",
+        "__locale": "cpp",
+        "iterator": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "vector": "cpp",
+        "__bit_reference": "cpp",
+        "__split_buffer": "cpp",
+        "__tree": "cpp",
+        "ios": "cpp",
+        "list": "cpp",
+        "map": "cpp"
     }
 }

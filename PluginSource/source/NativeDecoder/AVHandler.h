@@ -7,12 +7,13 @@
  
 class AVHandler {
 public:
-	AVHandler(const char* path);
-	~AVHandler();
-	
 	enum DecoderState {
 		INIT_FAIL = -1, UNINITIALIZED, INITIALIZED, DECODING, SEEK, BUFFERING, DECODE_EOF, STOP
 	};
+
+	AVHandler(const char* path);
+	~AVHandler();
+	
 	DecoderState getDecoderState();
 
 	void init(const char* filePath);
@@ -30,6 +31,9 @@ public:
 
 	IDecoder::VideoInfo getVideoInfo();
 	IDecoder::AudioInfo getAudioInfo();
+	IDecoder::VideoFrame getVideoFrame();
+	IDecoder::AudioFrame getAudioFrame();
+
 	bool isVideoBufferEmpty();
 	bool isVideoBufferFull();
 

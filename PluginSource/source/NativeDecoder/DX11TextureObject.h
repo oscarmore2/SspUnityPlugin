@@ -1,5 +1,3 @@
-//========= Copyright 2015-2018, HTC Corporation. All rights reserved. ===========
-
 #pragma once
 #include "ITextureObject.h"
 #include <d3d11.h>
@@ -15,6 +13,8 @@ public:
 	void upload(unsigned char* ych, unsigned char* uch, unsigned char* vch);
 	void destroy();
 
+	void getResourcePointer(void*& ptr);
+	void uploadOnce(unsigned char* data);
 private:
 	ID3D11Device* mD3D11Device;
 	
@@ -28,4 +28,7 @@ private:
 
 	ID3D11Texture2D* mTextures[TEXTURE_NUM];
 	ID3D11ShaderResourceView* mShaderResourceView[TEXTURE_NUM];
+
+	ID3D11Texture2D* mNV12Texture;
+	ID3D11ShaderResourceView* mNV12ShaderResourceView;
 };
