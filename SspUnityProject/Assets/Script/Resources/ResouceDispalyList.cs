@@ -40,6 +40,8 @@ public class ResourceDisplayList : Singleton<ResourceDisplayList>
         cam.aspect = 1.77f;
     }
 
+	public 
+
     public override void OnUninitialize()
     {
         

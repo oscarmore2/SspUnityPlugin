@@ -18,6 +18,18 @@ namespace Resource
         public float YAxis;
         public float Duration;
 
+		public void SortGroup()
+		{
+			ResourceRefs.Sort ((left, right)=>{
+				if (left.Resources.Priority > right.Resources.Priority)
+					return 1;
+				else if (left.Resources.Priority == right.Resources.Priority)
+					return 0;
+				else
+					return -1;
+			});
+		}
+
         public ResourceGroup(List<IResourceRef> refList)
         {
             ResourceRefs = refList;

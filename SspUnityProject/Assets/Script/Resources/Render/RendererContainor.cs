@@ -19,18 +19,20 @@ public class RendererContainor : Singleton<RendererContainor> {
         
     }
 
-    public void PVWRender(IResource resource, bool isAfterTransition)
+	public IResourceRenderer PVWRender(IResource resource, bool isAfterTransition)
     {
         var suffix = "@PVW";
         var rend = AddRender(suffix, resource);
         rend.IsAfterTransition = isAfterTransition;
+		return rend;
     }
 
-    public void PGMRender(IResource resource, bool isAfterTransition)
+	public IResourceRenderer PGMRender(IResource resource, bool isAfterTransition)
     {
         var suffix = "@PGM";
         var rend = AddRender(suffix, resource);
         rend.IsAfterTransition = isAfterTransition;
+		return rend;
     }
 
     IResourceRenderer AddRender(string suffix, IResource resource)

@@ -11,26 +11,56 @@ public class GroupTraveller : Singleton<GroupTraveller> {
 
     public void OnTravel()
     {
+		ResourceGroupList.Instance.Sort ();
         for (int i = 0; i < ResourceGroupList.Instance.Count; i++)
         {
             var ResGroup = ResourceGroupList.Instance[i];
+			ResGroup.SortGroup ();
             if (ResGroup.ActivateState[0] == true)
             {
+				int layer = 0;
                 for (int j = 0; i < ResGroup.ResourceRefs.Count; j++)
                 {
-                    RendererContainor.Instance.PVWRender(ResGroup.ResourceRefs[j].Resources, ResGroup.IsAfterTransition);
+					var resource = ResGroup.ResourceRefs [j].Resources;
+					var rend = RendererContainor.Instance.PVWRender(resource, ResGroup.IsAfterTransition);
+					ResourceRenderTarget target = null;
+					if (ResGroup.IsAfterTransition) {
+						target = ResourceRenderTarget.Create (ResourceDisplayList.Instance.PVWPostRenderPipeLineCamera.gameObject, layer);
+					} else {
+						target = ResourceRenderTarget.Create (ResourceDisplayList.Instance.PVWPreRenderPipeLineCamera.gameObject, layer);
+					}
+					if (resource.GetType () == ResourceType.Image) {
+						rend.AttachRenderTarget<UnityEngine.UI.RawImage> (target);
+					} else if (resource.GetType () == ResourceType.Text) {
+						rend.AttachRenderTarget<UnityEngine.UI.Text> (target);
+					}
+					layer++;
                 }
             }
             else if (ResGroup.ActivateState[1] == true)
             {
+				int layer = 0;
                 for (int j = 0; i < ResGroup.ResourceRefs.Count; j++)
                 {
-                    RendererContainor.Instance.PGMRender(ResGroup.ResourceRefs[j].Resources, ResGroup.IsAfterTransition);
+					var resource = ResGroup.ResourceRefs [j].Resources;
+					var rend = RendererContainor.Instance.PGMRender(resource, ResGroup.IsAfterTransition);
+					ResourceRenderTarget target = null;
+					if (ResGroup.IsAfterTransition) {
+						target = ResourceRenderTarget.Create (ResourceDisplayList.Instance.PGMPostRenderPipeLineCamera.gameObject, layer);
+					} else {
+						target = ResourceRenderTarget.Create (ResourceDisplayList.Instance.PGMPreRenderPipeLineCamera.gameObject, layer);
+					}
+					if (resource.GetType () == ResourceType.Image) {
+						rend.AttachRenderTarget<UnityEngine.UI.RawImage> (target);
+					} else if (resource.GetType () == ResourceType.Text) {
+						rend.AttachRenderTarget<UnityEngine.UI.Text> (target);
+					}
+					layer++;
                 }
             }
             else if (ResGroup.ActivateState[2] == true)
             {
-                //TODO : add login in this toggle.
+                //TODO : add logic in this toggle.
             }
             else
             {
