@@ -39,8 +39,7 @@ public class ResourceDisplayList : Singleton<ResourceDisplayList>
         canvas.worldCamera = cam;
         cam.aspect = 1.77f;
     }
-
-	public 
+    
 
     public override void OnUninitialize()
     {

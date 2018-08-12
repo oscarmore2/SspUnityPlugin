@@ -9,7 +9,12 @@ public class GroupTraveller : Singleton<GroupTraveller> {
     public event Action ResourceChange;
 
 
-    public void OnTravel()
+    public void OnTravel(ResourceGroup group, bool[] activateState)
+    {
+
+    }
+
+    public void OnInit()
     {
 		ResourceGroupList.Instance.Sort ();
         for (int i = 0; i < ResourceGroupList.Instance.Count; i++)
@@ -30,9 +35,9 @@ public class GroupTraveller : Singleton<GroupTraveller> {
 						target = ResourceRenderTarget.Create (ResourceDisplayList.Instance.PVWPreRenderPipeLineCamera.gameObject, layer);
 					}
 					if (resource.GetType () == ResourceType.Image) {
-						rend.AttachRenderTarget<UnityEngine.UI.RawImage> (target);
+						rend.AttachRenderTarget<UnityEngine.UI.RawImage> (target.gameObject);
 					} else if (resource.GetType () == ResourceType.Text) {
-						rend.AttachRenderTarget<UnityEngine.UI.Text> (target);
+						rend.AttachRenderTarget<UnityEngine.UI.Text> (target.gameObject);
 					}
 					layer++;
                 }
@@ -51,9 +56,9 @@ public class GroupTraveller : Singleton<GroupTraveller> {
 						target = ResourceRenderTarget.Create (ResourceDisplayList.Instance.PGMPreRenderPipeLineCamera.gameObject, layer);
 					}
 					if (resource.GetType () == ResourceType.Image) {
-						rend.AttachRenderTarget<UnityEngine.UI.RawImage> (target);
+						rend.AttachRenderTarget<UnityEngine.UI.RawImage> (target.gameObject);
 					} else if (resource.GetType () == ResourceType.Text) {
-						rend.AttachRenderTarget<UnityEngine.UI.Text> (target);
+						rend.AttachRenderTarget<UnityEngine.UI.Text> (target.gameObject);
 					}
 					layer++;
                 }

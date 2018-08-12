@@ -8,7 +8,7 @@ namespace Resource
     public class ResourceGroupList : Singleton<ResourceGroupList>, IEnumerable
     {
 
-        public event Action OnResourceGroupChange;
+        public Action<ResourceGroup, bool[]> OnResourceGroupChange;
 
         List<ResourceGroup> containor = new List<ResourceGroup>();
 
@@ -21,7 +21,6 @@ namespace Resource
 
         public void AddResourceGroup(ResourceGroup group)
         {
-            OnResourceGroupChange();
             containor.Add(group);
         }
 
@@ -47,7 +46,6 @@ namespace Resource
 
         public void Remove(ResourceGroup rg)
         {
-            OnResourceGroupChange();
             containor.Remove(rg);
         }
 

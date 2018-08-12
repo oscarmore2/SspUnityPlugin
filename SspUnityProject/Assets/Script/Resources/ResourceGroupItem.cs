@@ -62,14 +62,12 @@ namespace Resource
             PVWToggle.isOn = g.ActivateState[0];
             PGMToggle.isOn = g.ActivateState[1];
             BinDiagToggle.isOn = g.ActivateState[2];
+        }
 
-            groups.CalculateLayoutInputVertical();
-
-            var groupss = GetComponentsInChildren<VerticalLayoutGroup>();
-            foreach (var gr in groupss)
-            {
-                gr.CalculateLayoutInputVertical();
-            }
+        public void OnSwitchToggle()
+        {
+            ResGroup.ActivateState = new bool[]{ PVWToggle.isOn, PGMToggle.isOn, BinDiagToggle.isOn};
+            ResourceGroupList.Instance.OnResourceGroupChange(ResGroup, ResGroup.ActivateState);
         }
         
     }
