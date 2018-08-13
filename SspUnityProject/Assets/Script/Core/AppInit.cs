@@ -27,7 +27,6 @@ public class AppInit : Singleton<AppInit> {
             GroupTraveller.Create();
             RendererContainor.Create();
             VcamList.Create();
-            RenderProcessManager.Create();
             ResourceDisplayList.Create();
             RendererContainor.Create();
             GroupTraveller.Create();
@@ -41,7 +40,7 @@ public class AppInit : Singleton<AppInit> {
         //});
 
         OnSetUpRenderer += new Func<bool>(() => {
-            RenderProcessManager.Instance.CreateBseicRenderProcess();
+            GroupTraveller.Instance.OnInit();
             return true;
         });
 

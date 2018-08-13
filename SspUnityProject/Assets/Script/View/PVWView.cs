@@ -17,11 +17,15 @@ public class PVWView : IView {
 
     public override void OnUpdateTexture(Texture tex)
     {
-        if (!pvwBuffer)
-        {
-            renderProcessManager.StartRender(tex);
-            pvwBuffer = renderProcessManager.PostProcess.ProcessResult;
-        }
+        renderProcessManager.StopRender();
+        renderProcessManager.ChangeSurface(tex);
+        pvwBuffer = renderProcessManager.PostProcess.ProcessResult;
+    }
+
+    public void AttachUILayer()
+    {
+        renderProcessManager.EarlyProcess.SetOverlay(ResourceDisplayList.Instance.PVWPreRenderPipeLineCamera.targetTexture);
+        renderProcessManager.PostProcess.SetOverlay(ResourceDisplayList.Instance.PVWPostRenderPipeLineCamera.targetTexture);
     }
 
     protected override void OnHided()

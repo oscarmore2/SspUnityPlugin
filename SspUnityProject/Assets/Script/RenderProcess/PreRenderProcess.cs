@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PreRenderProcess : CommonRenderProcess
 {
+    private Texture Overlay;
 	public override void SetupProcess(Texture inputTex)
 	{
         processShader = Shader.Find("RenderProcess/PreProcess");
@@ -16,10 +17,19 @@ public class PreRenderProcess : CommonRenderProcess
         base.SetupProcess(inputTex);
     }
 
-    public override void DoRenderProcess()
+    public void SetOverlay(Texture txd)
+    {
+        Overlay = txd;
+        procressMaterial.SetTexture("_Overlay", Overlay);
+    }
+
+    public override void DoRenderProcess(Texture newTex = null)
     {
         if (null != ProcessBegin)
             ProcessBegin();
+
+        if (newTex != null)
+            procressMaterial.mainTexture = newTex;
 
         if (null != ProcessEnd)
             ProcessEnd();

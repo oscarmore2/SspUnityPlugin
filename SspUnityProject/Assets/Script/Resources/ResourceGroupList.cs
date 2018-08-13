@@ -8,7 +8,7 @@ namespace Resource
     public class ResourceGroupList : Singleton<ResourceGroupList>, IEnumerable
     {
 
-        public Action<ResourceGroup, bool[]> OnResourceGroupChange;
+        public Action<ResourceGroup> OnResourceGroupChange;
 
         List<ResourceGroup> containor = new List<ResourceGroup>();
 

@@ -3,20 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RenderProcessManager: Singleton<RenderProcessManager> {
+public class RenderProcessManager: MonoBehaviour {
 
     List<CommonRenderProcess> branchProcessPath = new List<CommonRenderProcess>();
     int currentProcessIndex = -1;
 
-	public EffectRenderProcess EffectProcess;
+	public EffectRenderProcess EffectProcess { get; private set; }
 
-	public PreRenderProcess EarlyProcess;
+	public PreRenderProcess EarlyProcess { get; private set; }
 
-	public TransitionRenderPrecess TransitionProcess;
+    public TransitionRenderPrecess TransitionProcess { get; private set; }
 
-	public PostRenderProcess PostProcess;
+    public PostRenderProcess PostProcess { get; private set; }
 
-	public void RegisterProcess(int position, CommonRenderProcess process)
+    public void RegisterProcess(int position, CommonRenderProcess process)
     {
 		if (position > branchProcessPath.Count + 1) {
 			branchProcessPath.Add (process);
@@ -80,11 +80,21 @@ public class RenderProcessManager: Singleton<RenderProcessManager> {
         StartCoroutine(OnRender());
     }
 
-	IEnumerator OnRender()
+    public void StopRender()
+    {
+        StopCoroutine("OnRender");
+    }
+
+    public void ChangeSurface(Texture txd)
+    {
+        StartCoroutine(OnRender(txd));
+    }
+
+	IEnumerator OnRender(Texture input = null)
 	{
         while (true)
         {
-            EffectProcess.DoRenderProcess();
+            EffectProcess.DoRenderProcess(input);
 
             EarlyProcess.DoRenderProcess();
 
@@ -99,14 +109,6 @@ public class RenderProcessManager: Singleton<RenderProcessManager> {
 
             yield return new WaitForEndOfFrame();
         }
-    }
-
-    public override void OnInitialize()
-    {
-    }
-
-    public override void OnUninitialize()
-    {
     }
 }
 

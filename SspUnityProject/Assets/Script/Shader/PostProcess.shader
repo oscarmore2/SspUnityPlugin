@@ -3,6 +3,7 @@
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
+		_Overlay("Texture", 2D) = "white" {}
 	}
 	SubShader
 	{
@@ -33,6 +34,7 @@
 			};
 
 			sampler2D _MainTex;
+			sampler2D _Overlay;
 			float4 _MainTex_ST;
 			
 			v2f vert (appdata v)
@@ -49,9 +51,13 @@
 			{
 				// sample the texture
 				fixed4 col = tex2D(_MainTex, i.uv);
+			fixed4 overlay = tex2D(_Overlay, i.uv);
+			fixed4 col2 = col * (1 - overlay.w);
+			overlay = overlay * overlay.w;
+			fixed4 result = col2 + overlay;
 				// apply fog
-				UNITY_APPLY_FOG(i.fogCoord, col);
-				return col;
+				UNITY_APPLY_FOG(i.fogCoord, result);
+				return result;
 			}
 			ENDCG
 		}

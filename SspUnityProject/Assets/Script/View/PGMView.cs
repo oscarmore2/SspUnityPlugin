@@ -23,13 +23,17 @@ public class PGMView : IView {
         outputBuffer.StartPush(pgmBuffer);
     }
 
+    public void AttachUILayer()
+    {
+        renderProcessManager.EarlyProcess.SetOverlay(ResourceDisplayList.Instance.PGMPreRenderPipeLineCamera.targetTexture);
+        renderProcessManager.PostProcess.SetOverlay(ResourceDisplayList.Instance.PGMPostRenderPipeLineCamera.targetTexture);
+    }
+
     public override void OnUpdateTexture(Texture tex)
     {
-        if (!pgmBuffer)
-        {
-            renderProcessManager.StartRender(tex);
-            pgmBuffer = renderProcessManager.PostProcess.ProcessResult;
-        }
+        renderProcessManager.StopRender();
+        renderProcessManager.ChangeSurface(tex);
+        pgmBuffer = renderProcessManager.PostProcess.ProcessResult;
     }
 
     protected override void OnHided()

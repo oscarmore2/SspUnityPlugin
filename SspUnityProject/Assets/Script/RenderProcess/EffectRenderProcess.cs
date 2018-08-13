@@ -16,11 +16,14 @@ public class EffectRenderProcess : CommonRenderProcess
         base.SetupProcess(inputTex);
     }
 
-    public override void DoRenderProcess()
+    public override void DoRenderProcess(Texture newTex = null)
     {
         if (null != ProcessBegin)
             ProcessBegin();
-        
+
+        if (newTex != null)
+            procressMaterial.mainTexture = newTex;
+
         if (null != ProcessEnd)
             ProcessEnd();
     }

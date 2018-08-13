@@ -8,6 +8,7 @@ public class ViewManager : MonoBehaviour {
     public PGMView PGM;
     public PVWView PVW;
     public List<VCamView> VCamView = new List<VCamView>();
+    
 
     public VCamMappingTable MappingTable;
 
@@ -17,6 +18,7 @@ public class ViewManager : MonoBehaviour {
         {
 			MappingTable.BindVcam(VcamList.Instance.GetList()[i], VCamView[i], new Rect(1, 1, 1, 1));
         }
+        AttachUI();
     }
 
     void OnChangeBiding()
@@ -24,10 +26,20 @@ public class ViewManager : MonoBehaviour {
 
     }
 
+    public void AttachUI()
+    {
+        PGM.AttachUILayer();
+        PVW.AttachUILayer();
+    }
+
     public void OnPushToPVW(IView view)
     {
         VCam cam = null;
-        
+        MappingTable.GetVcamByView(view, ref cam);
+        if (cam != null)
+        {
+            PGM.OnUpdateTexture(null);
+        }
     }
 
     void OnTransitionToPGM()

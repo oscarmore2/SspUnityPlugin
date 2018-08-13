@@ -67,7 +67,7 @@ namespace Resource
         public void OnSwitchToggle()
         {
             ResGroup.ActivateState = new bool[]{ PVWToggle.isOn, PGMToggle.isOn, BinDiagToggle.isOn};
-            ResourceGroupList.Instance.OnResourceGroupChange(ResGroup, ResGroup.ActivateState);
+            ResourceGroupList.Instance.OnResourceGroupChange(ResGroup);
         }
         
     }
