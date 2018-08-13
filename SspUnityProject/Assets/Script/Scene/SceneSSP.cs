@@ -30,7 +30,6 @@ public class SceneSSP : MonoBehaviour {
         });
 
         AppInit.Instance.Init();
-
-        viewManager.InitView();
+        
     }
 }

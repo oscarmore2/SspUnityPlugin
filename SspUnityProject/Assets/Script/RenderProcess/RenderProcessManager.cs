@@ -8,6 +8,8 @@ public class RenderProcessManager: MonoBehaviour {
     List<CommonRenderProcess> branchProcessPath = new List<CommonRenderProcess>();
     int currentProcessIndex = -1;
 
+    bool start = false;
+
 	public EffectRenderProcess EffectProcess { get; private set; }
 
 	public PreRenderProcess EarlyProcess { get; private set; }
@@ -41,6 +43,8 @@ public class RenderProcessManager: MonoBehaviour {
         DestoryRenderProcess();
     }
 
+    
+
     void DestoryRenderProcess()
     {
         EffectProcess = null;
@@ -51,6 +55,7 @@ public class RenderProcessManager: MonoBehaviour {
 
     public void StartRender(Texture Input)
     {
+        start = true;
         EffectProcess.SetupProcess(Input);
 
         EarlyProcess.SetupProcess(EffectProcess.ProcessResult);
@@ -87,6 +92,8 @@ public class RenderProcessManager: MonoBehaviour {
 
     public void ChangeSurface(Texture txd)
     {
+        if (!start)
+            StartRender(txd);
         StartCoroutine(OnRender(txd));
     }
 

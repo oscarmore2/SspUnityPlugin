@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class PGMView : IView {
     OutputBuffer outputBuffer;
     Texture pgmBuffer;
-    RenderProcessManager renderProcessManager;
+    public RenderProcessManager renderProcessManager { get; private set; }
 
     void Awake()
     {
@@ -15,6 +15,7 @@ public class PGMView : IView {
         //outputBuffer.InitFromConfig();
         //renderProcessManager = RenderProcessFactory.CreateProcessManager(Vector3.left * 500);
         //renderProcessManager.transform.parent = transform;
+        renderProcessManager = GetComponent<RenderProcessManager>();
         ViewImage = GetComponent<RawImage>();
     }
 

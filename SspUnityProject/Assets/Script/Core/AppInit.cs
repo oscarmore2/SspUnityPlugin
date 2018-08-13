@@ -27,10 +27,10 @@ public class AppInit : Singleton<AppInit> {
             GroupTraveller.Create();
             RendererContainor.Create();
             VcamList.Create();
-            ResourceDisplayList.Create();
             RendererContainor.Create();
             GroupTraveller.Create();
             OutputBuffer.Create();
+            ResourceDisplayList.Create();
             return true;
         });
 
@@ -41,12 +41,14 @@ public class AppInit : Singleton<AppInit> {
 
         OnSetUpRenderer += new Func<bool>(() => {
             GroupTraveller.Instance.OnInit();
+            
             return true;
         });
 
         OnLoadDevice += new Func<bool>(() => {
             VcamList.Instance.LoadConfig();
-            OutputBuffer.Instance.LoadConfig();
+            OutputBuffer.Instance.InitFromConfig();
+            ResourceDisplayList.Instance.InitProcess();
             return true;
         });
     }

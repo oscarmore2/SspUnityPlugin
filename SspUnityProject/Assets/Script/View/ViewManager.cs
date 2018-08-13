@@ -8,6 +8,7 @@ public class ViewManager : MonoBehaviour {
     public PGMView PGM;
     public PVWView PVW;
     public List<VCamView> VCamView = new List<VCamView>();
+    public Texture2D DefaultImg;
     
 
     public VCamMappingTable MappingTable;
@@ -18,6 +19,11 @@ public class ViewManager : MonoBehaviour {
         {
 			MappingTable.BindVcam(VcamList.Instance.GetList()[i], VCamView[i], new Rect(1, 1, 1, 1));
         }
+        PGM.renderProcessManager.CreateBseicRenderProcess();
+        PVW.renderProcessManager.CreateBseicRenderProcess();
+
+        PGM.renderProcessManager.StartRender(DefaultImg);
+        PVW.renderProcessManager.StartRender(DefaultImg);
         AttachUI();
     }
 

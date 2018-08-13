@@ -19,6 +19,11 @@ public class ResourceDisplayList : Singleton<ResourceDisplayList>
 
     public override void OnInitialize()
     {
+        
+    }
+
+    public void InitProcess()
+    {
         this.initProcess("PVWPreRenderPipeLine", ref PVWPreRenderPipeLine, ref PVWPreRenderPipeLineCamera);
         this.initProcess("PGMPreRenderPipeLine", ref PGMPreRenderPipeLine, ref PGMPreRenderPipeLineCamera);
 

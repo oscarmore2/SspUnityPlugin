@@ -6,12 +6,14 @@ using UnityEngine.UI;
 
 public class PVWView : IView {
     Texture pvwBuffer;
-    RenderProcessManager renderProcessManager;
+
+    public RenderProcessManager renderProcessManager { get; private set; }
 
     void Awake()
     {
         renderProcessManager = RenderProcessFactory.CreateProcessManager(Vector3.zero);
         renderProcessManager.transform.parent = transform;
+        renderProcessManager = GetComponent<RenderProcessManager>();
         ViewImage = GetComponent<RawImage>();
     }
 
