@@ -9,6 +9,7 @@ public class PGMView : IView {
     Texture pgmBuffer;
     public RenderProcessManager renderProcessManager { get; private set; }
 
+    bool isPushing;
     void Awake()
     {
         //outputBuffer = gameObject.AddComponent<OutputBuffer>();
@@ -19,15 +20,28 @@ public class PGMView : IView {
         ViewImage = GetComponent<RawImage>();
     }
 
-    public void StartPush()
+    public override void InitView(ViewManager _manager)
     {
-        outputBuffer.StartPush(pgmBuffer);
+        manager = _manager;
+        renderProcessManager.CreateBseicRenderProcess();
+        renderProcessManager.StartRender(manager.DefaultImg);
+        pgmBuffer = renderProcessManager.PostProcess.ProcessResult;
+        ViewImage.texture = pgmBuffer;
+        AttachUILayer();
+    }
+
+    public void TogglePush()
+    {
+        if (!isPushing)
+            outputBuffer.StartPush(pgmBuffer);
+        else
+            outputBuffer.StopPush();
     }
 
     public void AttachUILayer()
     {
-        renderProcessManager.EarlyProcess.SetOverlay(ResourceDisplayList.Instance.PGMPreRenderPipeLineCamera.targetTexture);
-        renderProcessManager.PostProcess.SetOverlay(ResourceDisplayList.Instance.PGMPostRenderPipeLineCamera.targetTexture);
+        renderProcessManager.EarlyProcess.SetOverlay(ResourceDisplayList.Instance.PGMPreRenderPipeLineCamera);
+        renderProcessManager.PostProcess.SetOverlay(ResourceDisplayList.Instance.PGMPostRenderPipeLineCamera);
     }
 
     public override void OnUpdateTexture(Texture tex)

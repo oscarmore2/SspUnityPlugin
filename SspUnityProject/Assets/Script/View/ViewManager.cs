@@ -17,14 +17,11 @@ public class ViewManager : MonoBehaviour {
     {
         for (int i = 0; i < VcamList.Instance.GetList().Count; i++)
         {
-			MappingTable.BindVcam(VcamList.Instance.GetList()[i], VCamView[i], new Rect(1, 1, 1, 1));
+            VCamView[i].InitView(this);
+            MappingTable.BindVcam(VcamList.Instance.GetList()[i], VCamView[i], new Rect(1, 1, 1, 1));
         }
-        PGM.renderProcessManager.CreateBseicRenderProcess();
-        PVW.renderProcessManager.CreateBseicRenderProcess();
-
-        PGM.renderProcessManager.StartRender(DefaultImg);
-        PVW.renderProcessManager.StartRender(DefaultImg);
-        AttachUI();
+        PGM.InitView(this);
+        PVW.InitView(this);
     }
 
     void OnChangeBiding()
@@ -32,20 +29,11 @@ public class ViewManager : MonoBehaviour {
 
     }
 
-    public void AttachUI()
-    {
-        PGM.AttachUILayer();
-        PVW.AttachUILayer();
-    }
-
     public void OnPushToPVW(IView view)
     {
-        VCam cam = null;
-        MappingTable.GetVcamByView(view, ref cam);
-        if (cam != null)
-        {
-            PGM.OnUpdateTexture(null);
-        }
+        var vcam = (VCamView)view;
+        if (vcam.BufferTexture != null)
+            PVW.OnUpdateTexture(vcam.BufferTexture);
     }
 
     void OnTransitionToPGM()

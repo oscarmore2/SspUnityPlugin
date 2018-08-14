@@ -11,7 +11,8 @@ public class RendererContainor : Singleton<RendererContainor> {
 
     public override void OnInitialize()
     {
-        
+        var canvas = gameObject.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
     }
 
     public override void OnUninitialize()
@@ -60,6 +61,8 @@ public class RendererContainor : Singleton<RendererContainor> {
             }
         }
 
+        render.GUID = resource.GUID;
+
         RenderPathMapping[resource.GUID + suffix] = render;
         return render;
     }
@@ -67,7 +70,14 @@ public class RendererContainor : Singleton<RendererContainor> {
     public IResourceRenderer this[string path]
     {
         get {
-            return RenderPathMapping[path];
+            if (RenderPathMapping.ContainsKey(path))
+            {
+                return RenderPathMapping[path];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         set {

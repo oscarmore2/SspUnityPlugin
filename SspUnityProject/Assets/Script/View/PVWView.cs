@@ -24,10 +24,20 @@ public class PVWView : IView {
         pvwBuffer = renderProcessManager.PostProcess.ProcessResult;
     }
 
+    public override void InitView(ViewManager _manager)
+    {
+        manager = _manager;
+        renderProcessManager.CreateBseicRenderProcess();
+        renderProcessManager.StartRender(manager.DefaultImg);
+        pvwBuffer = renderProcessManager.PostProcess.ProcessResult;
+        ViewImage.texture = pvwBuffer;
+        AttachUILayer();
+    }
+
     public void AttachUILayer()
     {
-        renderProcessManager.EarlyProcess.SetOverlay(ResourceDisplayList.Instance.PVWPreRenderPipeLineCamera.targetTexture);
-        renderProcessManager.PostProcess.SetOverlay(ResourceDisplayList.Instance.PVWPostRenderPipeLineCamera.targetTexture);
+        renderProcessManager.EarlyProcess.SetOverlay(ResourceDisplayList.Instance.PVWPreRenderPipeLineCamera);
+        renderProcessManager.PostProcess.SetOverlay(ResourceDisplayList.Instance.PVWPostRenderPipeLineCamera);
     }
 
     protected override void OnHided()

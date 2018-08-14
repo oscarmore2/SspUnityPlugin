@@ -5,13 +5,14 @@ using Resource;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Text))]
 public class TextRenderer : IResourceRenderer {
 
     public Text Content;
 
     public override void ChangeContent(Resource.IResource contentData)
     {
-        Content.text = (string)contentData.GetFile();
+        Content.text = (string)((TextResoure)contentData).GetFile();
     }
 
     public override Resource.ResourceType GetType()
@@ -41,6 +42,10 @@ public class TextRenderer : IResourceRenderer {
             prop.SetValue(dst, prop.GetValue(Content, null), null);
         }
         renderTarget.Add(target);
+        target.transform.localPosition = Vector3.zero;
+        RectTransform rect = target.GetComponent<RectTransform>();
+        rect.anchoredPosition = rectTranfrom.anchoredPosition;
+        target.transform.localScale = Vector3.one;
         return dst;
     }
 
@@ -53,9 +58,10 @@ public class TextRenderer : IResourceRenderer {
             render.transform.parent = root;
             render.rectTranfrom = obj.GetComponent<RectTransform>();
             render.Content = obj.GetComponent<Text>();
+            render.Content.font = Font.CreateDynamicFontFromOSFont("Arial", 10);
             render.ChangeContent(res);
             render.Attrs = res.Attrs;
-            render.ApplyAttrs();
+            render.ApplyAttrs(res.Attrs);
             return render;
         }
     }

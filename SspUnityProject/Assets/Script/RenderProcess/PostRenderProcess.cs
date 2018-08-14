@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class PostRenderProcess : CommonRenderProcess
 {
-    private Texture Overlay;
+    [SerializeField]
+    private RenderTexture Overlay;
     public override void SetupProcess(Texture inputTex)
     {
         processShader = Shader.Find("RenderProcess/PostProcess");
@@ -14,12 +15,14 @@ public class PostRenderProcess : CommonRenderProcess
         procressMaterial = new Material(processShader);
         mesh.material = procressMaterial;
         renderCamera = obj.GetComponent<Camera>();
+        Overlay = new RenderTexture(OutputBuffer.Instance.OutputConf.Width, OutputBuffer.Instance.OutputConf.Height, 0, RenderTextureFormat.ARGB32);
+        procressMaterial.SetTexture("_Overlay", inputTex);
         base.SetupProcess(inputTex);
     }
 
-    public void SetOverlay(Texture txd)
+    public void SetOverlay(Camera cam)
     {
-        Overlay = txd;
+        cam.targetTexture = Overlay;
         procressMaterial.SetTexture("_Overlay", Overlay);
     }
 

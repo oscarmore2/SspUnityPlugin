@@ -32,7 +32,7 @@ namespace Resource
             YAxis.text = g.YAxis.ToString();
             Scale.text = g.Scale.ToString();
             Duration.text = g.Duration.ToString();
-
+            ResGroup = g;
             for (int i = 0; i < g.ResourceRefs.Count; i++)
             {
                 GameObject gameobj = null;

@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Resource;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(RawImage))]
 public class ImageRenderer : IResourceRenderer {
 
     public RawImage image;
+    
 
     public override Resource.ResourceType GetType()
     {
@@ -21,7 +23,7 @@ public class ImageRenderer : IResourceRenderer {
 
     public override void ChangeContent(Resource.IResource contentData)
     {
-        image.texture = (Texture2D)contentData.GetFile();
+        image.texture = (Texture2D)((ImageResource)contentData).GetFile();
     }
 
     public override T AttachRenderTarget<T>(GameObject target)
@@ -45,6 +47,10 @@ public class ImageRenderer : IResourceRenderer {
             if (!prop.CanWrite || !prop.CanWrite || prop.Name == "name") continue;
             prop.SetValue(dst, prop.GetValue(image, null), null);
         }
+        target.transform.localPosition = Vector3.zero;
+        RectTransform rect = target.GetComponent<RectTransform>();
+        rect.anchoredPosition = rectTranfrom.anchoredPosition;
+        target.transform.localScale = Vector3.one;
         renderTarget.Add(target);
         return dst;
     }
@@ -60,7 +66,7 @@ public class ImageRenderer : IResourceRenderer {
             render.image = obj.GetComponent<RawImage>();
             render.ChangeContent(res);
             render.Attrs = res.Attrs;
-            render.ApplyAttrs();
+            render.ApplyAttrs(res.Attrs);
             return render;
         }
     }

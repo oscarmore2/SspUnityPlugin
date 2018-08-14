@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class IResourceRenderer : Component {
+public abstract class IResourceRenderer : MonoBehaviour {
 
     public int Priority;
 
+    public string GUID;
+
     public bool IsAfterTransition;
 
-    public List<GameObject> renderTarget;
+    public List<GameObject> renderTarget = new List<GameObject>();
 
     protected UnityEngine.RectTransform rectTranfrom;
 
@@ -28,6 +30,8 @@ public abstract class IResourceRenderer : Component {
 
     public virtual T AttachRenderTarget<T>(GameObject obj) where T : UnityEngine.UI.Graphic
     {
+        var target = obj.GetComponent<ResourceRenderTarget>();
+        target.renderer = this;
         return null;
     }
 

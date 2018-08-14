@@ -8,6 +8,14 @@ public class VCamView : IView {
 
     Surface surface;
 
+    public Texture BufferTexture {
+        get {
+            if (ViewImage != null && ViewImage.texture != null)
+                return ViewImage.texture;
+            else
+                return null;
+        } }
+
     protected override void OnHided()
     {
 
@@ -26,6 +34,11 @@ public class VCamView : IView {
     public override void OnUpdateTexture(Texture tex)
     {
         SetImage(tex);
+    }
+
+    public override void InitView(ViewManager _manager)
+    {
+        manager = _manager;
     }
 
     // Use this for initialization

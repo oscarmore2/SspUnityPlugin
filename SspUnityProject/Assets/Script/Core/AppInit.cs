@@ -40,8 +40,6 @@ public class AppInit : Singleton<AppInit> {
         //});
 
         OnSetUpRenderer += new Func<bool>(() => {
-            GroupTraveller.Instance.OnInit();
-            
             return true;
         });
 
@@ -49,6 +47,7 @@ public class AppInit : Singleton<AppInit> {
             VcamList.Instance.LoadConfig();
             OutputBuffer.Instance.InitFromConfig();
             ResourceDisplayList.Instance.InitProcess();
+            GroupTraveller.Instance.OnInit();
             return true;
         });
     }
