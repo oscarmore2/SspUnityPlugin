@@ -40,5 +40,5 @@ public abstract class CommonRenderProcess : MonoBehaviour  {
         procressMaterial.mainTexture = inputTexture;
 	}
     
-    public abstract void DoRenderProcess();
+    public abstract void DoRenderProcess(Texture newTex = null);
 }

@@ -19,7 +19,7 @@ namespace Resource
                 return null;
             }
 
-            return (object)System.Text.Encoding.Default.GetString(fileRef);
+            return (object)System.Text.Encoding.UTF8.GetString(fileRef);
         }
 
 		public override void LoadConfig(JsonData data)

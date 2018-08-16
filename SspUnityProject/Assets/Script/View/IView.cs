@@ -8,6 +8,8 @@ public abstract class IView : MonoBehaviour {
     [SerializeField]
     protected RawImage ViewImage;
 
+    protected ViewManager manager;
+
     void Awake()
     {
         ViewImage = GetComponent<RawImage>();
@@ -28,8 +30,9 @@ public abstract class IView : MonoBehaviour {
         ViewImage.texture = txd;
     }
     
-
+    
     protected abstract void OnShown();
     protected abstract void OnHided();
+    public abstract void InitView(ViewManager manager);
     public abstract void OnUpdateTexture(Texture tex);
 }

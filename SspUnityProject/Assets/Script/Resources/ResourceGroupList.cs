@@ -8,7 +8,7 @@ namespace Resource
     public class ResourceGroupList : Singleton<ResourceGroupList>, IEnumerable
     {
 
-        public event Action OnResourceGroupChange;
+        public Action<ResourceGroup> OnResourceGroupChange;
 
         List<ResourceGroup> containor = new List<ResourceGroup>();
 
@@ -21,7 +21,6 @@ namespace Resource
 
         public void AddResourceGroup(ResourceGroup group)
         {
-            OnResourceGroupChange();
             containor.Add(group);
         }
 
@@ -33,9 +32,20 @@ namespace Resource
             }
         }
 
+		public void Sort()
+		{
+			containor.Sort ((left, right) => {
+				if (left.Priority > right.Priority)
+					return 1;
+				else if (left.Priority == right.Priority)
+					return 0;
+				else
+					return -1;
+			});
+		}
+
         public void Remove(ResourceGroup rg)
         {
-            OnResourceGroupChange();
             containor.Remove(rg);
         }
 

@@ -7,29 +7,48 @@ using UnityEngine.UI;
 public class PGMView : IView {
     OutputBuffer outputBuffer;
     Texture pgmBuffer;
-    RenderProcessManager renderProcessManager;
+    public RenderProcessManager renderProcessManager { get; private set; }
 
+    bool isPushing;
     void Awake()
     {
         //outputBuffer = gameObject.AddComponent<OutputBuffer>();
         //outputBuffer.InitFromConfig();
         //renderProcessManager = RenderProcessFactory.CreateProcessManager(Vector3.left * 500);
         //renderProcessManager.transform.parent = transform;
+        renderProcessManager = GetComponent<RenderProcessManager>();
         ViewImage = GetComponent<RawImage>();
     }
 
-    public void StartPush()
+    public override void InitView(ViewManager _manager)
     {
-        outputBuffer.StartPush(pgmBuffer);
+        manager = _manager;
+        renderProcessManager.CreateBseicRenderProcess();
+        renderProcessManager.StartRender(manager.DefaultImg);
+        pgmBuffer = renderProcessManager.PostProcess.ProcessResult;
+        ViewImage.texture = pgmBuffer;
+        AttachUILayer();
+    }
+
+    public void TogglePush()
+    {
+        if (!isPushing)
+            outputBuffer.StartPush(pgmBuffer);
+        else
+            outputBuffer.StopPush();
+    }
+
+    public void AttachUILayer()
+    {
+        renderProcessManager.EarlyProcess.SetOverlay(ResourceDisplayList.Instance.PGMPreRenderPipeLineCamera);
+        renderProcessManager.PostProcess.SetOverlay(ResourceDisplayList.Instance.PGMPostRenderPipeLineCamera);
     }
 
     public override void OnUpdateTexture(Texture tex)
     {
-        if (!pgmBuffer)
-        {
-            renderProcessManager.StartRender(tex);
-            pgmBuffer = renderProcessManager.PostProcess.ProcessResult;
-        }
+        renderProcessManager.StopRender();
+        renderProcessManager.ChangeSurface(tex);
+        pgmBuffer = renderProcessManager.PostProcess.ProcessResult;
     }
 
     protected override void OnHided()

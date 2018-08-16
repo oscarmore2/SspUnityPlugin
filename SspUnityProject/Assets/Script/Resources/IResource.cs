@@ -22,6 +22,8 @@ namespace Resource
 
 		public string GUID;
 
+        public int Priority;
+
 
         public abstract ResourceType GetType();
         public abstract string GetPath();
