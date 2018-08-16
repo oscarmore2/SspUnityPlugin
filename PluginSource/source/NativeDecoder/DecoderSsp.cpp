@@ -460,6 +460,32 @@ void DecoderSsp::setAudioAllChDataEnable(bool isEnable)
 	initSwrContext();
 }
 
+double DecoderSsp::getVideoFrameNV12(uint8_t **output1, int &out1Size, uint8_t **output2, int &out2Size)
+{
+	std::lock_guard<std::mutex> lock(mVideoMutex);
+
+	if (!mIsInitialized || mVideoFrames.size() == 0)
+	{
+		LOG("Video frames buffer is empty. \n");
+		*outputY = *outputU = *outputV = NULL;
+		return -1;
+	}
+	AVFrame *frame = mVideoFrames.front();
+	if (AV_PIX_FMT_NV12 == frame->format)
+	{
+		*output1 = frame->data[0];
+		out1Size = frame->linesize[0];
+		*output2 = frame->data[1];
+		out2Size = frame->linesize[1];
+		mVideoInfo.lastTime = (double)frame->pkt_dts / (double)mVideoMeta.timescale * (double)mVideoMeta.unit;
+	}
+	else
+	{
+		LOG("Video frame format error, cur format is %d\n", frame->format);
+	}
+	return mVideoInfo.lastTime;
+}
+
 double DecoderSsp::getVideoFrame(unsigned char **outputY, unsigned char **outputU, unsigned char **outputV)
 {
 	std::lock_guard<std::mutex> lock(mVideoMutex);

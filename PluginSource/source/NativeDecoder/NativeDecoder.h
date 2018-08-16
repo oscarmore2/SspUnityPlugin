@@ -1,5 +1,3 @@
-//========= Copyright 2015-2018, HTC Corporation. All rights reserved. ===========
-
 #pragma once
 
 // Which platform we are on?

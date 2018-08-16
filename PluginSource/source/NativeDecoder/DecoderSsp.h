@@ -103,6 +103,8 @@ public:
 
 	virtual double getVideoFrame(unsigned char** outputY, unsigned char** outputU, unsigned char** outputV) override;
 
+	virtual double getVideoFrameNV12(uint8_t **output1, int &out1Size, uint8_t** output2, int &out2Size) override;
+
 	virtual double getAudioFrame(unsigned char** outputFrame, int& frameSize) override;
 
 	virtual void freeVideoFrame() override;

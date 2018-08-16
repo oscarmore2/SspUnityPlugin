@@ -22,6 +22,7 @@ public:
 	void setSeekTime(float sec);
 	bool isContentReady();
 	double getVideoFrame(uint8_t** outputY, uint8_t** outputU, uint8_t** outputV);
+	double getVideoFrameNV12(uint8_t** output1, int& out1Size, uint8_t** output2, int& out2Size);
 	double getAudioFrame(uint8_t** outputFrame, int& frameSize);
 	void freeVideoFrame();
 	void freeAudioFrame();

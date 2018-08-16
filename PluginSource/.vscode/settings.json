@@ -22,6 +22,8 @@
         "__tree": "cpp",
         "ios": "cpp",
         "list": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "bitset": "cpp",
+        "utility": "cpp"
     }
 }

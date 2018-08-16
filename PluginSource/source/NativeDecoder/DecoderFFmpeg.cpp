@@ -290,6 +290,29 @@ int DecoderFFmpeg::initSwrContext()
 	return errorCode;
 }
 
+double DecoderFFmpeg::getVideoFrameNV12(uint8_t **output1, int &out1Size, uint8_t** output2, int &out2Size) {
+	std::lock_guard<std::mutex> lock(mVideoMutex);
+
+	if (!mIsInitialized || mVideoFrames.size() == 0)
+	{
+		LOG("Video frame not available. \n");
+		*output1 = *output2 = NULL;
+		return -1;
+	}
+
+	AVFrame *frame = mVideoFrames.front();
+	*output1 = frame->data[0];
+	out1Size = frame->linesize[0];
+	*output2 = frame->data[1];
+	out2Size = frame->linesize[1];
+
+	int64_t timeStamp = av_frame_get_best_effort_timestamp(frame);
+	double timeInSec = av_q2d(mVideoStream->time_base) * timeStamp;
+	mVideoInfo.lastTime = timeInSec;
+
+	return timeInSec;
+}
+
 double DecoderFFmpeg::getVideoFrame(unsigned char **outputY, unsigned char **outputU, unsigned char **outputV)
 {
 	std::lock_guard<std::mutex> lock(mVideoMutex);

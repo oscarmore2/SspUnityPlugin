@@ -27,6 +27,8 @@ public:
 	void setAudioEnable(bool isEnable);
 	void setAudioAllChDataEnable(bool isEnable);
 	double	getVideoFrame(unsigned char** outputY, unsigned char** outputU, unsigned char** outputV);
+
+	double getVideoFrameNV12(uint8_t **output1, int &out1Size, uint8_t** output2, int &out2Size);
 	double	getAudioFrame(unsigned char** outputFrame, int& frameSize);
 	void freeVideoFrame();
 	void freeAudioFrame();
