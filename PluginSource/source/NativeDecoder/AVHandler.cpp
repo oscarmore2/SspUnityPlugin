@@ -56,16 +56,6 @@ double AVHandler::getVideoFrame(uint8_t** outputY, uint8_t** outputU, uint8_t** 
 	return mIDecoder->getVideoFrame(outputY, outputU, outputV);
 }
 
-double AVHandler::getVideoFrameNV12(uint8_t** output1, int& out1Size, uint8_t** output2, int& out2Size) {
-	if (mIDecoder == NULL || !mIDecoder->getVideoInfo().isEnabled || mDecoderState == SEEK) {
-		LOG("Video is not available. \n");
-		*output1 = *output2= NULL;
-		return -1;
-	}
-
-	return mIDecoder->getVideoFrameNV12(output1, out1Size, output2, out2Size);
-}
-
 double AVHandler::getAudioFrame(uint8_t** outputFrame, int& frameSize) {
 	if (mIDecoder == NULL || !mIDecoder->getAudioInfo().isEnabled || mDecoderState == SEEK) {
 		LOG("Audio is not available. \n");

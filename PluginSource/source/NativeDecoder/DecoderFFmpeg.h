@@ -1,14 +1,12 @@
-//========= Copyright 2015-2018, HTC Corporation. All rights reserved. ===========
-
 #pragma once
-#include "IDecoder.h"
-#include <list>
-#include <mutex>
 
 extern "C" {
 #include <libavformat\avformat.h>
 #include <libswresample\swresample.h>
 }
+#include "IDecoder.h"
+#include <list>
+#include <mutex>
 
 class DecoderFFmpeg : public virtual IDecoder
 {
@@ -27,8 +25,6 @@ public:
 	void setAudioEnable(bool isEnable);
 	void setAudioAllChDataEnable(bool isEnable);
 	double	getVideoFrame(unsigned char** outputY, unsigned char** outputU, unsigned char** outputV);
-
-	double getVideoFrameNV12(uint8_t **output1, int &out1Size, uint8_t** output2, int &out2Size);
 	double	getAudioFrame(unsigned char** outputFrame, int& frameSize);
 	void freeVideoFrame();
 	void freeAudioFrame();

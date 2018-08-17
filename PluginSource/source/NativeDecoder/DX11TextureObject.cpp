@@ -1,5 +1,3 @@
-//========= Copyright 2015-2018, HTC Corporation. All rights reserved. ===========
-
 #include "DX11TextureObject.h"
 #include "Logger.h"
 #include <thread>
@@ -13,8 +11,6 @@ DX11TextureObject::DX11TextureObject() {
 		mTextures[i] = NULL;
 		mShaderResourceView[i] = NULL;
 	}
-	mNV12Texture = NULL;
-	mNV12ShaderResourceView = NULL;
 }
 
 DX11TextureObject::~DX11TextureObject() {
@@ -44,36 +40,7 @@ void DX11TextureObject::create(void* handler, unsigned int width, unsigned int h
 	mWidthUV = mWidthY / 2;
 	mHeightUV = mHeightY / 2;
 	mLengthUV = mWidthUV * mHeightUV;
-
-	//======================= Create nv12 texture
-	D3D11_TEXTURE2D_DESC nv12TexDesc;
-	ZeroMemory(&nv12TexDesc, sizeof(D3D11_TEXTURE2D_DESC));
-	nv12TexDesc.Width = width;
-	nv12TexDesc.Height = height;
-	nv12TexDesc.MipLevels = nv12TexDesc.ArraySize = 1;
-	nv12TexDesc.Format = DXGI_FORMAT_NV12;
-	nv12TexDesc.SampleDesc.Count = 1;
-	nv12TexDesc.Usage = D3D11_USAGE_DYNAMIC;
-	nv12TexDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	nv12TexDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	nv12TexDesc.MiscFlags = 0;
-	HRESULT result = mD3D11Device->CreateTexture2D(&nv12TexDesc, NULL, (ID3D11Texture2D**)(&(mNV12Texture)));
-	if (FAILED(result)) {
-		LOG("Create texture Y fail. Error code: %x\n", result);
-	}
-	D3D11_SHADER_RESOURCE_VIEW_DESC nv12ShaderViewDesc;
-	nv12ShaderViewDesc.Format = DXGI_FORMAT_NV12;
-	nv12ShaderViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	nv12ShaderViewDesc.Texture2D.MostDetailedMip = 0;
-	nv12ShaderViewDesc.Texture2D.MipLevels = 1;
-
-	result = mD3D11Device->CreateShaderResourceView((ID3D11Texture2D*)(mTextures[0]), &nv12ShaderViewDesc, &(mNV12ShaderResourceView));
-	if (FAILED(result)) {
-		LOG("Create shader resource view Y fail. Error code: %x\n", result);
-	}
 	//===============================
-
-
 	//	For YUV420
 	//	Y channel
 	D3D11_TEXTURE2D_DESC texDesc;
@@ -126,47 +93,6 @@ void DX11TextureObject::create(void* handler, unsigned int width, unsigned int h
 	if (FAILED(result)) {
 		LOG("Create shader resource view V fail. %x\n", result);
 	}
-}
-
-void DX11TextureObject::getResourcePointer(void*& ptr) {
-	if (mD3D11Device == NULL) {
-		return;
-	}
-
-	ptry = mNV12ShaderResourceView;
-}
-
-void DX11TextureObject::uploadOnce(unsigned char* data) {
-	if (mD3D11Device == NULL) {
-		return;
-	}
-	ID3D11DeviceContext* ctx = NULL;
-	mD3D11Device->GetImmediateContext(&ctx);
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
-	ctx->Map(mNV12Texture, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	UINT rowPitch = mappedResource.RowPitch;
-	uint8_t* ptrMapped = (uint8_t*)(mappedResource.pData);
-	std::thread cpyThread = std::thread([&]() {
-		//	Map region has its own row pitch which may different to texture width.
-		if (mWidthY == rowPitch) {
-			memcpy(ptrMapped, data, mLengthY);
-		}
-		else {
-			//	Handle rowpitch of mapped memory.
-			uint8_t* end = data + mLengthY;
-			while (data != end) {
-				memcpy(ptrMapped, data, mWidthY);
-				data += mWidthY;
-				ptrMapped += rowPitch;
-			}
-		}
-	});
-	if (cpyThread.joinable()) {
-		cpyThread.join();
-	}
-	ctx->Unmap(mNV12Texture, 0);
-	ctx->Release();
 }
 
 void DX11TextureObject::upload(unsigned char* ych, unsigned char* uch, unsigned char* vch) {
@@ -258,13 +184,4 @@ void DX11TextureObject::destroy() {
 			mShaderResourceView[i] = NULL;
 		}
 	}
-	if (mNV12Texture != NULL) {
-		mNV12Texture->release();
-		mNV12Texture = NULL;
-	}
-	if (mNV12ShaderResourceView != NULL) {
-		mNV12ShaderResourceView->release();
-		mNV12ShaderResourceView = NULL;
-	}
-
 }

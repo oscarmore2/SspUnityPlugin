@@ -1,5 +1,3 @@
-//========= Copyright 2015-2018, HTC Corporation. All rights reserved. ===========
-
 #pragma once
 #include<cstddef>
 #include<cstdint>
@@ -82,8 +80,7 @@ class IDecoder
 	virtual void setAudioEnable(bool isEnable) = 0;
 	virtual void setAudioAllChDataEnable(bool isEnable) = 0;
 	virtual double getVideoFrame(unsigned char **outputY, unsigned char **outputU, unsigned char **outputV) = 0;
-
-	virtual double getVideoFrameNV12(uint8_t **output1, int &out1Size, uint8_t** output2, int &out2Size) = 0;
+	virtual double getAudioFrame(unsigned char** outputFrame, int& frameSize) = 0;
 	virtual void freeVideoFrame() = 0;
 	virtual void freeAudioFrame() = 0;
 	virtual bool isContentReady() = 0;

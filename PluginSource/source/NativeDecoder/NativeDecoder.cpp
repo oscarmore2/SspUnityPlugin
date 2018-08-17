@@ -1,11 +1,12 @@
-﻿#include "Unity\IUnityGraphics.h"
+﻿#include <stdio.h>
+#include <thread>
+#include <list>
 #include "NativeDecoder.h"
 #include "AVHandler.h"
 #include "Logger.h"
 #include "DX11TextureObject.h"
-#include <stdio.h>
-#include <thread>
-#include <list>
+#include "Unity/IUnityInterface.h"
+#include "Unity/IUnityGraphics.h"
 
 typedef struct _VideoContext {
 	int id = -1;
@@ -137,10 +138,17 @@ void DoRendering (int id)
 					double curFrameTime = localAVHandler->getVideoFrame(&ptrY, &ptrU, &ptrV);
 					if (ptrY != NULL && curFrameTime != -1 && localVideoContext->lastUpdateTime != curFrameTime) {
 						localVideoContext->textureObj->upload(ptrY, ptrU, ptrV);
-						//localVideoContext->textureObj->uploadOnce()
 						localVideoContext->lastUpdateTime = (float)curFrameTime;
-						//localVideoContext->isContentReady = true;
 					}
+					//uint8_t* ptr1 = NULL;
+					//uint8_t* ptr2 = NULL;
+					//int ptr1Size = 0;
+					//int ptr2Size = 0;
+					//double curFrameTime = localAVHandler->getVideoFrameNV12(&ptr1, ptr1Size, &ptr2, ptr2Size);
+					//if (ptr1 != NULL && ptr2 != NULL && curFrameTime != -1 && localVideoContext->lastUpdateTime != curFrameTime) {
+					//	localVideoContext->textureObj->uploadNV12(ptr1, ptr1Size, ptr2, ptr2Size);
+					//	localVideoContext->lastUpdateTime = (float)curFrameTime;
+					//}
 					localAVHandler->freeVideoFrame();
 				}
 			}
@@ -211,14 +219,6 @@ void nativeCreateTexture(int id, void*& tex0, void*& tex1, void*& tex2) {
 	iter->textureObj->getResourcePointers(tex0, tex1, tex2);
 }
 
-void nativeCreateOneTexture(int id, void*& tex) {
-	VideoContextIter iter;
-	if (!getVideoContextIter(id, &iter) || iter->textureObj == NULL) { return; }
-
-	iter->textureObj->getResourcePointer(tex);
-}
-
-
 bool nativeStartDecoding(int id) {
 	VideoContextIter iter;
 	if (!getVideoContextIter(id, &iter) || iter->avhandler == NULL) { return false; }
@@ -231,11 +231,6 @@ bool nativeStartDecoding(int id) {
 	if (avhandler->getDecoderState() >= AVHandler::DecoderState::INITIALIZED) {
 		avhandler->startDecoding();
 	}
-
-	//if (!avhandler->getVideoInfo().isEnabled) {
-	//	iter->isContentReady = true;
-	//}
-
 	return true;
 }
 

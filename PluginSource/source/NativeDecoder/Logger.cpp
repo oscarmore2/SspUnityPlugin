@@ -1,9 +1,9 @@
-//========= Copyright 2015-2018, HTC Corporation. All rights reserved. ===========
-
 #include "Logger.h"
 #include <memory>
+#include <ctime>
 #include <string>
 #include <consoleapi.h>
+
 #pragma warning(disable : 4996)
 Logger *Logger::_instance;
 UnityLog Logger::_unity = NULL;
@@ -48,27 +48,27 @@ void Logger::log(const char *str, ...)
 	fflush(stdout);
 }
 
-void TimeProfiler::start(std::string tag)
-{
-	watches[tag] = clock();
-}
-
-void TimeProfiler::stop(std::string tag)
-{
-	auto start = watches.find(tag);
-	if (start != watches.end())
-	{
-		auto delta = (double)(clock() - *start) / CLOCKS_PER_SEC * 1000;
-		LOG("[Time] [%s]: %f\n", tag.c_str(), delta);
-	}
-}
-
-TimeProfiler::TimeProfiler(const char *t) : tag(t)
-{
-	start(tag);
-}
-
-TimeProfiler::~TimeProfiler()
-{
-	stop(tag);
-}
+//void TimeProfiler::start(std::string tag)
+//{
+//	watches[tag] = clock();
+//}
+//
+//void TimeProfiler::stop(std::string tag)
+//{
+//	auto start = watches.find(tag);
+//	if (start != watches.end())
+//	{
+//		auto delta = (double)(clock() - start->second) / CLOCKS_PER_SEC * 1000;
+//		LOG("[Time] [%s]: %f\n", tag.c_str(), delta);
+//	}
+//}
+//
+//TimeProfiler::TimeProfiler(const char *t) : tag(t)
+//{
+//	start(tag);
+//}
+//
+//TimeProfiler::~TimeProfiler()
+//{
+//	stop(tag);
+//}

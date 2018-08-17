@@ -1,4 +1,10 @@
 #pragma once
+extern "C" {
+#include <libavformat\avformat.h>
+#include <libswresample\swresample.h>
+#include <libavutil\pixdesc.h>
+#include <libswscale\swscale.h>
+}
 #include "IDecoder.h"
 #include <list>
 #include <mutex>
@@ -6,12 +12,6 @@
 #include "imf/net/threadloop.h"
 #include "imf/ssp/sspclient.h"
 #include <string>
-extern "C" {
-#include <libavformat\avformat.h>
-#include <libswresample\swresample.h>
-#include <libavutil\pixdesc.h>
-#include <libswscale\swscale.h>
-}
 
 struct H264Data
 {
@@ -102,8 +102,6 @@ public:
 	virtual void setAudioAllChDataEnable(bool isEnable) override;
 
 	virtual double getVideoFrame(unsigned char** outputY, unsigned char** outputU, unsigned char** outputV) override;
-
-	virtual double getVideoFrameNV12(uint8_t **output1, int &out1Size, uint8_t** output2, int &out2Size) override;
 
 	virtual double getAudioFrame(unsigned char** outputFrame, int& frameSize) override;
 

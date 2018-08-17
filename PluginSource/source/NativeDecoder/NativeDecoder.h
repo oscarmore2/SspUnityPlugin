@@ -23,8 +23,7 @@ extern "C" {
 	__declspec(dllexport) int nativeCreateDecoder(const char* filePath, int& id);
 	__declspec(dllexport) int nativeCreateDecoderAsync(const char* filePath, int& id);
 	__declspec(dllexport) int nativeGetDecoderState(int id);
-	__declspec(dllexport) void nativeCreateTexture(int id, void*& tex0, void*& tex1, void*& tex2);
-	__declspec(dllexport) void nativeCreateOneTexture(int id, void*& tex);
+
 	__declspec(dllexport) bool nativeStartDecoding(int id);
 	__declspec(dllexport) void nativeDestroyDecoder(int id);
 	__declspec(dllexport) bool nativeIsEOF(int id);
@@ -49,4 +48,6 @@ extern "C" {
 	//  Utility
 	__declspec(dllexport) int nativeGetMetaData(const char* filePath, char*** key, char*** value);
 	// __declspec(dllexport) void nativeLoadThumbnail(int id, float time, void* texY, void* texU, void* texV);
+
+	__declspec(dllexport) void nativeCreateTexture(int id, void*& tex0, void*& tex1, void*& tex2);
 }

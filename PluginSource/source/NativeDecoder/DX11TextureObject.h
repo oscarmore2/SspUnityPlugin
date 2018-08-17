@@ -1,7 +1,6 @@
 #pragma once
 #include "ITextureObject.h"
 #include <d3d11.h>
-
 class DX11TextureObject : public virtual ITextureObject
 {
 public:
@@ -12,9 +11,6 @@ public:
 	void getResourcePointers(void*& ptry, void*& ptru, void*& ptrv);
 	void upload(unsigned char* ych, unsigned char* uch, unsigned char* vch);
 	void destroy();
-
-	void getResourcePointer(void*& ptr);
-	void uploadOnce(unsigned char* data);
 private:
 	ID3D11Device* mD3D11Device;
 	
@@ -28,7 +24,4 @@ private:
 
 	ID3D11Texture2D* mTextures[TEXTURE_NUM];
 	ID3D11ShaderResourceView* mShaderResourceView[TEXTURE_NUM];
-
-	ID3D11Texture2D* mNV12Texture;
-	ID3D11ShaderResourceView* mNV12ShaderResourceView;
 };
