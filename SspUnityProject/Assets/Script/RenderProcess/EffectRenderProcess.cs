@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class EffectRenderProcess : CommonRenderProcess
 {
+	public Texture InputTexture { get; private set;}
     public override void SetupProcess(Texture inputTex)
     {
+		InputTexture = inputTex;
         processShader = Shader.Find("RenderProcess/EffectProcess");
         GameObject obj = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefab/Renderer"), this.gameObject.transform);
         var mesh = obj.GetComponentInChildren<MeshRenderer>();

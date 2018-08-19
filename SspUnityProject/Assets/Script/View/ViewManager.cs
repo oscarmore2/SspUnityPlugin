@@ -36,10 +36,31 @@ public class ViewManager : MonoBehaviour {
             PVW.OnUpdateTexture(vcam.BufferTexture);
     }
 
-    void OnTransitionToPGM()
+	Texture tempBuffer;
+	Transition transition;
+    public void OnTransitionToPGM()
     {
+		tempBuffer = PVW.renderProcessManager.EarlyProcess.ProcessResult;
+		TransitionManager.Instance.OnTransitionStart = ((Material obj) => {
+			PVW.renderProcessManager.ChangeSurface(PGM.renderProcessManager.EffectProcess.InputTexture);
+			obj.SetTexture("PVW", tempBuffer);
+			obj.SetTexture("PGM", PGM.renderProcessManager.EarlyProcess.ProcessResult);
+			PGM.renderProcessManager.TransitionProcess.SetTransition(obj);
+		});
 
+		TransitionManager.Instance.OnTransitionEnd = (() => {
+			PGM.renderProcessManager.TransitionProcess.ResetMaterial();
+			PGM.renderProcessManager.TransitionProcess.DoRenderProcess(PGM.renderProcessManager.EarlyProcess.ProcessResult);
+			PGM.renderProcessManager.ChangeSurface(tempBuffer);
+		});
+
+		TransitionManager.Instance.Transition (transition);
     }
+
+	public void SetTransition(TransitionCreater tran)
+	{
+		transition = tran.transition;
+	}
 
     public void ExpendCameraView()
     {

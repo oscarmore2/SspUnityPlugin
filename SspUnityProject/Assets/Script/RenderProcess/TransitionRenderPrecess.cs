@@ -27,4 +27,25 @@ public class TransitionRenderPrecess : CommonRenderProcess
         if (null != ProcessEnd)
             ProcessEnd();
     }
+
+	public void SetTransition(Material mat = null)
+	{
+		if (null != ProcessBegin)
+			ProcessBegin();
+
+		if (mat != null) {
+			var mesh = GetComponentInChildren<MeshRenderer>(true);
+			mesh.material = mat;
+		}
+			
+
+		if (null != ProcessEnd)
+			ProcessEnd();
+	}
+
+	public void ResetMaterial()
+	{
+		var mesh = GetComponentInChildren<MeshRenderer>(true);
+		mesh.material = procressMaterial;
+	}
 }

@@ -31,6 +31,7 @@ public class AppInit : Singleton<AppInit> {
             GroupTraveller.Create();
             OutputBuffer.Create();
             ResourceDisplayList.Create();
+			TransitionManager.Create();
             return true;
         });
 
