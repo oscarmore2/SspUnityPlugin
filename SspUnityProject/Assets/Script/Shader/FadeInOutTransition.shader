@@ -53,10 +53,10 @@
 				// sample the texture
 				fixed4 colPVW = tex2D(_PVW, i.uv);
 				fixed4 colPGM = tex2D(_PGM, i.uv);
-				fixed4 col = colPVW * (1 - _AlphaKey) + colPGM * _AlphaKey;
+				fixed4 col = colPGM * _AlphaKey;
 				// apply fog
-				UNITY_APPLY_FOG(i.fogCoord, col);
-				return col;
+				//UNITY_APPLY_FOG(i.fogCoord, col);
+				return colPVW;
 			}
 			ENDCG
 		}

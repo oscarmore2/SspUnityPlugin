@@ -24,7 +24,11 @@ public class EffectRenderProcess : CommonRenderProcess
             ProcessBegin();
 
         if (newTex != null)
+        {
+            InputTexture = newTex;
             procressMaterial.mainTexture = newTex;
+        }
+            
 
         if (null != ProcessEnd)
             ProcessEnd();

@@ -24,6 +24,7 @@ public class FadeTransitionCreater : TransitionCreater {
 		transition.duration = duration;
 		float step = Mathf.Abs(endValue - startValue) / duration;
 		transition.ValueField.Add (new Transition.ShaderParams<float> (key,startValue, endValue, step));
+        transition.SetShader(shaderName);
 	}
 
 }

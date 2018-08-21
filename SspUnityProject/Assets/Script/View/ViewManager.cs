@@ -38,11 +38,13 @@ public class ViewManager : MonoBehaviour {
 
 	Texture tempBuffer;
 	Transition transition;
+    [SerializeField]
+    TransitionCreater currentTransition;
     public void OnTransitionToPGM()
     {
-		tempBuffer = PVW.renderProcessManager.EarlyProcess.ProcessResult;
 		TransitionManager.Instance.OnTransitionStart = ((Material obj) => {
-			PVW.renderProcessManager.ChangeSurface(PGM.renderProcessManager.EffectProcess.InputTexture);
+            tempBuffer = PVW.renderProcessManager.EffectProcess.InputTexture;
+            PVW.renderProcessManager.ChangeSurface(PGM.renderProcessManager.EffectProcess.InputTexture);
 			obj.SetTexture("PVW", tempBuffer);
 			obj.SetTexture("PGM", PGM.renderProcessManager.EarlyProcess.ProcessResult);
 			PGM.renderProcessManager.TransitionProcess.SetTransition(obj);
@@ -59,6 +61,7 @@ public class ViewManager : MonoBehaviour {
 
 	public void SetTransition(TransitionCreater tran)
 	{
+        currentTransition = tran;
 		transition = tran.transition;
 	}
 

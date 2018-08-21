@@ -40,7 +40,7 @@ public class TransitionManager : Singleton<TransitionManager> {
 
 		while(true)
 		{
-			yield return new WaitForEndOfFrame ();
+			yield return new WaitForFixedUpdate();
 			count += Time.deltaTime;
 			if (count > transition.duration) {
 				break;
@@ -48,7 +48,7 @@ public class TransitionManager : Singleton<TransitionManager> {
 
 			for (int i = 0; i < transition.ValueField.Count; i++) {
 				var value = transition.ValueField [i];
-				tempValue [i] += value.Step;
+				tempValue [i] += value.Step * Time.deltaTime;
 				Stage.SetFloat (value.fieldName, tempValue [i]);
 			}
 		}
