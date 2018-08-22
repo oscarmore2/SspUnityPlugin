@@ -54,6 +54,9 @@ public class ViewManager : MonoBehaviour {
 			PGM.renderProcessManager.TransitionProcess.ResetMaterial();
 			PGM.renderProcessManager.TransitionProcess.DoRenderProcess(PGM.renderProcessManager.EarlyProcess.ProcessResult);
 			PGM.renderProcessManager.ChangeSurface(tempBuffer);
+			var temp = PGM.renderProcessManager.EarlyProcess.OverlayCamera;
+			PGM.renderProcessManager.EarlyProcess.SetOverlay(PVW.renderProcessManager.EarlyProcess.OverlayCamera);
+			PVW.renderProcessManager.EarlyProcess.SetOverlay(temp);
 		});
 
 		TransitionManager.Instance.Transition (transition);

@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FadeTransitionCreater : TransitionCreater {
-	
+public class AlphaEreaseTransitionCreater : TransitionCreater {
 
 	[SerializeField]
 	string key;
@@ -14,6 +13,11 @@ public class FadeTransitionCreater : TransitionCreater {
 	[SerializeField]
 	float endValue;
 
+	[SerializeField]
+	Texture2D Mask;
+
+	[SerializeField]
+	string textureKey;
 
 	// Use this for initialization
 	void Start () {
@@ -21,7 +25,8 @@ public class FadeTransitionCreater : TransitionCreater {
 		transition.duration = duration;
 		float step = Mathf.Abs(endValue - startValue) / duration;
 		transition.ValueField.Add (new Transition.ShaderParams<float> (key,startValue, endValue, step));
-        transition.SetShader(shaderName);
+		transition.TextureField.Add (new Transition.ShaderParams<Texture> (textureKey, Mask, Mask));
+		transition.SetShader(shaderName);
 	}
 
 }

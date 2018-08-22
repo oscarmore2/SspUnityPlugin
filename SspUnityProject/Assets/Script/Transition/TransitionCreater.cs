@@ -8,6 +8,9 @@ public class TransitionCreater : MonoBehaviour {
 	[SerializeField]
 	protected float duration;
 
+	[SerializeField]
+	protected string shaderName;
+
 
 	[SerializeField]
 	protected UnityEngine.UI.InputField durationInput;

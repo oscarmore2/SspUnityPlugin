@@ -8,6 +8,7 @@ public class PreRenderProcess : CommonRenderProcess
     [SerializeField]
     private RenderTexture Overlay;
     
+	public Camera OverlayCamera { get; private set;}
 	public override void SetupProcess(Texture inputTex)
 	{
         processShader = Shader.Find("RenderProcess/PreProcess");
@@ -23,6 +24,7 @@ public class PreRenderProcess : CommonRenderProcess
 
     public void SetOverlay(Camera cam)
     {
+		OverlayCamera = cam;
         cam.targetTexture = Overlay;
         procressMaterial.SetTexture("_Overlay", Overlay);
     }
