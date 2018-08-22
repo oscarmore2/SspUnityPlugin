@@ -1,11 +1,11 @@
-﻿Shader "Unlit/AlphaErease"
+﻿Shader "Transition/AlphaErease"
 {
 	Properties
 	{
-		PVW ("PVW", 2D) = "white" {}
-		PGM ("PGM", 2D) = "white" {}
-		Mask ("Mask", 2D) = "white" {}
-		AlphaKey ("AlphaKey", Float) = 0.0
+		_PVW ("PVW", 2D) = "white" {}
+		_PGM ("PGM", 2D) = "white" {}
+		_Mask ("Mask", 2D) = "white" {}
+		_AlphaKey ("AlphaKey", Float) = 0.0
 	}
 	SubShader
 	{
@@ -55,12 +55,16 @@
 				// sample the texture
 				half4 colPVW = tex2D(_PVW, i.uv);
 				half4 colPGM = tex2D(_PGM, i.uv);
-				half4 colMask = tex2D(_Mask, i.UV);
-				half4 temp = half4(0f, 0f, 0f, _AlphaKey);
-				half4 temp2 = half4(0f, 0f, 0f, 1);
-				half4 pgmVector = colMask - alphaKey;
-				half4 pvwVector = -(temp2 - (colMask - alphaKey));
-				half4 col = (colPVW - pvwVector) + (col - pgmVector) 
+				half4 colMask = tex2D(_Mask, i.uv);
+				half4 col = half4(0,0,0,0);
+				if (colMask.a * (_AlphaKey) > 0.05)
+				{
+					col = colPGM;
+				}
+				else
+				{
+					col = colPVW;
+				}
 				// apply fog
 				UNITY_APPLY_FOG(i.fogCoord, col);
 				return col;

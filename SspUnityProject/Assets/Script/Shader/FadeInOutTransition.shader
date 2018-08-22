@@ -2,13 +2,17 @@
 {
 	Properties
 	{
-		PVW ("PVW", 2D) = "white" {}
-		PGM ("PGM", 2D) = "white" {}
-		AlphaKey ("AlphaKey", Float) = 0.0
+		_PVW ("PVW", 2D) = "white" {}
+		_PGM ("PGM", 2D) = "white" {}
+		_AlphaKey ("AlphaKey", Float) = 0.0
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque" }
+		Tags { 
+		"RenderType"="Transparent"
+		"Queue" = "Transparent"
+
+	}
 		LOD 100
 
 		Pass
@@ -53,10 +57,10 @@
 				// sample the texture
 				fixed4 colPVW = tex2D(_PVW, i.uv);
 				fixed4 colPGM = tex2D(_PGM, i.uv);
-				fixed4 col = colPGM * _AlphaKey;
+				fixed4 col = colPVW * (1 - _AlphaKey) + colPGM * _AlphaKey;
 				// apply fog
 				//UNITY_APPLY_FOG(i.fogCoord, col);
-				return colPVW;
+				return col;
 			}
 			ENDCG
 		}
