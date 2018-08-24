@@ -57,6 +57,21 @@ namespace Resource
                 var objAttr = gameobj.GetComponent<ResourceAttributeFields>();
                 objAttr.SetContent(g.ResourceRefs[i].Resources.Attrs);
                 objAttr.transform.parent = ResContainor;
+
+                TransitionManager.Instance.OnTransitionEnd += (()=> {
+                    if (!g.IsAfterTransition)
+                    {
+                        if (PVWToggle.isOn)
+                        {
+                            PVWToggle.isOn = false;
+                            PGMToggle.isOn = true;
+                        }
+                        else if (PGMToggle.isOn) {
+                            PGMToggle.isOn = false;
+                            PVWToggle.isOn = true;
+                        }
+                    }
+                });
             }
 
             PVWToggle.isOn = g.ActivateState[0];

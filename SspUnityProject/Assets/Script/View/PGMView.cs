@@ -27,6 +27,7 @@ public class PGMView : IView {
         renderProcessManager.StartRender(manager.DefaultImg);
         pgmBuffer = renderProcessManager.PostProcess.ProcessResult;
         ViewImage.texture = pgmBuffer;
+        outputBuffer = OutputBuffer.Instance;
         AttachUILayer();
     }
 

@@ -22,6 +22,23 @@ public class ViewManager : MonoBehaviour {
         }
         PGM.InitView(this);
         PVW.InitView(this);
+
+        TransitionManager.Instance.OnTransitionStart += ((Material obj) => {
+            tempBuffer = PVW.renderProcessManager.EffectProcess.InputTexture;
+            PVW.renderProcessManager.ChangeSurface(PGM.renderProcessManager.EffectProcess.InputTexture);
+            obj.SetTexture("_PVW", tempBuffer);
+            obj.SetTexture("_PGM", PGM.renderProcessManager.EarlyProcess.ProcessResult);
+            PGM.renderProcessManager.TransitionProcess.SetTransition(obj);
+            var temp = PGM.renderProcessManager.EarlyProcess.OverlayCamera;
+            PGM.renderProcessManager.EarlyProcess.SetOverlay(PVW.renderProcessManager.EarlyProcess.OverlayCamera);
+            PVW.renderProcessManager.EarlyProcess.SetOverlay(temp);
+        });
+
+        TransitionManager.Instance.OnTransitionEnd += (() => {
+            PGM.renderProcessManager.TransitionProcess.ResetMaterial();
+            PGM.renderProcessManager.TransitionProcess.DoRenderProcess(PGM.renderProcessManager.EarlyProcess.ProcessResult);
+            PGM.renderProcessManager.ChangeSurface(tempBuffer);
+        });
     }
 
     void OnChangeBiding()
@@ -42,23 +59,6 @@ public class ViewManager : MonoBehaviour {
     TransitionCreater currentTransition;
     public void OnTransitionToPGM()
     {
-		TransitionManager.Instance.OnTransitionStart = ((Material obj) => {
-            tempBuffer = PVW.renderProcessManager.EffectProcess.InputTexture;
-            PVW.renderProcessManager.ChangeSurface(PGM.renderProcessManager.EffectProcess.InputTexture);
-			obj.SetTexture("_PVW", tempBuffer);
-			obj.SetTexture("_PGM", PGM.renderProcessManager.EarlyProcess.ProcessResult);
-			PGM.renderProcessManager.TransitionProcess.SetTransition(obj);
-		});
-
-		TransitionManager.Instance.OnTransitionEnd = (() => {
-			PGM.renderProcessManager.TransitionProcess.ResetMaterial();
-			PGM.renderProcessManager.TransitionProcess.DoRenderProcess(PGM.renderProcessManager.EarlyProcess.ProcessResult);
-			PGM.renderProcessManager.ChangeSurface(tempBuffer);
-			var temp = PGM.renderProcessManager.EarlyProcess.OverlayCamera;
-			PGM.renderProcessManager.EarlyProcess.SetOverlay(PVW.renderProcessManager.EarlyProcess.OverlayCamera);
-			PVW.renderProcessManager.EarlyProcess.SetOverlay(temp);
-		});
-
 		TransitionManager.Instance.Transition (transition);
     }
 

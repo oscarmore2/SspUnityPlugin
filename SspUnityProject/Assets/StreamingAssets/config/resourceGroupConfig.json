@@ -40,7 +40,7 @@
             }
         ],
         "ActivateState":[false, false, false],
-        "IsAfterTransition":false,
+        "IsAfterTransition":true,
         "Scale":1.0,
         "XAxis":100.0,
         "YAxis":200.0,

@@ -12,6 +12,9 @@ namespace Resource
 
         ResourcesManager resourceManager;
 
+        [SerializeField]
+        ViewVertiheightCalculator heightCalculator;
+
         public void OnInit(ResourcesManager resManager)
         {
             ResourceGroupeGenerator.GenerateResourceGroupList(Paths.RESOURCE_GROUP, resManager);
@@ -54,6 +57,7 @@ namespace Resource
                 {
                     AddItem(ResourceGroupList.Instance[i]);
                 }
+                heightCalculator.doCalculate();
             }
         }
 

@@ -29,24 +29,45 @@ public class ViewVertiheightCalculator : MonoBehaviour {
 	{
 		var layout = transform.GetComponent<LayoutElement> ();
 		var contentsizeFilter = transform.GetComponent<ContentSizeFitter> ();
-		if (contentsizeFilter != null) {
+        RectTransform rt = GetComponent<RectTransform>();
+        if (contentsizeFilter != null) {
 			contentsizeFilter.enabled = false;
 		}
 
-		if (transform.childCount > 0) {
+		if (transform.childCount > 0 & GetComponent<HorizontalLayoutGroup>() == null && GetComponent<GridLayoutGroup>() == null) {
+            var LayoutGroup = GetComponent<VerticalLayoutGroup>();
 			for (int i = 0; i < transform.childCount; i++) {
-				var sub_calc = transform.GetChild (i).gameObject.AddComponent<ViewVertiheightCalculator> ();
-				height += (sub_calc.doCalculate () + pedding);
-				Destroy (sub_calc);
+                if (transform.GetChild(i).gameObject.activeInHierarchy)
+                {
+                    var sub_calc = transform.GetChild(i).gameObject.AddComponent<ViewVertiheightCalculator>();
+                    if (LayoutGroup == null)
+                    {
+                        height += (sub_calc.doCalculate() + pedding);
+                    }
+                    else {
+                        height += (sub_calc.doCalculate() + LayoutGroup.spacing);
+                    }
+                    Destroy(sub_calc);
+                }
 			}
-			height += 2 * pedding;
+            if (LayoutGroup != null)
+            {
+                height += 2 * pedding;
+            }
+            else {
+                height +=  (LayoutGroup.padding.top + LayoutGroup.padding.bottom);
+            }
+            
 		} else {
-			RectTransform rt = GetComponent<RectTransform> ();
 			height = rt.sizeDelta.y;
 		}
 
-		layout.preferredHeight = height;
+        
+		layout.minHeight = height;
+        var x = rt.sizeDelta.x == 0 ? 420 : rt.sizeDelta.x;
+        rt.sizeDelta = new Vector2(x, height);
 
-		return height;
+
+        return height;
 	}
 }
