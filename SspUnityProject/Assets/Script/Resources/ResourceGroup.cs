@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LitJson;
 
 namespace Resource
 {
@@ -18,6 +19,9 @@ namespace Resource
         public float YAxis;
         public float Duration;
 
+		ResourceGroupManager manager;
+
+
 		public void SortGroup()
 		{
 			ResourceRefs.Sort ((left, right)=>{
@@ -30,12 +34,18 @@ namespace Resource
 			});
 		}
 
-        public ResourceGroup(List<IResourceRef> refList)
+		public ResourceGroup(ResourceGroupManager _manager)
+		{
+			manager = _manager;
+		}
+
+		public ResourceGroup(ResourceGroupManager _manager, List<IResourceRef> refList)
         {
+			manager = _manager;
             ResourceRefs = refList;
         }
 
-        public ResourceGroup(List<IResourceRef> refList, int priority)
+		public ResourceGroup(ResourceGroupManager _manager, List<IResourceRef> refList, int priority)
         {
             foreach (var item in refList)
             {
@@ -43,6 +53,17 @@ namespace Resource
             }
             Priority = priority;
         }
+
+		public void LoadData(JsonData data)
+		{
+			ResourceGroupSerializer resManager = JsonMapper.ToObject<ResourceGroupSerializer> ();
+			foreach (var r in resManager.ResourceRefs)
+			{
+				IResourceRef resRef;
+				resRef = new IResourceRef(manager.ResourceManager.Containor.GetResourceByGUID(r.GUID));
+				ResourceRefs.Add(resRef);
+			}
+		}
     }
 
     public class ResourceGroupSerializer
@@ -65,15 +86,10 @@ namespace Resource
         public float YAxis;
         public float Duration;
 
-        public ResourceGroup ConvertToResourceGroup(ResourcesManager resManager)
+		public ResourceGroup ConvertToResourceGroup(ResourcesManager resManager, LitJson.JsonData)
         {
             List<IResourceRef> resList = new List<IResourceRef>();
-            foreach (var r in ResourceRefs)
-            {
-                IResourceRef resRef;
-				resRef = new IResourceRef(resManager.Containor.GetResourceByGUID(r.GUID));
-                resList.Add(resRef);
-            }
+            
             ResourceGroup rg = new ResourceGroup(resList);
             rg.Name = this.Name;
             rg.Priority = this.Priority;

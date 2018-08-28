@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Text))]
-public class TextRenderer : IResourceRenderer {
+public class TextRenderer : CommonResourceRenderer {
 
     public Text Content;
 

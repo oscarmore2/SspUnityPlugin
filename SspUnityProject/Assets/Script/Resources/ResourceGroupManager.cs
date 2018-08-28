@@ -12,15 +12,32 @@ namespace Resource
 
         ResourcesManager resourceManager;
 
+		public ResourcesManager ResourceManager
+		{
+			get{ return resourceManager; }
+		}
+
         [SerializeField]
         ViewVertiheightCalculator heightCalculator;
 
         public void OnInit(ResourcesManager resManager)
         {
-            ResourceGroupeGenerator.GenerateResourceGroupList(Paths.RESOURCE_GROUP, resManager);
+            GenerateResourceGroupList(Paths.RESOURCE_GROUP, resManager);
             resourceManager = resManager;
             gameObject.SetActive(true);
         }
+
+		void GenerateResourceGroupList(string config, ResourcesManager resManager)
+		{
+			var groupConfig = new JsonConfiguration(config);
+			var listGroup = groupConfig["list"];
+			for (int i = 0; i < listGroup.Count; i++)
+			{
+				ResourceGroup rg = new ResourceGroup (resManager);
+				rg.LoadData (listGroup [i].ToJson ());
+				ResourceGroupList.Instance.AddResourceGroup(rg);
+			}
+		}
 
         public void OnAddToGroup()
         {
@@ -32,15 +49,6 @@ namespace Resource
                 res.Add(comp.Resource);
                 t.isOn = false;
             }
-            OnAddResourceGroup(res);
-        }
-
-        public void OnAddResourceGroup(List<IResource> ListRes, string Name = "")
-        {
-            var resGroup = ResourceGroupeGenerator.GenerateResourceGroup(ListRes);
-            resGroup.Name = Name;
-            AddItem(resGroup);
-            ResourceGroupList.Instance.AddResourceGroup(resGroup);
         }
 
         void OnEnable()
@@ -72,29 +80,4 @@ namespace Resource
     }
 
 
-    public class ResourceGroupeGenerator
-    {
-        public static void GenerateResourceGroupList(string config, ResourcesManager resManager)
-        {
-            var groupConfig = new JsonConfiguration(config);
-            var listGroup = groupConfig["list"];
-            for (int i = 0; i < listGroup.Count; i++)
-            {
-                var re = LitJson.JsonMapper.ToObject<ResourceGroupSerializer>(listGroup[i].ToJson());
-                ResourceGroupList.Instance.AddResourceGroup(re.ConvertToResourceGroup(resManager));
-            }
-        }
-
-        public static ResourceGroup GenerateResourceGroup(List<IResource> resList)
-        {
-            List<IResourceRef> RefList = new List<IResourceRef>();
-            for (int i = 0; i < resList.Count; i++)
-            {
-                IResourceRef refs = new IResourceRef(resList[i]);
-                RefList.Add(refs);
-            }
-            ResourceGroup rg = new ResourceGroup(RefList);
-            return rg;
-        }
-    }
 }

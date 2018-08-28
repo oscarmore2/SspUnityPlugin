@@ -5,7 +5,7 @@ using UnityEngine;
 public class ResourceRenderTarget : MonoBehaviour{
 
     public int Prioirty;
-    public IResourceRenderer renderer;
+    public CommonResourceRenderer renderer;
 
     public static ResourceRenderTarget Create(GameObject parent, int _priority)
     {

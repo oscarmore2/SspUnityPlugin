@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class IResourceRenderer : MonoBehaviour {
+public abstract class CommonResourceRenderer : MonoBehaviour {
 
     public int Priority;
 

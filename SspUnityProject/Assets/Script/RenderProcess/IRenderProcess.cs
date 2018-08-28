@@ -7,7 +7,7 @@ using UnityEngine;
 
 public abstract class CommonRenderProcess : MonoBehaviour  {
 
-    protected List<IResourceRenderer> ResourceOverlays = new List<IResourceRenderer>();
+    protected List<CommonResourceRenderer> ResourceOverlays = new List<CommonResourceRenderer>();
 
 	public Camera renderCamera { get; protected set; }
 

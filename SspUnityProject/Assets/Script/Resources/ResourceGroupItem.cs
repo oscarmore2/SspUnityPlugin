@@ -22,6 +22,7 @@ namespace Resource
         public InputField XAxis;
         public InputField YAxis;
         public InputField Duration;
+		public Button ApplyChange;
 
         public Transform ResContainor;
 
@@ -84,6 +85,12 @@ namespace Resource
             ResGroup.ActivateState = new bool[]{ PVWToggle.isOn, PGMToggle.isOn, BinDiagToggle.isOn};
             ResourceGroupList.Instance.OnResourceGroupChange(ResGroup);
         }
+
+		void FinishEditingScale(ResourceGroup group)
+		{
+			group.ActivateState = new bool[]{ false, false, true };
+			GroupTraveller.Instance.OnTravel (group);
+		}
         
     }
 }

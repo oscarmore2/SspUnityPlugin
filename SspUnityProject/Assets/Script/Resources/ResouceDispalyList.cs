@@ -62,7 +62,7 @@ public class ResourceDisplayList : Singleton<ResourceDisplayList>
         scaler.referenceResolution = new Vector2(OutputBuffer.Instance.OutputConf.Width, OutputBuffer.Instance.OutputConf.Height);
     }
 
-    public void ReFlushComponent(IResourceRenderer renderer, Transform trans)
+    public void ReFlushComponent(CommonResourceRenderer renderer, Transform trans)
     {
         for (int i = 0; i < trans.childCount; i++)
         {

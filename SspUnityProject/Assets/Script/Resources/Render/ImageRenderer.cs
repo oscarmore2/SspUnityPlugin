@@ -6,7 +6,7 @@ using Resource;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(RawImage))]
-public class ImageRenderer : IResourceRenderer {
+public class ImageRenderer : CommonResourceRenderer {
 
     public RawImage image;
     

@@ -7,7 +7,7 @@ using Resource;
 public class RendererContainor : Singleton<RendererContainor> {
     
 
-	Dictionary<string, IResourceRenderer> RenderPathMapping = new Dictionary<string, IResourceRenderer>();
+	Dictionary<string, CommonResourceRenderer> RenderPathMapping = new Dictionary<string, CommonResourceRenderer>();
 
     public override void OnInitialize()
     {
@@ -20,7 +20,7 @@ public class RendererContainor : Singleton<RendererContainor> {
         
     }
 
-	public IResourceRenderer PVWRender(IResource resource, bool isAfterTransition)
+	public CommonResourceRenderer PVWRender(IResource resource, bool isAfterTransition)
     {
         var suffix = "@PVW";
         var rend = AddRender(suffix, resource);
@@ -28,7 +28,7 @@ public class RendererContainor : Singleton<RendererContainor> {
 		return rend;
     }
 
-	public IResourceRenderer PGMRender(IResource resource, bool isAfterTransition)
+	public CommonResourceRenderer PGMRender(IResource resource, bool isAfterTransition)
     {
         var suffix = "@PGM";
         var rend = AddRender(suffix, resource);
@@ -36,9 +36,9 @@ public class RendererContainor : Singleton<RendererContainor> {
 		return rend;
     }
 
-    IResourceRenderer AddRender(string suffix, IResource resource)
+    CommonResourceRenderer AddRender(string suffix, IResource resource)
     {
-        IResourceRenderer render = null;
+        CommonResourceRenderer render = null;
         foreach (var val in RenderPathMapping.Keys)
         {
             if (val.Replace(suffix, "") == resource.GUID)
@@ -67,7 +67,7 @@ public class RendererContainor : Singleton<RendererContainor> {
         return render;
     }
 
-    public IResourceRenderer this[string path]
+    public CommonResourceRenderer this[string path]
     {
         get {
             if (RenderPathMapping.ContainsKey(path))
