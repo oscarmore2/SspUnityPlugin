@@ -3,11 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using LitJson;
 
 namespace Resource
 {
-    public class ResourcesListContainor : IEnumerable
+	public class ResourcesListContainor : IEnumerable, IJsonConfigable
     {
+		public JsonData Data { public get; private set;}
+
+		public delegate IResource Creator(LitJson.JsonData _data); 
+		public static Dictionary<string, Creator> InitionMapping = new Dictionary<string, Creator>();
+
+		ResourcesManager manager;
+
+		public ResourcesListContainor (ResourcesManager resManager)
+		{
+			manager = resManager;
+		}
+
         List<IResource> containorList = new List<IResource>();
 
         public int CurrentSelection = -1;
@@ -21,6 +34,31 @@ namespace Resource
         {
             containorList.Add(res);
         }
+
+		public void LoadConfig(JsonData data)
+		{
+			Data = data;
+			for (int i = 0; i < data.Count; i++)
+			{
+				var res  = InitionMapping [data [i] ["Type"].ToString()] (data [i]);
+				this.AddResource(res);
+			}
+		}
+
+
+		public void SetConfig(JsonData data)
+		{
+			int index = -1;
+			int.TryParse(data ["index"].ToString(), out index);
+			if (index >= containorList.Count) {
+				var res = InitionMapping [data ["data"] ["Type"].ToString ()] (data ["data"]);
+				this.AddResource (res);
+				Data.Add (data ["data"]);
+			} else {
+				Data [index] = data ["data"];
+			}
+			JsonConfiguration.WriteData (Data, ResourcesManager.RESOURCE_CONFIG);
+		}
 
         public IResource this[int id]
         {
@@ -54,6 +92,11 @@ namespace Resource
 				}
 			}
 			return null;
+		}
+
+		public int getIndex(IResource resource)
+		{
+			return containorList.IndexOf (resource);
 		}
     }
 }

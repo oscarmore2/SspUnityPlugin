@@ -34,7 +34,7 @@ namespace Resource
 			for (int i = 0; i < listGroup.Count; i++)
 			{
 				ResourceGroup rg = new ResourceGroup (resManager);
-				rg.LoadData (listGroup [i].ToJson ());
+				rg.LoadConfig (listGroup [i].ToJson ());
 				ResourceGroupList.Instance.AddResourceGroup(rg);
 			}
 		}

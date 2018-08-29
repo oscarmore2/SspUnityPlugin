@@ -5,7 +5,7 @@ using LitJson;
 
 namespace Resource
 {
-    public class ResourceGroup
+	public class ResourceGroup : IJsonConfigable
     {
         public string Name;
         public int Priority;
@@ -54,7 +54,7 @@ namespace Resource
             Priority = priority;
         }
 
-		public void LoadData(JsonData data)
+		public void LoadConfig(JsonData data)
 		{
 			ResourceGroupSerializer resManager = JsonMapper.ToObject<ResourceGroupSerializer> ();
 			foreach (var r in resManager.ResourceRefs)
@@ -63,6 +63,12 @@ namespace Resource
 				resRef = new IResourceRef(manager.ResourceManager.Containor.GetResourceByGUID(r.GUID));
 				ResourceRefs.Add(resRef);
 			}
+		}
+
+
+		public void SetConfig(JsonData data)
+		{
+
 		}
     }
 

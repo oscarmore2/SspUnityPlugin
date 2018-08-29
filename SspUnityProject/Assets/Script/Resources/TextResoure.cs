@@ -31,7 +31,11 @@ namespace Resource
 
 		public override void SetConfig(JsonData data)
 		{
-			
+			this.GUID = data ["GUID"].ToString ();
+			this.Path = data ["Path"].ToString ();
+			this.Name = data ["Name"].ToString ();
+			this.Priority = int.Parse (data ["Priority"].ToString());
+
 		}
 
 		public override byte[] GetBytes ()

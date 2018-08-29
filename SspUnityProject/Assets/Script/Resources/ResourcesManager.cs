@@ -8,6 +8,7 @@ namespace Resource
 {
     public class ResourcesManager : MonoBehaviour
     {
+		public static readonly string RESOURCE_CONFIG = Paths.CONFIG + "resourceConfig_new.json";
         private ResourcesListContainor containor;
         public ResourcesListContainor Containor {
             get {
@@ -17,10 +18,11 @@ namespace Resource
 
         public void Init()
         {
-            containor = new ResourcesListContainor();
-			ResourceGenerator.InitionMapping ["Text"] = Resource.TextResoure.TextResoureGenerator.Generate;
-			ResourceGenerator.InitionMapping ["Image"] = Resource.ImageResource.ImageResourceGenerator.Generate;
-            ResourceGenerator.OnGenerate(Paths.CONFIG + "resourceConfig_new.json", ref containor);
+			containor = new ResourcesListContainor(this);
+			var ResourceConfig = new JsonConfiguration(RESOURCE_CONFIG);
+			containor.InitionMapping ["Text"] = Resource.TextResoure.TextResoureGenerator.Generate;
+			containor.InitionMapping ["Image"] = Resource.ImageResource.ImageResourceGenerator.Generate;
+			containor.LoadConfig(ResourceConfig);
             gameObject.SetActive(true);
         }
 
@@ -49,37 +51,6 @@ namespace Resource
                 }
             }
         }
-    }
-
-    public class ResourceGenerator
-    {
-		public delegate IResource Creator(LitJson.JsonData _data); 
-		public static Dictionary<string, Creator> InitionMapping = new Dictionary<string, Creator>();
-        public static void OnGenerate(string path, ref ResourcesListContainor containor)
-        {
-            var ResourceConfig = new JsonConfiguration(path);
-            //var TextResource = ResourceConfig["Texts"];
-            //var ImageResource = ResourceConfig["Images"];
-
-            //for (int i = 0; i < TextResource.Count; i++)
-            //{
-            //    var res = JsonConfiguration.GetData<TextResoure>(TextResource[i]);
-            //    containor.AddResource(res);
-            //}
-
-            //for (int i = 0; i < ImageResource.Count; i++)
-            //{
-            //    var res = JsonConfiguration.GetData<ImageResource>(ImageResource[i]);
-            //    containor.AddResource(res);
-            //}
-
-            for (int i = 0; i < ResourceConfig.Count; i++)
-            {
-				var res  = InitionMapping [ResourceConfig [i] ["Type"].ToString()] (ResourceConfig [i]);
-				containor.AddResource(res);
-            }
-        }
-
     }
 }
 
