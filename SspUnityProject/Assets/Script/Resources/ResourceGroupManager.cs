@@ -10,7 +10,7 @@ namespace Resource
     {
         public Transform ResourceGroupContainor;
 
-        ResourcesManager resourceManager;
+		private ResourcesManager resourceManager;
 
 		public ResourcesManager ResourceManager
 		{
@@ -22,22 +22,12 @@ namespace Resource
 
         public void OnInit(ResourcesManager resManager)
         {
-            GenerateResourceGroupList(Paths.RESOURCE_GROUP, resManager);
             resourceManager = resManager;
+			var config = new JsonConfiguration (Paths.RESOURCE_GROUP);
+			ResourceGroupList.Instance.Init (this);
+			ResourceGroupList.Instance.LoadConfig (config);
             gameObject.SetActive(true);
         }
-
-		void GenerateResourceGroupList(string config, ResourcesManager resManager)
-		{
-			var groupConfig = new JsonConfiguration(config);
-			var listGroup = groupConfig["list"];
-			for (int i = 0; i < listGroup.Count; i++)
-			{
-				ResourceGroup rg = new ResourceGroup (resManager);
-				rg.LoadConfig (listGroup [i].ToJson ());
-				ResourceGroupList.Instance.AddResourceGroup(rg);
-			}
-		}
 
         public void OnAddToGroup()
         {

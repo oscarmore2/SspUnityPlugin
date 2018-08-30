@@ -2,11 +2,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LitJson;
 
 namespace Resource
 {
-    public class ResourceGroupList : Singleton<ResourceGroupList>, IEnumerable
+	public class ResourceGroupList : Singleton<ResourceGroupList>, IEnumerable, IJsonConfigable
     {
+		public JsonData Data { public get; private set;}
+
+		protected ResourceGroupManager manager;
 
         public Action<ResourceGroup> OnResourceGroupChange;
 
@@ -18,6 +22,11 @@ namespace Resource
         {
             return containor.GetEnumerator();
         }
+
+		public void Init(ResourceGroupManager _manager)
+		{
+			manager = _manager;	
+		}
 
         public void AddResourceGroup(ResourceGroup group)
         {
@@ -31,6 +40,36 @@ namespace Resource
                 return containor[id];
             }
         }
+
+		public void LoadConfig(JsonData data)
+		{
+			Data = data;
+			var listGroup = data["list"];
+			for (int i = 0; i < listGroup.Count; i++)
+			{
+				ResourceGroup rg = new ResourceGroup (manager.ResourceManager);
+				rg.LoadConfig (listGroup [i].ToJson ());
+				AddResourceGroup(rg);
+			}
+		}
+
+
+		public void SetConfig(JsonData data)
+		{
+			int index = -1;
+			int.TryParse(data ["index"].ToString(), out index);
+			if (index >= containor.Count) {
+				ResourceGroup rg = new ResourceGroup (manager.ResourceManager);
+				rg.LoadConfig (data["data"].ToJson ());
+				AddResourceGroup(rg);
+				Data["list"].Add (data ["data"]);
+			} else {
+				Data ["list"][index] = data ["data"];
+
+			}
+
+			JsonConfiguration.WriteData (Data, Paths.RESOURCE_GROUP);
+		}
 
 		public void Sort()
 		{

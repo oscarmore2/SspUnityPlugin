@@ -69,6 +69,28 @@ public class JsonConfiguration : JsonData
         }
     }
 
+	int SetToFile(string data, string path)
+	{
+		try
+		{
+			using (System.IO.FileStream fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite))
+			{
+				using (System.IO.StreamWriter sr = new System.IO.StreamWriter(fs, System.Text.Encoding.UTF8))
+				{
+					sr.Write(data);
+					sr.Flush();
+					return 0;
+				}
+			}
+		}
+		catch (System.IO.IOException ex)
+		{
+			throw new System.Exception(System.String.Format("Could not parse file {0}", path), ex);
+		}
+
+		return 1;
+	}
+
     public JsonData this[int id]
     {
         get {
@@ -98,6 +120,16 @@ public class JsonConfiguration : JsonData
             data[str] = value;
         }
     }
+
+	public static int WriteData(JsonData data, string path)
+	{
+		return SetToFile (data.ToJson (), path);
+	}
+
+	public int Write(string path)
+	{
+		return SetToFile (ToJson (), path);
+	}
 
     public static T GetData<T>(JsonData data)
     {

@@ -8,7 +8,6 @@ namespace Resource
 {
     public class ResourcesManager : MonoBehaviour
     {
-		public static readonly string RESOURCE_CONFIG = Paths.CONFIG + "resourceConfig_new.json";
         private ResourcesListContainor containor;
         public ResourcesListContainor Containor {
             get {
@@ -19,7 +18,7 @@ namespace Resource
         public void Init()
         {
 			containor = new ResourcesListContainor(this);
-			var ResourceConfig = new JsonConfiguration(RESOURCE_CONFIG);
+			var ResourceConfig = new JsonConfiguration(Paths.RESOURCE);
 			containor.InitionMapping ["Text"] = Resource.TextResoure.TextResoureGenerator.Generate;
 			containor.InitionMapping ["Image"] = Resource.ImageResource.ImageResourceGenerator.Generate;
 			containor.LoadConfig(ResourceConfig);

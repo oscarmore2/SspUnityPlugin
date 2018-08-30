@@ -77,7 +77,7 @@ namespace Resource
 
         public override void SetConfig(JsonData data)
         {
-            
+			base.SetConfig(data);
         }
 
 		public class ImageResourceGenerator

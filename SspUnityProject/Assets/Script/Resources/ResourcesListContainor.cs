@@ -57,7 +57,7 @@ namespace Resource
 			} else {
 				Data [index] = data ["data"];
 			}
-			JsonConfiguration.WriteData (Data, ResourcesManager.RESOURCE_CONFIG);
+			JsonConfiguration.WriteData (Data, Paths.RESOURCE);
 		}
 
         public IResource this[int id]

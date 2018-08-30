@@ -6,7 +6,7 @@ public struct Paths {
 
     public readonly static string CONFIG = Application.streamingAssetsPath + "/config/";
 
-    public readonly static string RESOURCE = CONFIG + "resourceConfig.json";
+	public readonly static string RESOURCE = CONFIG + "resourceConfig_new.json";
     public readonly static string RESOURCE_GROUP = CONFIG + "resourceGroupConfig.json";
 
 }

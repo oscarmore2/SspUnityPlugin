@@ -68,7 +68,25 @@ namespace Resource
 
 		public void SetConfig(JsonData data)
 		{
+			this.Name = data["Name"].ToString();
+			this.Priority = int.Parse(data["Priority"].ToString());
 
+			this.ActivateState = new bool[]{bool.Parse(data["ActivateState"][0]), bool.Parse(data["ActivateState"][1]), 
+				bool.Parse(data["ActivateState"][2])};
+			this.IsAfterTransition = bool.Parse(data["IsAfterTransition"].ToString());
+			this.Scale = float.Parse(data["Scale"].ToString()) ;
+			this.XAxis = float.Parse(data["XAxis"].ToString());
+			this.YAxis = float.Parse(data["YAxis"].ToString());
+			this.Duration = float.Parse(data["Duration"].ToString());
+
+			if (data.Keys.Contains ("VCamBiding")) {
+				object bools = data ["VCamBiding"];
+				for (int i = 0; i < data ["VCamBiding"].Count; i++) {
+					this.VCamBiding [i] = data ["VCamBiding"] [i];
+				}
+			}
+
+			//Call SetConfig in resource list
 		}
     }
 
