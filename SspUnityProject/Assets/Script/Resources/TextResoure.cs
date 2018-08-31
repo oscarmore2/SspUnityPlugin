@@ -7,6 +7,16 @@ namespace Resource
 {
     public class TextResoure : IResource
     {
+        public TextResoure()
+        {
+
+        }
+
+        public TextResoure (ResourcesManager _manager)
+		{
+            manager = _manager;
+		}
+
         public override string GetPath()
         {
             return Path;

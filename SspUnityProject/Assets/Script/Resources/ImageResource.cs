@@ -8,6 +8,16 @@ namespace Resource
 {
     public class ImageResource : IResource
     {
+        public ImageResource()
+        {
+
+        }
+
+        public ImageResource(ResourcesManager _manager)
+        {
+            manager = _manager;
+        }
+
         Texture2D Data;
 		public int Width;
 		public int Height;

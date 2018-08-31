@@ -95,8 +95,6 @@ public class GroupTraveller : Singleton<GroupTraveller> {
 
         if (ResourceChange != null)
             ResourceChange();
-
-		return rend
     }
 
     void SetupRenderer(IResource resource, ResourceGroup group, int layer)

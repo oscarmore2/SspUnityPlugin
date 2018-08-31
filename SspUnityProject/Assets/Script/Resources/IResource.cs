@@ -13,15 +13,10 @@ namespace Resource
 
     public abstract class IResource : IJsonConfigable
     {
-		protected ResourcesManager manager;
+		public ResourcesManager manager;
         public string Name;
         public string Path;
         public Dictionary<string, string> Attrs;
-
-		public IResource (ResourcesManager _manager)
-		{
-			manager = _manager;
-		}
 
         protected byte[] fileRef;
 

@@ -9,7 +9,7 @@ namespace Resource
 {
 	public class ResourcesListContainor : IEnumerable, IJsonConfigable
     {
-		public JsonData Data { public get; private set;}
+		public JsonData Data { get; private set;}
 
 		public delegate IResource Creator(LitJson.JsonData _data); 
 		public static Dictionary<string, Creator> InitionMapping = new Dictionary<string, Creator>();

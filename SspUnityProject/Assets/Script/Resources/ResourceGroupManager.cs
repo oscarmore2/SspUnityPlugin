@@ -25,7 +25,7 @@ namespace Resource
             resourceManager = resManager;
 			var config = new JsonConfiguration (Paths.RESOURCE_GROUP);
 			ResourceGroupList.Instance.Init (this);
-			ResourceGroupList.Instance.LoadConfig (config);
+			ResourceGroupList.Instance.LoadConfig (config.Data);
             gameObject.SetActive(true);
         }
 

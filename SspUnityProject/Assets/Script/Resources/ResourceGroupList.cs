@@ -8,7 +8,7 @@ namespace Resource
 {
 	public class ResourceGroupList : Singleton<ResourceGroupList>, IEnumerable, IJsonConfigable
     {
-		public JsonData Data { public get; private set;}
+		public JsonData Data { get; private set;}
 
 		protected ResourceGroupManager manager;
 
@@ -47,8 +47,8 @@ namespace Resource
 			var listGroup = data["list"];
 			for (int i = 0; i < listGroup.Count; i++)
 			{
-				ResourceGroup rg = new ResourceGroup (manager.ResourceManager);
-				rg.LoadConfig (listGroup [i].ToJson ());
+				ResourceGroup rg = new ResourceGroup (manager);
+				rg.LoadConfig (listGroup [i]);
 				AddResourceGroup(rg);
 			}
 		}
@@ -59,17 +59,21 @@ namespace Resource
 			int index = -1;
 			int.TryParse(data ["index"].ToString(), out index);
 			if (index >= containor.Count) {
-				ResourceGroup rg = new ResourceGroup (manager.ResourceManager);
-				rg.LoadConfig (data["data"].ToJson ());
+				ResourceGroup rg = new ResourceGroup (manager);
+				rg.LoadConfig (data["data"]);
 				AddResourceGroup(rg);
 				Data["list"].Add (data ["data"]);
 			} else {
 				Data ["list"][index] = data ["data"];
 
 			}
-
 			JsonConfiguration.WriteData (Data, Paths.RESOURCE_GROUP);
 		}
+
+        public int getIndex(ResourceGroup rg)
+        {
+            return containor.IndexOf(rg);
+        }
 
 		public void Sort()
 		{

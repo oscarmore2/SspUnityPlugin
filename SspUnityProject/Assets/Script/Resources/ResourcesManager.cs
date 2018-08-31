@@ -19,9 +19,9 @@ namespace Resource
         {
 			containor = new ResourcesListContainor(this);
 			var ResourceConfig = new JsonConfiguration(Paths.RESOURCE);
-			containor.InitionMapping ["Text"] = Resource.TextResoure.TextResoureGenerator.Generate;
-			containor.InitionMapping ["Image"] = Resource.ImageResource.ImageResourceGenerator.Generate;
-			containor.LoadConfig(ResourceConfig);
+            ResourcesListContainor.InitionMapping ["Text"] = Resource.TextResoure.TextResoureGenerator.Generate;
+            ResourcesListContainor.InitionMapping ["Image"] = Resource.ImageResource.ImageResourceGenerator.Generate;
+			containor.LoadConfig(ResourceConfig.Data);
             gameObject.SetActive(true);
         }
 

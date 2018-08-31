@@ -35,15 +35,22 @@ public class Configuration : IniData
 
 
 
-public class JsonConfiguration : JsonData
+public class JsonConfiguration 
 {
 
     JsonData data = new JsonData();
+
+    public JsonData Data { get { return data; } }
 
     public JsonConfiguration(string path)
     {
         var s = LoadFromFile(path);
         data = JsonMapper.ToObject(s);
+    }
+
+    public JsonConfiguration(JsonData _data)
+    {
+        data = _data;
     }
 
     string LoadFromFile(string path)
@@ -121,14 +128,20 @@ public class JsonConfiguration : JsonData
         }
     }
 
+    public static JsonConfiguration ConvertJsonData(JsonData data)
+    {
+        JsonConfiguration json = new JsonConfiguration(data);
+        return json;
+    }
+
 	public static int WriteData(JsonData data, string path)
 	{
-		return SetToFile (data.ToJson (), path);
+        return ConvertJsonData(data).SetToFile(data.ToJson (), path);
 	}
 
 	public int Write(string path)
 	{
-		return SetToFile (ToJson (), path);
+		return SetToFile (data.ToJson (), path);
 	}
 
     public static T GetData<T>(JsonData data)
