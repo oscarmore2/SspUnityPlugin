@@ -70,28 +70,31 @@ namespace Resource
 
 		public void SetConfig(JsonData data)
 		{
-            if (data.Keys.Contains("Name"))
-			    this.Name = data["Name"].ToString();
-            if (data.Keys.Contains("Priority"))
-                this.Priority = int.Parse(data["Priority"].ToString());
-            if (data.Keys.Contains("ActivateState"))
-                this.ActivateState = new bool[]{data["ActivateState"][0].GetBoolean(), data["ActivateState"][1].GetBoolean(), 
-				data["ActivateState"][2].GetBoolean()};
-            if (data.Keys.Contains("IsAfterTransition"))
-                this.IsAfterTransition = bool.Parse(data["IsAfterTransition"].ToString());
-            if (data.Keys.Contains("Scale"))
-                this.Scale = float.Parse(data["Scale"].ToString()) ;
-            if (data.Keys.Contains("XAxis"))
-                this.XAxis = float.Parse(data["XAxis"].ToString());
-            if (data.Keys.Contains("YAxis"))
-                this.YAxis = float.Parse(data["YAxis"].ToString());
-            if (data.Keys.Contains("Duration"))
-                this.Duration = float.Parse(data["Duration"].ToString());
+			if (data != null) {
+				if (data.Keys.Contains ("Name"))
+					this.Name = data ["Name"].ToString ();
+				if (data.Keys.Contains ("Priority"))
+					this.Priority = int.Parse (data ["Priority"].ToString ());
+				if (data.Keys.Contains ("ActivateState"))
+					this.ActivateState = new bool[] {data ["ActivateState"] [0].GetBoolean (), data ["ActivateState"] [1].GetBoolean (), 
+						data ["ActivateState"] [2].GetBoolean ()
+					};
+				if (data.Keys.Contains ("IsAfterTransition"))
+					this.IsAfterTransition = bool.Parse (data ["IsAfterTransition"].ToString ());
+				if (data.Keys.Contains ("Scale"))
+					this.Scale = float.Parse (data ["Scale"].ToString ());
+				if (data.Keys.Contains ("XAxis"))
+					this.XAxis = float.Parse (data ["XAxis"].ToString ());
+				if (data.Keys.Contains ("YAxis"))
+					this.YAxis = float.Parse (data ["YAxis"].ToString ());
+				if (data.Keys.Contains ("Duration"))
+					this.Duration = float.Parse (data ["Duration"].ToString ());
 
-			if (data.Keys.Contains ("VCamBiding")) {
-				object bools = data ["VCamBiding"];
-				for (int i = 0; i < data ["VCamBiding"].Count; i++) {
-					this.VCamBiding [i] = data ["VCamBiding"] [i].GetBoolean();
+				if (data.Keys.Contains ("VCamBiding")) {
+					object bools = data ["VCamBiding"];
+					for (int i = 0; i < data ["VCamBiding"].Count; i++) {
+						this.VCamBiding [i] = data ["VCamBiding"] [i].GetBoolean ();
+					}
 				}
 			}
 

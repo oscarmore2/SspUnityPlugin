@@ -34,6 +34,7 @@ namespace Resource
 
 		Color originalColor;
 
+
         public void SetContent(ResourceGroup g)
         {
 			SelectionPanel = BackgroundImage.GetComponent<Button> ();
@@ -42,6 +43,11 @@ namespace Resource
             XAxis.text = g.XAxis.ToString();
             YAxis.text = g.YAxis.ToString();
             Scale.text = g.Scale.ToString();
+
+			Scale.onEndEdit.AddListener (FinishEditingScale);
+			XAxis.onEndEdit.AddListener (FinishEditingXAxis);
+			YAxis.onEndEdit.AddListener (FinishEditingYAxis);
+
             Duration.text = g.Duration.ToString();
             ResGroup = g;
             for (int i = 0; i < g.ResourceRefs.Count; i++)
@@ -96,10 +102,38 @@ namespace Resource
             ResourceGroupList.Instance.OnResourceGroupChange(ResGroup);
         }
 
-		void FinishEditingScale(ResourceGroup group)
+		bool[] originalState;
+		void SetResourceDirty()
 		{
-			group.ActivateState = new bool[]{ false, false, true };
-			GroupTraveller.Instance.OnTravel (group);
+			originalState = ResGroup.ActivateState;
+			ResGroup.ActivateState = new bool[]{ false, false, false };
+			GroupTraveller.Instance.OnTravel (ResGroup);
+			ResGroup.ActivateState = originalState;
+			GroupTraveller.Instance.OnTravel (ResGroup);
+		}
+
+		void FinishEditingScale(string s)
+		{
+			ResGroup.Scale = float.Parse(s);
+			SetResourceDirty ();
+		}
+
+		void FinishEditingXAxis(string s)
+		{
+			ResGroup.XAxis = float.Parse (s);
+			SetResourceDirty ();
+		}
+
+		void FinishEditingYAxis(string s)
+		{
+			ResGroup.YAxis = float.Parse (s);
+			SetResourceDirty ();
+		}
+
+		public void SetConfig()
+		{
+			if (ResGroup != null)
+				ResGroup.SetConfig (null);
 		}
 
 		public void SelectSelf()
