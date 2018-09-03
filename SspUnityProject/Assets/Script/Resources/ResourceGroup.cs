@@ -19,7 +19,7 @@ namespace Resource
         public float YAxis;
         public float Duration;
 
-		ResourceGroupManager manager;
+		public ResourceGroupManager manager { get; protected set;}
 
 
 		public void SortGroup()

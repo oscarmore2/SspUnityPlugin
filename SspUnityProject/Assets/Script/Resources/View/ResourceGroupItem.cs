@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Resource
 {
-    public class ResourceGroupItem : MonoBehaviour
+	public class ResourceGroupItem : MonoBehaviour, ISelectableItem
     {
 
         [SerializeField]
@@ -24,10 +24,20 @@ namespace Resource
         public InputField Duration;
 		public Button ApplyChange;
 
+		public Color SelectedColor;
+
         public Transform ResContainor;
+		public Transform LayerButton; 
+		public Graphic BackgroundImage;
+
+		Button SelectionPanel;
+
+		Color originalColor;
 
         public void SetContent(ResourceGroup g)
         {
+			SelectionPanel = BackgroundImage.GetComponent<Button> ();
+			originalColor = BackgroundImage.color;
             ResContainor.parent = ResContainor;
             XAxis.text = g.XAxis.ToString();
             YAxis.text = g.YAxis.ToString();
@@ -90,6 +100,23 @@ namespace Resource
 		{
 			group.ActivateState = new bool[]{ false, false, true };
 			GroupTraveller.Instance.OnTravel (group);
+		}
+
+		public void SelectSelf()
+		{
+			ResGroup.manager.OnChangeResourceSelection (this);
+		}
+
+		public void OnSelect()
+		{
+			BackgroundImage.color = SelectedColor;
+			LayerButton.gameObject.SetActive (true);
+		}
+
+		public void OnDeselect()
+		{
+			LayerButton.gameObject.SetActive (false);
+			BackgroundImage.color = originalColor;
 		}
         
     }

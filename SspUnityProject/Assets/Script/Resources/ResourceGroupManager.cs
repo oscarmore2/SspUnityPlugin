@@ -6,11 +6,13 @@ using UnityEngine.UI;
 
 namespace Resource
 {
-    public class ResourceGroupManager : MonoBehaviour
+	public class ResourceGroupManager : MonoBehaviour, UnityEngine.EventSystems.IPointerClickHandler
     {
         public Transform ResourceGroupContainor;
 
 		private ResourcesManager resourceManager;
+
+		public ISelectableItem CurrentSelected{ get; private set;}
 
 		public ResourcesManager ResourceManager
 		{
@@ -67,6 +69,25 @@ namespace Resource
             o.GetComponent<ResourceGroupItem>().SetContent(rg);
         }
 
+		public void OnChangeResourceSelection(ISelectableItem Selectable)
+		{
+			if (Selectable != null) {
+				Selectable.OnSelect ();	
+			}
+
+			if (CurrentSelected != null) {
+				CurrentSelected.OnDeselect ();
+			}
+			CurrentSelected = Selectable;
+		}
+
+		public void OnPointerClick(UnityEngine.EventSystems.PointerEventData data)
+		{
+			var list = data.pointerCurrentRaycast.gameObject.transform.GetComponentsInParent<ResourceGroupManager>();
+			if (list [0] != this) {
+				OnChangeResourceSelection (null);
+			}
+		}
     }
 
 
