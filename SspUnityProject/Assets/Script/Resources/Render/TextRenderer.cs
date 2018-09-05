@@ -46,13 +46,13 @@ public class TextRenderer : CommonResourceRenderer {
 		rectTranfrom.anchoredPosition = new Vector2 (x, y);
 	}
 
-	public override T AttachRenderTarget<T>(GameObject target, Resource.ResourceGroup rg)
+	public override T AttachRenderTarget<T>(ResourceRenderTarget target, Resource.ResourceGroup rg)
     {
 		base.AttachRenderTarget<T>(target,rg);
         System.Type type = Content.GetType();
         var dst = target.GetComponent(type) as T;
         if (!dst)
-            dst = target.AddComponent(type) as T;
+			dst = target.gameObject.AddComponent(type) as T;
 
         var fields = type.GetFields();
         foreach (var field in fields)
@@ -67,14 +67,13 @@ public class TextRenderer : CommonResourceRenderer {
             if (!prop.CanWrite || !prop.CanWrite || prop.Name == "name") continue;
             prop.SetValue(dst, prop.GetValue(Content, null), null);
         }
-        renderTarget.Add(target);
         target.transform.localPosition = Vector3.zero;
         RectTransform rect = target.GetComponent<RectTransform>();
-		rect.anchoredPosition = rectTranfrom.anchoredPosition + new Vector2(rg.XAxis, rg.YAxis);
-		target.transform.localScale = new Vector3(rg.Scale, rg.Scale, rg.Scale);
-		var cont = target.AddComponent<ContentSizeFitter> ();
+		rect.anchoredPosition = rectTranfrom.anchoredPosition;
+		var cont = target.gameObject.AddComponent<ContentSizeFitter> ();
 		cont.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 		cont.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+		target.SetTarget (rg);
         return dst;
     }
 

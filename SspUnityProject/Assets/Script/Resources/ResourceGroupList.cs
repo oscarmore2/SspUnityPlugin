@@ -92,6 +92,10 @@ namespace Resource
 			}
 			if (inverse) {
 				sorted.Sort ((left, right) => {
+					if (left.IsAfterTransition && !right.IsAfterTransition)
+						return 1;
+					if (!left.IsAfterTransition && right.IsAfterTransition)
+						return -1;
 					if (left.Priority < right.Priority)
 						return 1;
 					else if (left.Priority == right.Priority)
@@ -101,6 +105,10 @@ namespace Resource
 				});
 			} else {
 				sorted.Sort ((left, right) => {
+					if (left.IsAfterTransition && !right.IsAfterTransition)
+						return -1;
+					if (!left.IsAfterTransition && right.IsAfterTransition)
+						return 1;
 					if (left.Priority > right.Priority)
 						return 1;
 					else if (left.Priority == right.Priority)

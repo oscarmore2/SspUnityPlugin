@@ -62,14 +62,14 @@ public class ResourceDisplayList : Singleton<ResourceDisplayList>
         scaler.referenceResolution = new Vector2(OutputBuffer.Instance.OutputConf.Width, OutputBuffer.Instance.OutputConf.Height);
     }
 
-    public void ReFlushComponent(CommonResourceRenderer renderer, Transform trans)
+	public void ReFlushComponent(CommonResourceRenderer renderer, Resource.ResourceGroup rg, Transform trans)
     {
         for (int i = 0; i < trans.childCount; i++)
         {
             var target = trans.GetChild(i).GetComponent<ResourceRenderTarget>();
             if (target != null)
             {
-                if (target.renderer == renderer)
+				if (target.renderer == renderer && target.resourceGroup == rg)
                     Destroy(trans.GetChild(i).gameObject);
             }
             

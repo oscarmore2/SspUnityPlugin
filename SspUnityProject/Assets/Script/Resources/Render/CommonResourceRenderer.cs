@@ -28,10 +28,11 @@ public abstract class CommonResourceRenderer : MonoBehaviour {
         rectTranfrom.anchoredPosition = new Vector2(posX, posY);
     }
 
-	public virtual T AttachRenderTarget<T>(GameObject obj, Resource.ResourceGroup rg) where T : UnityEngine.UI.Graphic
+	public virtual T AttachRenderTarget<T>(ResourceRenderTarget obj, Resource.ResourceGroup rg) where T : UnityEngine.UI.Graphic
     {
         var target = obj.GetComponent<ResourceRenderTarget>();
         target.renderer = this;
+		target.resourceGroup = rg;
         return null;
     }
 

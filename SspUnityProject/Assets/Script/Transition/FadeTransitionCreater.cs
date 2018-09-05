@@ -24,4 +24,9 @@ public class FadeTransitionCreater : TransitionCreater {
         transition.SetShader(shaderName);
 	}
 
+	public override void OnChangeDuration ()
+	{
+		base.OnChangeDuration ();
+	}
+
 }

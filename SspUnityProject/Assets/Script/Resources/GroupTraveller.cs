@@ -29,11 +29,11 @@ public class GroupTraveller : Singleton<GroupTraveller> {
                 }
                 if (resource.GetType() == ResourceType.Image)
                 {
-					((ImageRenderer)rend).AttachRenderTarget<UnityEngine.UI.RawImage>(target.gameObject, group);
+					((ImageRenderer)rend).AttachRenderTarget<UnityEngine.UI.RawImage>(target, group);
                 }
                 else if (resource.GetType() == ResourceType.Text)
                 {
-					((TextRenderer)rend).AttachRenderTarget<UnityEngine.UI.Text>(target.gameObject, group);
+					((TextRenderer)rend).AttachRenderTarget<UnityEngine.UI.Text>(target, group);
                 }
                 layer++;
             }
@@ -55,11 +55,11 @@ public class GroupTraveller : Singleton<GroupTraveller> {
                 }
                 if (resource.GetType() == ResourceType.Image)
                 {
-					((ImageRenderer)rend).AttachRenderTarget<UnityEngine.UI.RawImage>(target.gameObject, group);
+					((ImageRenderer)rend).AttachRenderTarget<UnityEngine.UI.RawImage>(target, group);
                 }
                 else if (resource.GetType() == ResourceType.Text)
                 {
-					((TextRenderer)rend).AttachRenderTarget<UnityEngine.UI.Text>(target.gameObject, group);
+					((TextRenderer)rend).AttachRenderTarget<UnityEngine.UI.Text>(target, group);
                 }
                 layer++;
             }
@@ -77,18 +77,18 @@ public class GroupTraveller : Singleton<GroupTraveller> {
                 if (rend != null)
                 {
                     if (group.IsAfterTransition)
-                        ResourceDisplayList.Instance.ReFlushComponent(rend, ResourceDisplayList.Instance.PGMPostRender);
+						ResourceDisplayList.Instance.ReFlushComponent(rend, group, ResourceDisplayList.Instance.PGMPostRender);
                     else
-                        ResourceDisplayList.Instance.ReFlushComponent(rend, ResourceDisplayList.Instance.PGMPreRender);
+						ResourceDisplayList.Instance.ReFlushComponent(rend, group, ResourceDisplayList.Instance.PGMPreRender);
                 }
 
                 rend = RendererContainor.Instance[resource.GUID + "@PVW"];
                 if (rend != null)
                 {
                     if (group.IsAfterTransition)
-                        ResourceDisplayList.Instance.ReFlushComponent(rend, ResourceDisplayList.Instance.PVWPostRender);
+						ResourceDisplayList.Instance.ReFlushComponent(rend, group, ResourceDisplayList.Instance.PVWPostRender);
                     else
-                        ResourceDisplayList.Instance.ReFlushComponent(rend, ResourceDisplayList.Instance.PVWPreRender);
+						ResourceDisplayList.Instance.ReFlushComponent(rend, group, ResourceDisplayList.Instance.PVWPreRender);
                 }
             }
         }

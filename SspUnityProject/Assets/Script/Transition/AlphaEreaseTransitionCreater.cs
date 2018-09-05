@@ -29,4 +29,9 @@ public class AlphaEreaseTransitionCreater : TransitionCreater {
 		transition.SetShader(shaderName);
 	}
 
+	public override void OnChangeDuration ()
+	{
+		base.OnChangeDuration ();
+	}
+
 }
