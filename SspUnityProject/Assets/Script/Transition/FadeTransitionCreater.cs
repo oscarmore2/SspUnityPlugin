@@ -27,6 +27,8 @@ public class FadeTransitionCreater : TransitionCreater {
 	public override void OnChangeDuration ()
 	{
 		base.OnChangeDuration ();
-	}
+        float step = Mathf.Abs(endValue - startValue) / duration;
+        transition.ValueField[0] = new Transition.ShaderParams<float>(key, startValue, endValue, step);
+    }
 
 }

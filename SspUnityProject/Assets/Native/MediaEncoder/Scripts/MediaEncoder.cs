@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using UnityEditor;
 using UnityEngine.Rendering;
 using UnityEngine.VR;
 
@@ -827,21 +826,21 @@ namespace UnityPlugin.Encoder
     {
         public static MediaEncoder InitLiveEncoder(Material imgMat, NativeEncoder.VIDEO_CAPTURE_TYPE type = NativeEncoder.VIDEO_CAPTURE_TYPE.LIVE, int width = 1920, int height = 1080, int frameRate = 30, int bitRate = 400000)
         {
-//            if (null == MediaEncoder.Instance)
-//            {
-//                var renderer = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefab/Renderer"));
-//                MeshRenderer mesh = renderer.GetComponentInChildren<MeshRenderer>();
-//                mesh.material = imgMat;
-//                renderer.transform.position = (Vector3.down + Vector3.left) * 3000;
-//                MediaEncoder.Create(renderer);
-//            }
-//            
-//            MediaEncoder.Instance.videoCaptureType = type;
-//            MediaEncoder.Instance.liveVideoWidth = width;
-//            MediaEncoder.Instance.liveVideoFrameRate = frameRate;
-//            MediaEncoder.Instance.liveVideoHeight = height;
-//            MediaEncoder.Instance.liveVideoBitRate = bitRate;
-//            return MediaEncoder.Instance;
+            //if (null == MediaEncoder.Instance)
+            //{
+            //    var renderer = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefab/Renderer"));
+            //    MeshRenderer mesh = renderer.GetComponentInChildren<MeshRenderer>();
+            //    mesh.material = imgMat;
+            //    renderer.transform.position = (Vector3.down + Vector3.left) * 3000;
+            //    MediaEncoder.Create(renderer);
+            //}
+
+            //MediaEncoder.Instance.videoCaptureType = type;
+            //MediaEncoder.Instance.liveVideoWidth = width;
+            //MediaEncoder.Instance.liveVideoFrameRate = frameRate;
+            //MediaEncoder.Instance.liveVideoHeight = height;
+            //MediaEncoder.Instance.liveVideoBitRate = bitRate;
+            //return MediaEncoder.Instance;
             return null;
         }
     }

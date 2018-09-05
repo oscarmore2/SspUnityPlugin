@@ -19,7 +19,13 @@ namespace Resource
             Resource = res;
             Label.text = res.Name;
 			StartCoroutine (res.LoadFile(()=>{
-				fileSize = res.GetBytes().Length;
+                if (res.GetBytes() == null)
+                {
+                    if (res.GetBytes() != null)
+                    {
+                        fileSize = res.GetBytes().Length;
+                    }
+                }
 			}));
         }
 

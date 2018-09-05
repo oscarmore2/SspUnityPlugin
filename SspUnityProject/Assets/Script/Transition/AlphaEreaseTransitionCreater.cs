@@ -23,7 +23,7 @@ public class AlphaEreaseTransitionCreater : TransitionCreater {
 	void Start () {
 		transition = new Transition ();
 		transition.duration = duration;
-		float step = Mathf.Abs(endValue - startValue) / duration;
+		float step = Mathf.Abs(endValue - startValue) / duration * Time.deltaTime;
 		transition.ValueField.Add (new Transition.ShaderParams<float> (key,startValue, endValue, step));
 		transition.TextureField.Add (new Transition.ShaderParams<Texture> (textureKey, Mask, Mask));
 		transition.SetShader(shaderName);
@@ -32,6 +32,8 @@ public class AlphaEreaseTransitionCreater : TransitionCreater {
 	public override void OnChangeDuration ()
 	{
 		base.OnChangeDuration ();
-	}
+        float step = Mathf.Abs(endValue - startValue) / duration * Time.deltaTime;
+        transition.ValueField[0]= new Transition.ShaderParams<float>(key, startValue, endValue, step);
+    }
 
 }

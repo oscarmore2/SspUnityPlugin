@@ -50,8 +50,14 @@ public class OutputBuffer : Singleton<OutputBuffer>, IIniConfigable {
         int width = int.Parse(config["Output"]["width"]);
         int height = int.Parse(config["Output"]["height"]);
         int frame = int.Parse(config["Output"]["frame"]);
-        encoder = EncoderFactory.InitLiveEncoder(bufferMaterial, NativeEncoder.VIDEO_CAPTURE_TYPE.LIVE, width, height, frame);
         OutputConf = OutputConfig.BuildConfig(width, height, frame, config["Output"]["outputUrl"].ToString());
+        encoder = gameObject.AddComponent<MediaEncoder>();
+        encoder.videoCaptureType = NativeEncoder.VIDEO_CAPTURE_TYPE.LIVE;
+        encoder.liveVideoWidth = width;
+        encoder.liveVideoHeight = height;
+        encoder.liveVideoBitRate = 400000;
+        encoder.liveVideoFrameRate = OutputConf.FPS;
+        encoder.liveStreamUrl = OutputConf.OutputPath;
     }
 
 	public void SetConfig()
@@ -61,14 +67,29 @@ public class OutputBuffer : Singleton<OutputBuffer>, IIniConfigable {
         config.Parser.SaveFile(Path.Combine(Application.streamingAssetsPath, "/config/StreamSetting.ini"), config);
     }
 
+
+    bool isPushing = false;
     public void StartPush(Texture outputBuffer)
     {
-        encoder.EncodeFrame((RenderTexture)outputBuffer);
-        encoder.StartLiveStreaming(config["Output"]["outputUrl"].ToString());
+        isPushing = true;
+        StartCoroutine(Pushing(outputBuffer));
+        encoder.StartLiveStreaming(OutputConf.OutputPath);
+    }
+
+    IEnumerator Pushing(Texture outputBuffer)
+    {
+        yield return new WaitForEndOfFrame();
+
+        while (isPushing)
+        {
+            yield return new WaitForEndOfFrame();
+            encoder.EncodeFrame((RenderTexture)outputBuffer);
+        }
     }
 
     public void StopPush()
     {
+        isPushing = false;
         encoder.GetComponent<Camera>().enabled = false;
         encoder.StopCapture();
     }
