@@ -45,7 +45,7 @@ namespace Resource
 		{
 			Data = data;
 			var listGroup = data["list"];
-			for (int i = 0; i < listGroup.Count; i++)
+			for (int i = 0; containor.Count < listGroup.Count; i++)
 			{
 				ResourceGroup rg = new ResourceGroup (manager);
 				rg.LoadConfig (listGroup [i]);
@@ -65,9 +65,18 @@ namespace Resource
 				Data["list"].Add (data ["data"]);
 			} else {
 				Data ["list"][index] = data ["data"];
-
 			}
+			Debug.Log (Data.ToJson ());
 			JsonConfiguration.WriteData (Data, Paths.RESOURCE_GROUP);
+		}
+
+		public int RemoveItem(ResourceGroup rg)
+		{
+			int index = containor.IndexOf (rg);
+			Data ["list"] [index] = new JsonData ();
+			containor.Remove (rg);
+			JsonConfiguration.WriteData (Data, Paths.RESOURCE_GROUP);
+			return index;
 		}
 
         public int getIndex(ResourceGroup rg)
@@ -75,16 +84,32 @@ namespace Resource
             return containor.IndexOf(rg);
         }
 
-		public void Sort()
+		public List<ResourceGroup> Sort(bool inverse = false)
 		{
-			containor.Sort ((left, right) => {
-				if (left.Priority > right.Priority)
-					return 1;
-				else if (left.Priority == right.Priority)
-					return 0;
-				else
-					return -1;
-			});
+			List<ResourceGroup> sorted = new List<ResourceGroup> ();
+			for (int i = 0; i < containor.Count; i++) {
+				sorted.Add (containor[i]);
+			}
+			if (inverse) {
+				sorted.Sort ((left, right) => {
+					if (left.Priority < right.Priority)
+						return 1;
+					else if (left.Priority == right.Priority)
+						return 0;
+					else
+						return -1;
+				});
+			} else {
+				sorted.Sort ((left, right) => {
+					if (left.Priority > right.Priority)
+						return 1;
+					else if (left.Priority == right.Priority)
+						return 0;
+					else
+						return -1;
+				});
+			}
+			return sorted;
 		}
 
         public void Remove(ResourceGroup rg)
@@ -105,6 +130,11 @@ namespace Resource
             CurrentSelection = id;
             return containor[id];
         }
+
+		public ResourceGroup GetLast()
+		{
+			return containor [containor.Count - 1];	
+		}
 
         public override void OnInitialize()
         {

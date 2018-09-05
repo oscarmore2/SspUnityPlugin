@@ -78,9 +78,10 @@ public class JsonConfiguration
 
 	int SetToFile(string data, string path)
 	{
+		Debug.Log (data);
 		try
 		{
-			using (System.IO.FileStream fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite))
+			using (System.IO.FileStream fs = System.IO.File.Open(path, System.IO.FileMode.Open, System.IO.FileAccess.Write, System.IO.FileShare.Write))
 			{
 				using (System.IO.StreamWriter sr = new System.IO.StreamWriter(fs, System.Text.Encoding.UTF8))
 				{

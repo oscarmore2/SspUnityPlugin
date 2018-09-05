@@ -12,6 +12,7 @@ public class TextRenderer : CommonResourceRenderer {
 
     public override void ChangeContent(Resource.IResource contentData)
     {
+		
         Content.text = (string)((TextResoure)contentData).GetFile();
     }
 
@@ -20,9 +21,34 @@ public class TextRenderer : CommonResourceRenderer {
         return Resource.ResourceType.Text;
     }
 
-    public override T AttachRenderTarget<T>(GameObject target)
+	public override void ApplyAttrs(Dictionary<string, string> _Attrs = null)
+	{
+		base.ApplyAttrs(_Attrs);
+		var text = GetComponent<Text> ();
+		float x = 0;
+		float y = 0;
+		float r = 0;
+		float g = 0;
+		float b = 0;
+		float a = 0;
+		int fontSize = 10;
+		float.TryParse (Attrs ["R"], out r);
+		float.TryParse (Attrs ["G"], out g);
+		float.TryParse (Attrs ["B"], out b);
+		float.TryParse (Attrs ["Alpha"], out a);
+		float.TryParse (Attrs ["X"], out x);
+		float.TryParse (Attrs ["Y"], out y);
+		int.TryParse (Attrs ["FontSize"], out fontSize);
+		text.color = new Color (r, g, b, a);
+		text.fontSize = fontSize;
+		text.font = Font.CreateDynamicFontFromOSFont (Attrs ["FontFace"], 10);
+		rectTranfrom = GetComponent<RectTransform> ();
+		rectTranfrom.anchoredPosition = new Vector2 (x, y);
+	}
+
+	public override T AttachRenderTarget<T>(GameObject target, Resource.ResourceGroup rg)
     {
-        base.AttachRenderTarget<T>(target);
+		base.AttachRenderTarget<T>(target,rg);
         System.Type type = Content.GetType();
         var dst = target.GetComponent(type) as T;
         if (!dst)
@@ -44,8 +70,11 @@ public class TextRenderer : CommonResourceRenderer {
         renderTarget.Add(target);
         target.transform.localPosition = Vector3.zero;
         RectTransform rect = target.GetComponent<RectTransform>();
-        rect.anchoredPosition = rectTranfrom.anchoredPosition;
-        target.transform.localScale = Vector3.one;
+		rect.anchoredPosition = rectTranfrom.anchoredPosition + new Vector2(rg.XAxis, rg.YAxis);
+		target.transform.localScale = new Vector3(rg.Scale, rg.Scale, rg.Scale);
+		var cont = target.AddComponent<ContentSizeFitter> ();
+		cont.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+		cont.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
         return dst;
     }
 
@@ -56,13 +85,17 @@ public class TextRenderer : CommonResourceRenderer {
             GameObject obj = new GameObject(res.Name);
             var render = obj.AddComponent<TextRenderer>();
             render.transform.parent = root;
-            render.rectTranfrom = obj.GetComponent<RectTransform>();
-            render.Content = obj.GetComponent<Text>();
-            render.Content.font = Font.CreateDynamicFontFromOSFont("Arial", 10);
-            render.ChangeContent(res);
-            render.Attrs = res.Attrs;
-            render.ApplyAttrs(res.Attrs);
+			ModifyContent (ref render, res);
             return render;
         }
+
+		public static void ModifyContent(ref TextRenderer render, Resource.IResource res)
+		{
+			render.rectTranfrom = render.GetComponent<RectTransform>();
+			render.Content = render.GetComponent<Text>();
+			render.ChangeContent(res);
+			render.Attrs = res.Attrs;
+			render.ApplyAttrs(res.Attrs);
+		}
     }
 }

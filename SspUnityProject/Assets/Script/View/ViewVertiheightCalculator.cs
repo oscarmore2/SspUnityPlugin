@@ -22,6 +22,9 @@ public class ViewVertiheightCalculator : MonoBehaviour {
 
 	public void Calculate()
 	{
+		RectTransform rt = GetComponent<RectTransform>();
+		var x = rt.sizeDelta.x == 0 ? 420 : rt.sizeDelta.x;
+		rt.sizeDelta = new Vector2(x, 0);
 		doCalculate ();
 	}
 

@@ -34,13 +34,42 @@ namespace Resource
         public void OnAddToGroup()
         {
             var toggles = resourceManager.TaggleGroup.ActiveToggles();
-            List<IResource> res = new List<IResource>();
-            foreach (var t in toggles)
-            {
-                var comp = t.GetComponentInParent<ResourceItem>();
-                res.Add(comp.Resource);
-                t.isOn = false;
-            }
+			int index = 1;
+            
+			LitJson.JsonData data = new LitJson.JsonData ();
+			data ["index"] = ResourceGroupList.Instance.Count + 1;
+			data ["data"] = new LitJson.JsonData ();
+			data ["data"]["Name"] = "Group" + ResourceGroupList.Instance.Count + 1;
+			data ["data"]["Priority"] = ResourceGroupList.Instance.Count + 1;
+			data["data"]["IsAfterTransition"] = false;
+			data["data"]["Scale"] = 1;
+			data["data"]["XAxis"] = 0;
+			data["data"]["YAxis"] = 0;
+			data["data"]["Duration"] = 0;
+			data["data"]["ActivateState"] = new LitJson.JsonData();
+			for (int i = 0; i < 3; i++)
+			{
+				data["data"]["ActivateState"].Add(false);
+			}
+			data ["data"]["VCamBiding"] = new LitJson.JsonData();
+			for (int i = 0; i < 8; i++)
+			{
+				data["data"]["VCamBiding"].Add(false);
+			}
+			data["data"]["ResourceRefs"] = new LitJson.JsonData();
+			foreach (var t in toggles)
+			{
+				var comp = t.GetComponentInParent<ResourceItem>();
+				LitJson.JsonData item = new LitJson.JsonData ();
+				item ["GUID"] = comp.Resource.GUID;
+				data ["data"] ["ResourceRefs"].Add(item);
+				t.isOn = false;
+			}
+			if (data ["data"] ["ResourceRefs"].Count > 0) {
+				ResourceGroupList.Instance.SetConfig (data);
+				AddItem (ResourceGroupList.Instance.GetLast ());
+				heightCalculator.Calculate ();
+			}
         }
 
         void OnEnable()
@@ -53,11 +82,12 @@ namespace Resource
 
             if (ResourceGroupContainor.childCount < ResourceGroupList.Instance.Count)
             {
-                for (int i = 0; i < ResourceGroupList.Instance.Count; i++)
+				var list = ResourceGroupList.Instance.Sort ();
+				for (int i = 0; i < list.Count; i++)
                 {
-                    AddItem(ResourceGroupList.Instance[i]);
+					AddItem(list[i]);
                 }
-                heightCalculator.doCalculate();
+				heightCalculator.Calculate();
             }
         }
 
@@ -71,14 +101,18 @@ namespace Resource
 
 		public void OnChangeResourceSelection(ISelectableItem Selectable)
 		{
-			if (Selectable != null) {
-				Selectable.OnSelect ();	
-			}
-
 			if (CurrentSelected != null) {
 				CurrentSelected.OnDeselect ();
+				if (CurrentSelected == Selectable) {
+					CurrentSelected = null;
+					return;
+				}
 			}
-			CurrentSelected = Selectable;
+
+			if (Selectable != null) {
+				Selectable.OnSelect ();	
+				CurrentSelected = Selectable;
+			}
 		}
 
 		public void OnPointerClick(UnityEngine.EventSystems.PointerEventData data)
@@ -86,6 +120,17 @@ namespace Resource
 			var list = data.pointerCurrentRaycast.gameObject.transform.GetComponentsInParent<ResourceGroupManager>();
 			if (list [0] != this) {
 				OnChangeResourceSelection (null);
+			}
+		}
+
+		public void DeleteItem()
+		{
+			if (CurrentSelected != null) {
+				var rg = (ResourceGroupItem)CurrentSelected;
+				int id = ResourceGroupList.Instance.RemoveItem (rg.ResGroup);
+				CurrentSelected = null;
+				var c = ResourceGroupContainor.GetChild (id);
+				Destroy (c.gameObject);
 			}
 		}
     }

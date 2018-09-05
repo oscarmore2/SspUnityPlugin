@@ -29,11 +29,11 @@ public class GroupTraveller : Singleton<GroupTraveller> {
                 }
                 if (resource.GetType() == ResourceType.Image)
                 {
-                    ((ImageRenderer)rend).AttachRenderTarget<UnityEngine.UI.RawImage>(target.gameObject);
+					((ImageRenderer)rend).AttachRenderTarget<UnityEngine.UI.RawImage>(target.gameObject, group);
                 }
                 else if (resource.GetType() == ResourceType.Text)
                 {
-                    ((TextRenderer)rend).AttachRenderTarget<UnityEngine.UI.Text>(target.gameObject);
+					((TextRenderer)rend).AttachRenderTarget<UnityEngine.UI.Text>(target.gameObject, group);
                 }
                 layer++;
             }
@@ -55,11 +55,11 @@ public class GroupTraveller : Singleton<GroupTraveller> {
                 }
                 if (resource.GetType() == ResourceType.Image)
                 {
-                    ((ImageRenderer)rend).AttachRenderTarget<UnityEngine.UI.RawImage>(target.gameObject);
+					((ImageRenderer)rend).AttachRenderTarget<UnityEngine.UI.RawImage>(target.gameObject, group);
                 }
                 else if (resource.GetType() == ResourceType.Text)
                 {
-                    ((TextRenderer)rend).AttachRenderTarget<UnityEngine.UI.Text>(target.gameObject);
+					((TextRenderer)rend).AttachRenderTarget<UnityEngine.UI.Text>(target.gameObject, group);
                 }
                 layer++;
             }
@@ -104,10 +104,10 @@ public class GroupTraveller : Singleton<GroupTraveller> {
 
     public void OnInit()
     {
-		ResourceGroupList.Instance.Sort ();
-        for (int i = 0; i < ResourceGroupList.Instance.Count; i++)
+		var list = ResourceGroupList.Instance.Sort (true);
+		for (int i = 0; i < list.Count; i++)
         {
-            var ResGroup = ResourceGroupList.Instance[i];
+			var ResGroup = list[i];
             OnTravel(ResGroup);
         }
     }

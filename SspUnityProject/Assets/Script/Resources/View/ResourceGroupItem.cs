@@ -115,18 +115,21 @@ namespace Resource
 		void FinishEditingScale(string s)
 		{
 			ResGroup.Scale = float.Parse(s);
+			ResGroup.SetConfig (null);
 			SetResourceDirty ();
 		}
 
 		void FinishEditingXAxis(string s)
 		{
 			ResGroup.XAxis = float.Parse (s);
+			ResGroup.SetConfig (null);
 			SetResourceDirty ();
 		}
 
 		void FinishEditingYAxis(string s)
 		{
 			ResGroup.YAxis = float.Parse (s);
+			ResGroup.SetConfig (null);
 			SetResourceDirty ();
 		}
 

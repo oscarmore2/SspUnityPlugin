@@ -8,6 +8,9 @@ namespace Resource
 {
     public class ResourcesManager : MonoBehaviour
     {
+		[SerializeField]
+		ViewVertiheightCalculator calculator; 
+
         private ResourcesListContainor containor;
         public ResourcesListContainor Containor {
             get {
@@ -48,6 +51,7 @@ namespace Resource
                     var t = o.GetComponentInChildren<Toggle>();
                     TaggleGroup.RegisterToggle(t);
                 }
+				//calculator.Calculate ();
             }
         }
     }

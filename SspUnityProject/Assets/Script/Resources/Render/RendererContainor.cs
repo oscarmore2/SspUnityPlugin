@@ -36,7 +36,7 @@ public class RendererContainor : Singleton<RendererContainor> {
 		return rend;
     }
 
-    CommonResourceRenderer AddRender(string suffix, IResource resource)
+	CommonResourceRenderer AddRender(string suffix, IResource resource)
     {
         CommonResourceRenderer render = null;
         foreach (var val in RenderPathMapping.Keys)
@@ -45,6 +45,18 @@ public class RendererContainor : Singleton<RendererContainor> {
             {
                 render = RenderPathMapping[val];
                 RenderPathMapping.Remove(val);
+				if (resource.GetType() == ResourceType.Image)
+				{
+					var rend = (ImageRenderer)render;
+					ImageRenderer.ImageRenderGenerate.ModifyContent(ref rend, resource);
+					render = rend;
+				}
+				else if (resource.GetType() == ResourceType.Text)
+				{
+					var rend = (TextRenderer)render;
+					TextRenderer.TextRenderGenerate.ModifyContent(ref rend, resource);
+					render = rend;
+				}
                 break;
             }
         }
@@ -64,6 +76,7 @@ public class RendererContainor : Singleton<RendererContainor> {
         render.GUID = resource.GUID;
 
         RenderPathMapping[resource.GUID + suffix] = render;
+		render.Attrs = resource.Attrs;
         return render;
     }
 

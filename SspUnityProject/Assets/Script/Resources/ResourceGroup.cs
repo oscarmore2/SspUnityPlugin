@@ -103,16 +103,16 @@ namespace Resource
             json["index"] = ResourceGroupList.Instance.getIndex(this);
             json["data"] = new JsonData();
             json["data"]["Name"] = Name;
-            json["data"]["Priority"] = Priority;
+			json["data"]["Priority"] = Priority;
             json["data"]["IsAfterTransition"] = IsAfterTransition;
-            json["data"]["Scale"] = Scale;
-            json["data"]["XAxis"] = XAxis;
-            json["data"]["YAxis"] = YAxis;
-            json["data"]["Duration"] = Duration;
+			json["data"]["Scale"] = Scale;
+			json["data"]["XAxis"] = XAxis;
+			json["data"]["YAxis"] = YAxis;
+			json["data"]["Duration"] = Duration;
             json["data"]["ActivateState"] = new JsonData();
             for (int i = 0; i < ActivateState.Length; i++)
             {
-                json["data"]["ActivateState"].Add(ActivateState[i]);
+				json["data"]["ActivateState"].Add(false);
             }
             json["data"]["VCamBiding"] = new JsonData();
             for (int i = 0; i < VCamBiding.Length; i++)
@@ -122,8 +122,11 @@ namespace Resource
             json["data"]["ResourceRefs"] = new JsonData();
             for(int i = 0; i < ResourceRefs.Count; i++)
             {
-                json["data"]["ResourceRefs"].Add(ResourceRefs[i].Resources.GUID);
+				JsonData d = new JsonData ();
+				d ["GUID"] = ResourceRefs [i].Resources.GUID;
+				json["data"]["ResourceRefs"].Add(d);
             }
+			Debug.Log (json.ToJson());
             ResourceGroupList.Instance.SetConfig(json);
         }
     }

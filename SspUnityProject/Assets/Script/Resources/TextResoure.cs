@@ -7,6 +7,7 @@ namespace Resource
 {
     public class TextResoure : IResource
     {
+		string Content = null;
         public TextResoure()
         {
 
@@ -24,19 +25,22 @@ namespace Resource
 
         public override object GetFile()
         {
-            if (null == fileRef)
-            {   
-                return null;
-            }
+			if (null != fileRef) {   
+				Content = System.Text.Encoding.UTF8.GetString(fileRef);
+			}
 
-            return (object)System.Text.Encoding.UTF8.GetString(fileRef);
+			return (object)Content;
         }
 
 		public override void LoadConfig(JsonData data)
 		{
-			var _Path = data ["Path"].ToString();
-			_Path = _Path.Replace ("%streamingAssetsPath%", Application.streamingAssetsPath);
-			this.Path = _Path;
+			if (data.Keys.Contains ("Path")) {
+				var _Path = data ["Path"].ToString ();
+				_Path = _Path.Replace ("%streamingAssetsPath%", Application.streamingAssetsPath);
+				this.Path = _Path;
+			} else {
+				Content = data ["Text"].ToString();
+			}
 		}
 
 		public override void SetConfig(JsonData data)
