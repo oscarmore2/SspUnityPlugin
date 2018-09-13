@@ -15,9 +15,11 @@ public class ViewManager : MonoBehaviour {
 
     public void InitView()
     {
+		for (int i = 0; i < 8; i++) {
+			VCamView[i].InitView(this);
+		}
         for (int i = 0; i < VcamList.Instance.GetList().Count; i++)
         {
-            VCamView[i].InitView(this);
             MappingTable.BindVcam(VcamList.Instance.GetList()[i], VCamView[i], new Rect(1, 1, 1, 1));
         }
         PGM.InitView(this);
@@ -56,6 +58,7 @@ public class ViewManager : MonoBehaviour {
     public void OnPushToPVW(IView view)
     {
         var vcam = (VCamView)view;
+		Debug.Log (vcam.gameObject.name);
         if (vcam.BufferTexture != null)
             PVW.OnUpdateTexture(vcam.BufferTexture);
     }
@@ -73,6 +76,7 @@ public class ViewManager : MonoBehaviour {
 	{
         currentTransition = tran;
 		transition = tran.transition;
+		OnTransitionToPGM ();
 	}
 
     public void ExpendCameraView()

@@ -6,6 +6,9 @@ using UnityPlugin.Decoder;
 
 public class VCamView : IView {
 
+	[SerializeField]
+	int Index;
+
     Surface surface;
 
     public Texture BufferTexture {
@@ -52,6 +55,9 @@ public class VCamView : IView {
         {
             OnUpdateTexture(surface.GetTexture());
         }
+		if (Input.GetKeyDown ((KeyCode)(48 + Index))) {
+			manager.OnPushToPVW (this);
+		}
 	}
 
     
