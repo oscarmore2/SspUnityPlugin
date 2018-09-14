@@ -18,6 +18,8 @@ namespace Resource
         public Toggle PGMToggle;
         public Toggle BinDiagToggle;
 
+        public Text Name;
+
         public InputField Scale;
         public InputField XAxis;
         public InputField YAxis;
@@ -37,7 +39,8 @@ namespace Resource
 
         public void SetContent(ResourceGroup g)
         {
-			SelectionPanel = BackgroundImage.GetComponent<Button> ();
+            Name.text = g.Name;
+            SelectionPanel = BackgroundImage.GetComponent<Button> ();
 			originalColor = BackgroundImage.color;
             ResContainor.parent = ResContainor;
             XAxis.text = g.XAxis.ToString();
@@ -72,7 +75,7 @@ namespace Resource
                         break;
                 }
                 var objAttr = gameobj.GetComponent<ResourceAttributeFields>();
-                objAttr.SetContent(g.ResourceRefs[i].Resources.Attrs);
+                objAttr.SetContent(g.ResourceRefs[i].Resources);
                 objAttr.transform.parent = ResContainor;
 
                 TransitionManager.Instance.OnTransitionEnd += (()=> {

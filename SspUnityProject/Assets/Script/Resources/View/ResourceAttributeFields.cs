@@ -11,11 +11,15 @@ namespace Resource
         public Transform AttrContainor;
 
         [SerializeField]
+        Text Name;
+
+        [SerializeField]
         GridLayoutGroup grid;
 
-        public void SetContent(Dictionary<string, string> AttrKeyPair)
+        public void SetContent(Resource.IResource res)
         {
-            foreach (var kp in AttrKeyPair)
+            Name.text = res.Name;
+            foreach (var kp in res.Attrs)
             {
                 GameObject obKey = new GameObject(kp.Key + ":key");
                 var txKey = obKey.AddComponent<Text>();
