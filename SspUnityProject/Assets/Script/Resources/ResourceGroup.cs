@@ -22,16 +22,27 @@ namespace Resource
 		public ResourceGroupManager manager { get; protected set;}
 
 
-		public void SortGroup()
+		public void SortGroup(bool inverse = false)
 		{
-			ResourceRefs.Sort ((left, right)=>{
-				if (left.Resources.Priority > right.Resources.Priority)
-					return 1;
-				else if (left.Resources.Priority == right.Resources.Priority)
-					return 0;
-				else
-					return -1;
-			});
+			if (!inverse) {
+				ResourceRefs.Sort ((left, right) => {
+					if (left.Resources.Priority > right.Resources.Priority)
+						return 1;
+					else if (left.Resources.Priority == right.Resources.Priority)
+						return 0;
+					else
+						return -1;
+				});
+			} else {
+				ResourceRefs.Sort ((left, right) => {
+					if (left.Resources.Priority < right.Resources.Priority)
+						return 1;
+					else if (left.Resources.Priority == right.Resources.Priority)
+						return 0;
+					else
+						return -1;	
+				});
+			}
 		}
 
 		public ResourceGroup(ResourceGroupManager _manager)

@@ -5,13 +5,21 @@ using UnityEngine.UI;
 
 namespace Resource
 {
-    public class ResourceAttributeFields : MonoBehaviour
+	public class ResourceAttributeFields : MonoBehaviour, ISelectableItem
     {
 
         public Transform AttrContainor;
 
         [SerializeField]
         Text Name;
+
+		int priority;
+
+		[SerializeField]
+		RawImage background;
+
+		[SerializeField]
+		GameObject LayerKey;
 
         [SerializeField]
         GridLayoutGroup grid;
@@ -42,5 +50,15 @@ namespace Resource
             grid.CalculateLayoutInputHorizontal();
             grid.CalculateLayoutInputHorizontal();
         }
+
+		public void OnSelect()
+		{
+				
+		}
+
+		public void OnDeselect()
+		{
+			
+		}
     }
 }

@@ -53,6 +53,7 @@ namespace Resource
 
             Duration.text = g.Duration.ToString();
             ResGroup = g;
+			g.SortGroup ();
             for (int i = 0; i < g.ResourceRefs.Count; i++)
             {
                 GameObject gameobj = null;
