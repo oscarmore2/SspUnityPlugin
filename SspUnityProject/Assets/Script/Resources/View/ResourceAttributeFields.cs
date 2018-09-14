@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Resource
 {
-	public class ResourceAttributeFields : MonoBehaviour, ISelectableItem
+	public class ResourceAttributeFields : MonoBehaviour
     {
 
         public Transform AttrContainor;
@@ -16,7 +16,7 @@ namespace Resource
 		int priority;
 
 		[SerializeField]
-		RawImage background;
+		RawImage backg;
 
 		[SerializeField]
 		GameObject LayerKey;
@@ -51,14 +51,5 @@ namespace Resource
             grid.CalculateLayoutInputHorizontal();
         }
 
-		public void OnSelect()
-		{
-				
-		}
-
-		public void OnDeselect()
-		{
-			
-		}
     }
 }
