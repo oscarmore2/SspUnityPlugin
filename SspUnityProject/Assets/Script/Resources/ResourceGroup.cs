@@ -79,6 +79,34 @@ namespace Resource
         }
 
 
+        public void updatePriority(IResourceRef ref_, int DesignPriority)
+        {
+            SortGroup();
+            int index = ResourceRefs.IndexOf(ref_);
+            if (DesignPriority < index)
+            {
+                if (ResourceRefs[DesignPriority] != null)
+                {
+                    for (int i = DesignPriority; i < index; i++)
+                    {
+                        ResourceRefs[i].Priority = ResourceRefs[i].Priority + 1;
+                    }
+                    ResourceRefs[index].Priority = DesignPriority;
+                }
+            }
+            else if (DesignPriority > index)
+            {
+                if (ResourceRefs[DesignPriority] != null)
+                {
+                    for (int i = index; i < DesignPriority; i++)
+                    {
+                        ResourceRefs[i].Priority = ResourceRefs[i].Priority - 1;
+                    }
+                    ResourceRefs[index].Priority = DesignPriority;
+                }
+            }
+        }
+
 		public void SetConfig(JsonData data)
 		{
 			if (data != null) {

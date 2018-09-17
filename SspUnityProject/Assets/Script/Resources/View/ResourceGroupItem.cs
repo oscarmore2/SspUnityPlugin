@@ -76,7 +76,7 @@ namespace Resource
                         break;
                 }
                 var objAttr = gameobj.GetComponent<ResourceAttributeFields>();
-                objAttr.SetContent(g.ResourceRefs[i].Resources);
+                objAttr.SetContent(g.ResourceRefs[i], ResGroup);
                 objAttr.transform.parent = ResContainor;
 
                 TransitionManager.Instance.OnTransitionEnd += (()=> {

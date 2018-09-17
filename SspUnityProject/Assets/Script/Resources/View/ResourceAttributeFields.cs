@@ -24,10 +24,15 @@ namespace Resource
         [SerializeField]
         GridLayoutGroup grid;
 
-        public void SetContent(Resource.IResource res)
+        IResourceRef resource;
+        ResourceGroup resourceGroup;
+
+        public void SetContent(IResourceRef res, ResourceGroup rg)
         {
-            Name.text = res.Name;
-            foreach (var kp in res.Attrs)
+            resourceGroup = rg;
+            resource = res;
+            Name.text = res.Resources.Name;
+            foreach (var kp in res.Resources.Attrs)
             {
                 GameObject obKey = new GameObject(kp.Key + ":key");
                 var txKey = obKey.AddComponent<Text>();
@@ -49,6 +54,14 @@ namespace Resource
 
             grid.CalculateLayoutInputHorizontal();
             grid.CalculateLayoutInputHorizontal();
+        }
+
+        public void OnMoveUp()
+        {
+            if (resource != null)
+            {
+                
+            }
         }
 
     }
