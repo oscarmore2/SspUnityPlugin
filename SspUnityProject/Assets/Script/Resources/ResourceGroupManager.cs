@@ -68,9 +68,15 @@ namespace Resource
 			if (data ["data"] ["ResourceRefs"].Count > 0) {
 				ResourceGroupList.Instance.SetConfig (data);
 				AddItem (ResourceGroupList.Instance.GetLast ());
-				heightCalculator.Calculate ();
+				RefreshUI ();
 			}
         }
+
+		public void RefreshUI()
+		{
+			gameObject.SetActive (false);
+			gameObject.SetActive (true);
+		}
 
         void OnEnable()
         {
@@ -96,7 +102,7 @@ namespace Resource
             var o = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Prefab/ResourceGroupItem"));
             var rect = o.GetComponent<Transform>();
             rect.parent = ResourceGroupContainor;
-            o.GetComponent<ResourceGroupItem>().SetContent(rg);
+			o.GetComponent<ResourceGroupItem>().SetContent(rg, this);
         }
 
 		public void OnChangeResourceSelection(ISelectableItem Selectable)

@@ -35,10 +35,11 @@ namespace Resource
 		Button SelectionPanel;
 
 		Color originalColor;
+		ResourceGroupManager manager;
 
-
-        public void SetContent(ResourceGroup g)
+		public void SetContent(ResourceGroup g, ResourceGroupManager rgm)
         {
+			manager = rgm;
             Name.text = g.Name;
             SelectionPanel = BackgroundImage.GetComponent<Button> ();
 			originalColor = BackgroundImage.color;
@@ -76,7 +77,7 @@ namespace Resource
                         break;
                 }
                 var objAttr = gameobj.GetComponent<ResourceAttributeFields>();
-                objAttr.SetContent(g.ResourceRefs[i], ResGroup);
+				objAttr.SetContent(g.ResourceRefs[i], this);
                 objAttr.transform.parent = ResContainor;
 
                 TransitionManager.Instance.OnTransitionEnd += (()=> {
@@ -111,9 +112,14 @@ namespace Resource
 		{
 			originalState = ResGroup.ActivateState;
 			ResGroup.ActivateState = new bool[]{ false, false, false };
-			GroupTraveller.Instance.OnTravel (ResGroup);
+			ResourceGroupList.Instance.OnResourceGroupChange(ResGroup);
 			ResGroup.ActivateState = originalState;
-			GroupTraveller.Instance.OnTravel (ResGroup);
+			ResourceGroupList.Instance.OnResourceGroupChange(ResGroup);
+		}
+
+		public void ReflreshUI()
+		{
+			manager.RefreshUI();
 		}
 
 		void FinishEditingScale(string s)

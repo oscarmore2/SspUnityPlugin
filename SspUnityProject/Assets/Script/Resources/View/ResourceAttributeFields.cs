@@ -25,9 +25,9 @@ namespace Resource
         GridLayoutGroup grid;
 
         IResourceRef resource;
-        ResourceGroup resourceGroup;
+		ResourceGroupItem resourceGroup;
 
-        public void SetContent(IResourceRef res, ResourceGroup rg)
+		public void SetContent(IResourceRef res, ResourceGroupItem rg)
         {
             resourceGroup = rg;
             resource = res;
@@ -60,9 +60,22 @@ namespace Resource
         {
             if (resource != null)
             {
-                
+				if (resource.Priority > 1) {
+					resourceGroup.ResGroup.updatePriority (resource, resource.Priority - 1);
+					resourceGroup.ReflreshUI ();
+				}
             }
         }
+
+		public void OnMoveDown()
+		{
+			if (resource != null) {
+				if (resource.Priority < resourceGroup.ResGroup.ResourceRefs.Count) {
+					resourceGroup.ResGroup.updatePriority (resource, resource.Priority + 1);
+					resourceGroup.ReflreshUI ();
+				}
+			}
+		}
 
     }
 }
