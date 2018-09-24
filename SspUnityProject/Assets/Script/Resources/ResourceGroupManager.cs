@@ -93,7 +93,7 @@ namespace Resource
                 {
 					AddItem(list[i]);
                 }
-				heightCalculator.Calculate();
+				//heightCalculator.Calculate();
             }
         }
 

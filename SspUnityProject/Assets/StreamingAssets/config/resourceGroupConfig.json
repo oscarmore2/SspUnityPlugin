@@ -1,4 +1,21 @@
-﻿{"list":[{"Name":"Group1","Priority":1,"IsAfterTransition":false,"Scale":3.0,"XAxis":0.0,"YAxis":2.0,"Duration":2.2000000476837158,"ActivateState":[false,false,false],"VCamBiding":[false,false,false,false,false,false,false,false,false],"ResourceRefs":[{"GUID":"4d2f34fc3c3ffd2ab67319e64f92e984"},{"GUID":"987496bc165880b168aed37b102d58d3"}]},{"Name":"Group2","Priority":2,"VCamBiding":[false,false,false,false,false,false,false,false,false],"ResourceRefs":[{"type":"Texts","GUID":"70145ba633a74ead406b371644d6a18f","index":1},{"type":"Images","GUID":"1eb872e78e6e349553811c5bcb607bfb","index":2}],"ActivateState":[false,false,false],"IsAfterTransition":true,"Scale":1,"XAxis":100,"YAxis":200,"Duration":2.2},{"Name":"Group21","Priority":3,"IsAfterTransition":true,"Scale":1.0,"XAxis":200.0,"YAxis":200.0,"Duration":2.2000000476837158,"ActivateState":[false,false,false],"VCamBiding":[false,false,false,false,false,false,false,false],"ResourceRefs":[{"GUID":"1eb872e78e6e349553811c5bcb607bfb"},{"GUID":"70145ba633a74ead406b371644d6a18f"},{"GUID":"4d2f34fc3c3ffd2ab67319e64f92e984"}]}]}          false,
+﻿{
+    "list":[
+        {
+            "Name":"Group1",
+            "Priority":1,
+            "IsAfterTransition":false,
+            "Scale":3,
+            "XAxis":0,
+            "YAxis":2,
+            "Duration":2.200000047683716,
+            "ActivateState":[
+                false,
+                false,
+                false
+            ],
+            "VCamBiding":[
+                false,
+                false,
                 false,
                 false,
                 false,
@@ -9,12 +26,37 @@
             ],
             "ResourceRefs":[
                 {
-                    "type":"Texts",
+                    "Priorty":1,
+                    "GUID":"4d2f34fc3c3ffd2ab67319e64f92e984"
+                },
+                {
+                    "Priorty":2,
+                    "GUID":"987496bc165880b168aed37b102d58d3"
+                }
+            ]
+        },
+        {
+            "Name":"Group2",
+            "Priority":2,
+            "VCamBiding":[
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+            ],
+            "ResourceRefs":[
+                {
+                    "Priorty":2,
                     "GUID":"70145ba633a74ead406b371644d6a18f",
                     "index":1
                 },
                 {
-                    "type":"Images",
+                    "Priorty":1,
                     "GUID":"1eb872e78e6e349553811c5bcb607bfb",
                     "index":2
                 }
@@ -34,8 +76,8 @@
             "Name":"Group21",
             "Priority":3,
             "IsAfterTransition":true,
-            "Scale":2,
-            "XAxis":100,
+            "Scale":1,
+            "XAxis":200,
             "YAxis":200,
             "Duration":2.200000047683716,
             "ActivateState":[
@@ -55,13 +97,16 @@
             ],
             "ResourceRefs":[
                 {
-                    "GUID":"4d2f34fc3c3ffd2ab67319e64f92e984"
+                    "Priorty":3,
+                    "GUID":"1eb872e78e6e349553811c5bcb607bfb"
                 },
                 {
+                    "Priorty":1,
                     "GUID":"70145ba633a74ead406b371644d6a18f"
                 },
                 {
-                    "GUID":"1eb872e78e6e349553811c5bcb607bfb"
+                    "Priorty":2,
+                    "GUID":"4d2f34fc3c3ffd2ab67319e64f92e984"
                 }
             ]
         }

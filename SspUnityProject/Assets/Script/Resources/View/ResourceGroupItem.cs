@@ -119,8 +119,13 @@ namespace Resource
 
 		public void ReflreshUI()
 		{
-			manager.RefreshUI();
-		}
+            for (int i = 1; i < ResContainor.childCount; i++) // don't destroy header
+            {
+                Destroy(ResContainor.GetChild(i).gameObject);
+            }
+
+            SetContent(ResGroup, manager);
+        }
 
 		void FinishEditingScale(string s)
 		{

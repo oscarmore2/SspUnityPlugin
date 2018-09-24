@@ -72,39 +72,24 @@ namespace Resource
 			foreach (var r in resSerializer.ResourceRefs)
 			{
 				IResourceRef resRef;
-				resRef = new IResourceRef(manager.ResourceManager.Containor.GetResourceByGUID(r.GUID));
+				resRef = new IResourceRef(manager.ResourceManager.Containor.GetResourceByGUID(r.GUID), r.Priorty);
 				ResourceRefs.Add(resRef);
 			}
             resSerializer.ConvertToResourceGroup(ref temp);
         }
 
 
-        public void updatePriority(IResourceRef ref_, int DesignPriority)
+        public ResourceGroup updatePriority(IResourceRef ref_, int DesignPriority)
         {
             SortGroup();
             int index = ResourceRefs.IndexOf(ref_);
-            if (DesignPriority < index)
+            ResourceRefs.Remove(ref_);
+            ResourceRefs.Insert(DesignPriority - 1, ref_);
+            for (int i = 0; i < ResourceRefs.Count; i++)
             {
-                if (ResourceRefs[DesignPriority] != null)
-                {
-                    for (int i = DesignPriority; i < index; i++)
-                    {
-                        ResourceRefs[i].Priority = ResourceRefs[i].Priority + 1;
-                    }
-                    ResourceRefs[index].Priority = DesignPriority;
-                }
+                ResourceRefs[i].Priority = i + 1;
             }
-            else if (DesignPriority > index)
-            {
-                if (ResourceRefs[DesignPriority] != null)
-                {
-                    for (int i = index; i < DesignPriority; i++)
-                    {
-                        ResourceRefs[i].Priority = ResourceRefs[i].Priority - 1;
-                    }
-                    ResourceRefs[index].Priority = DesignPriority;
-                }
-            }
+            return this;
         }
 
 		public void SetConfig(JsonData data)
@@ -175,6 +160,7 @@ namespace Resource
         public class ResourceRefSerializer
         {
 			public string GUID;
+            public int Priorty;
         }
         public string Name;
         public int Priority;

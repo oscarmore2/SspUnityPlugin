@@ -58,18 +58,19 @@ namespace Resource
 
         public void OnMoveUp()
         {
-            if (resource != null)
+            if (resource.Resources != null)
             {
 				if (resource.Priority > 1) {
-					resourceGroup.ResGroup.updatePriority (resource, resource.Priority - 1);
-					resourceGroup.ReflreshUI ();
+					var res = resourceGroup.ResGroup.updatePriority (resource, resource.Priority - 1);
+                    resourceGroup.ResGroup = res;
+                    resourceGroup.ReflreshUI ();
 				}
             }
         }
 
 		public void OnMoveDown()
 		{
-			if (resource != null) {
+			if (resource.Resources != null) {
 				if (resource.Priority < resourceGroup.ResGroup.ResourceRefs.Count) {
 					resourceGroup.ResGroup.updatePriority (resource, resource.Priority + 1);
 					resourceGroup.ReflreshUI ();

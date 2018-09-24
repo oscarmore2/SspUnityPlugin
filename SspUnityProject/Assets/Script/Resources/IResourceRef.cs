@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Resource
 {
-    public class IResourceRef : MonoBehaviour
+    public class IResourceRef 
     {
 
         public int Priority;
